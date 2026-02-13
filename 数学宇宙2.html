@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学思想宇宙 - The Mathematical Universe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;700;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    
+    <style>
+        :root {
+            --font-serif: 'Noto Serif SC', serif;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --glass-bg: rgba(20, 20, 20, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: rgba(255, 255, 255, 0.95);
+            --text-sub: rgba(255, 255, 255, 0.6);
+            --accent-color: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            overflow: hidden;
+            font-family: var(--font-sans);
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        /* === 封面/开场屏幕 === */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 120%, #1a0b2e 0%, #000 70%);
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+
+        #intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
+        }
+
+        .intro-content { text-align: center; position: relative; z-index: 2; }
+
+        .intro-title {
+            font-family: var(--font-serif);
+            font-weight: 900;
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            background: linear-gradient(to bottom, #fff 20%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            letter-spacing: -0.02em;
+        }
+
+        .intro-subtitle {
+            font-family: var(--font-serif);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--text-sub);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+        }
+
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: #fff;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* === UI 层 === */
+        #ui-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #chapter-display {
+            position: absolute;
+            top: 40px; left: 50px;
+        }
+
+        .chapter-num {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            letter-spacing: 0.2em;
+            margin-bottom: 5px;
+        }
+
+        .chapter-title {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        #progress-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: rgba(255,255,255,0.05);
+        }
+        #progress-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.1s linear;
+        }
+
+        #info-panel {
+            position: absolute;
+            bottom: 60px; left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            width: 90%; max-width: 800px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px 40px;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        #info-panel.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .info-header { display: flex; align-items: baseline; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .info-title { font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: #fff; line-height: 1; }
+        .info-subtitle { font-family: var(--font-serif); font-style: italic; color: var(--text-sub); font-size: 1.1rem; }
+        .info-body p { font-size: 1.15rem; line-height: 1.8; color: var(--text-main); margin-bottom: 0; }
+        
+        .keywords { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .keyword { font-size: 0.85rem; padding: 4px 12px; background: rgba(255,255,255,0.08); border-radius: 4px; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.05); }
+
+        /* === 标签系统 (核心修改区域) === */
+        #label-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* 标签样式优化：常驻显示 */
+        .planet-label {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            /* 默认半透明，远处的更淡 */
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            padding: 4px 8px;
+            
+            /* 文字阴影确保在亮背景下也清晰 */
+            text-shadow: 0 0 4px #000, 0 0 8px rgba(0,0,0,0.8);
+            
+            white-space: nowrap;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-family: var(--font-sans);
+            transition: opacity 0.2s, font-size 0.3s, background-color 0.3s;
+            pointer-events: none; /* 防止遮挡鼠标交互 */
+            
+            /* 居中对齐 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* 增加一个小圆点装饰，连接星球和文字 */
+        .planet-label::after {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            margin-top: 4px;
+            opacity: 0.6;
+        }
+
+        /* 当被激活或距离很近时的样式 */
+        .planet-label.active {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            padding: 6px 12px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .planet-label.active::after {
+            display: none; /* 激活模式下不需要小点 */
+        }
+
+        #ending-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 60;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease;
+        }
+
+        .quote-text { font-family: var(--font-serif); font-size: 2rem; color: #fff; max-width: 800px; text-align: center; line-height: 1.6; }
+        .quote-author { margin-top: 20px; color: var(--accent-color); font-style: italic; }
+
+        @media (max-width: 768px) {
+            .intro-title { font-size: 3.5rem; }
+            #info-panel { width: 95%; padding: 20px; bottom: 40px; }
+            .info-title { font-size: 1.8rem; }
+            .info-header { flex-direction: column; gap: 5px; }
+            .planet-label { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="intro-content">
+            <h1 class="intro-title">数学思想<br>宇宙</h1>
+            <div class="intro-subtitle">THE MATHEMATICAL UNIVERSE</div>
+            <button class="start-btn" onclick="startExperience()">开始探索</button>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+    <div id="label-container"></div>
+
+    <div id="ui-layer">
+        <div id="progress-container"><div id="progress-bar"></div></div>
+        
+        <div id="chapter-display">
+            <div class="chapter-num">CHAPTER I</div>
+            <div class="chapter-title">基础与逻辑</div>
+        </div>
+
+        <div id="info-panel">
+            <div class="info-header">
+                <div class="info-title">节点名称</div>
+                <div class="info-subtitle">Subtitle</div>
+            </div>
+            <div class="info-body">
+                <p>描述内容...</p>
+            </div>
+            <div class="keywords"></div>
+        </div>
+    </div>
+
+    <div id="ending-screen">
+        <div class="quote-text">"数学是上帝书写宇宙的语言。"</div>
+        <div class="quote-author">— 伽利略</div>
+    </div>
+
+    <script>
+        // ============================================
+        // 数据定义
+        // ============================================
+        const COLORS = {
+            core: 0xFFFFFF,
+            algebra: 0x6366F1,
+            analysis: 0x10B981,
+            geometry: 0xF59E0B,
+            discrete: 0xEC4899,
+            applied: 0x06B6D4
+        };
+
+        const NODES = {
+            // 0. 核心
+            core: { name: "数学基础", subtitle: "Foundations", color: COLORS.core, size: 30, pos: [0, 0, 0], desc: "所有数学分支的共同根基。集合论定义了对象，逻辑定义了规则，范畴论则提供了统一的高级视角。", tags: ["ZFC公理", "哥德尔定理", "范畴论"] },
+            logic: { name: "数理逻辑", subtitle: "Logic", color: COLORS.core, size: 15, pos: [0, 60, -30], desc: "研究证明、计算和语言结构的数学分支。", tags: ["模型论", "证明论"] },
+            setTheory: { name: "集合论", subtitle: "Set Theory", color: COLORS.core, size: 15, pos: [-50, 40, 30], desc: "研究集合（对象的汇聚）的性质，是现代数学的语言。", tags: ["无穷基数", "序数"] },
+
+            // 1. 代数
+            algebra: { name: "代数", subtitle: "Algebra", color: COLORS.algebra, size: 25, pos: [-200, 20, -50], desc: "研究结构、关系和数量。从解方程到抽象的群、环、域。", tags: ["群论", "环论", "伽罗瓦理论"] },
+            numberTheory: { name: "数论", subtitle: "Number Theory", color: COLORS.algebra, size: 18, pos: [-180, 80, -80], desc: "最古老而纯粹的分支，研究整数的性质。", tags: ["黎曼猜想", "费马大定理"] },
+            linearAlgebra: { name: "线性代数", subtitle: "Linear Algebra", color: COLORS.algebra, size: 18, pos: [-240, -30, -20], desc: "向量空间与线性变换。高维空间的语言。", tags: ["矩阵", "特征值", "向量空间"] },
+            algGeo: { name: "代数几何", subtitle: "Algebraic Geometry", color: COLORS.algebra, size: 16, pos: [-260, 40, -120], desc: "代数与几何的交叉点，用多项式方程定义几何形状。", tags: ["概形", "簇"] },
+
+            // 2. 分析
+            analysis: { name: "分析", subtitle: "Analysis", color: COLORS.analysis, size: 25, pos: [50, -150, -100], desc: "驯服无穷与连续变化的艺术。研究函数、极限、导数。", tags: ["极限", "微积分", "测度论"] },
+            calculus: { name: "微积分", subtitle: "Calculus", color: COLORS.analysis, size: 18, pos: [20, -120, -60], desc: "研究变化的数学，包括微分和积分。", tags: ["牛顿-莱布尼茨", "级数"] },
+            complex: { name: "复分析", subtitle: "Complex Analysis", color: COLORS.analysis, size: 16, pos: [90, -180, -140], desc: "复数域上的函数分析，拥有完美的性质。", tags: ["全纯函数", "黎曼曲面"] },
+            functional: { name: "泛函分析", subtitle: "Functional Analysis", color: COLORS.analysis, size: 16, pos: [60, -200, -50], desc: "无穷维空间的研究，函数本身成为空间中的点。", tags: ["希尔伯特空间", "算子"] },
+
+            // 3. 几何与拓扑
+            geometry: { name: "几何与拓扑", subtitle: "Geometry", color: COLORS.geometry, size: 25, pos: [200, 50, 50], desc: "研究形状、大小、相对位置以及空间的性质。", tags: ["流形", "曲率", "不变量"] },
+            topology: { name: "拓扑学", subtitle: "Topology", color: COLORS.geometry, size: 18, pos: [240, 80, 20], desc: "“橡皮泥几何学”，研究连续变形下保持不变的性质。", tags: ["同伦", "庞加莱猜想"] },
+            diffGeo: { name: "微分几何", subtitle: "Differential Geometry", color: COLORS.geometry, size: 18, pos: [180, 10, 100], desc: "利用微积分研究弯曲空间。广义相对论的基础。", tags: ["黎曼几何", "测地线"] },
+            
+            // 4. 离散
+            discrete: { name: "离散数学", subtitle: "Discrete Math", color: COLORS.discrete, size: 22, pos: [0, 150, 100], desc: "计算机科学的数学基础，处理有限集、图与算法。", tags: ["组合数学", "图论"] },
+            graphTheory: { name: "图论", subtitle: "Graph Theory", color: COLORS.discrete, size: 15, pos: [-40, 180, 80], desc: "点与线的连接之美，模拟网络关系的强力工具。", tags: ["网络", "路径"] },
+            
+            // 5. 应用
+            applied: { name: "动力系统", subtitle: "Dynamical Systems", color: COLORS.applied, size: 22, pos: [-120, -100, 150], desc: "研究系统随时间的演化规则。揭示确定性中的混沌。", tags: ["混沌", "分形"] },
+            probability: { name: "概率统计", subtitle: "Probability", color: COLORS.applied, size: 18, pos: [-80, -140, 180], desc: "量化不确定性的科学。", tags: ["随机过程", "大数定律"] }
+        };
+
+        const CONNECTIONS = [
+            ['core', 'logic'], ['core', 'setTheory'], ['core', 'algebra'], ['core', 'analysis'], ['core', 'geometry'], ['core', 'discrete'],
+            ['algebra', 'numberTheory'], ['algebra', 'linearAlgebra'], ['algebra', 'algGeo'], ['numberTheory', 'algGeo'],
+            ['analysis', 'calculus'], ['analysis', 'complex'], ['analysis', 'functional'], ['calculus', 'diffGeo'],
+            ['geometry', 'topology'], ['geometry', 'diffGeo'], ['topology', 'diffGeo'], ['algGeo', 'geometry'],
+            ['discrete', 'graphTheory'], ['discrete', 'logic'], ['discrete', 'numberTheory'],
+            ['applied', 'probability'], ['applied', 'analysis'], ['applied', 'diffGeo'], ['probability', 'analysis']
+        ];
+
+        // 剧本
+        const TIMELINE = [
+            { t: 0, target: 'overview', ch: 'I', title: '全景概览' },
+            { t: 5000, target: 'core', ch: 'I', title: '数学基石' },
+            { t: 12000, target: 'algebra', ch: 'II', title: '代数结构' },
+            { t: 18000, target: 'numberTheory', ch: 'II', title: '代数结构' },
+            { t: 24000, target: 'analysis', ch: 'III', title: '无限与变化' },
+            { t: 30000, target: 'complex', ch: 'III', title: '无限与变化' },
+            { t: 36000, target: 'geometry', ch: 'IV', title: '空间形态' },
+            { t: 42000, target: 'topology', ch: 'IV', title: '空间形态' },
+            { t: 48000, target: 'discrete', ch: 'V', title: '离散与算法' },
+            { t: 54000, target: 'applied', ch: 'VI', title: '混沌与秩序' },
+            { t: 62000, target: 'overview', ch: 'VII', title: '统一之美' },
+            { t: 70000, target: 'end', ch: '', title: '' }
+        ];
+
+        let scene, camera, renderer;
+        let nodeMeshes = {};
+        let starField;
+        let isRunning = false;
+        let startTime = 0;
+        let currentTimelineIdx = 0;
+        let activeNodeKey = null; // 当前聚焦的节点
+
+        function init() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.0015);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 3000);
+            camera.position.set(0, 0, 600);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1, 1000);
+            pointLight.position.set(0, 200, 200);
+            scene.add(pointLight);
+
+            createStars();
+            createWorld();
+            window.addEventListener('resize', onResize);
+        }
+
+        function createStars() {
+            const createLayer = (count, size, range) => {
+                const geom = new THREE.BufferGeometry();
+                const pos = [];
+                for(let i=0; i<count; i++) {
+                    pos.push((Math.random()-0.5)*range, (Math.random()-0.5)*range, (Math.random()-0.5)*range);
+                }
+                geom.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+                const mat = new THREE.PointsMaterial({ size: size, color: 0x888888, transparent: true, opacity: 0.6, sizeAttenuation: true });
+                return new THREE.Points(geom, mat);
+            };
+            starField = [createLayer(3000, 1.5, 2000), createLayer(1000, 3, 1500)];
+            scene.add(starField[0]);
+            scene.add(starField[1]);
+        }
+
+        function createWorld() {
+            const labelContainer = document.getElementById('label-container');
+            
+            Object.keys(NODES).forEach(key => {
+                const data = NODES[key];
+                const group = new THREE.Group();
+                group.position.set(...data.pos);
+
+                // 核心球体
+                const coreGeom = new THREE.SphereGeometry(data.size * 0.4, 32, 32);
+                const coreMat = new THREE.MeshBasicMaterial({ color: data.color });
+                const core = new THREE.Mesh(coreGeom, coreMat);
+                group.add(core);
+
+                // 光晕
+                const canvas = document.createElement('canvas');
+                canvas.width = 64; canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                const grad = ctx.createRadialGradient(32,32,0, 32,32,32);
+                grad.addColorStop(0, `rgba(${((data.color>>16)&255)},${((data.color>>8)&255)},${(data.color&255)}, 1)`);
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0,0,64,64);
+                const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending }));
+                sprite.scale.set(data.size * 3, data.size * 3, 1);
+                group.add(sprite);
+
+                if(data.size > 20) {
+                    const ring = new THREE.Mesh(
+                        new THREE.RingGeometry(data.size * 0.8, data.size * 0.85, 64),
+                        new THREE.MeshBasicMaterial({ color: data.color, side: THREE.DoubleSide, transparent: true, opacity: 0.3 })
+                    );
+                    ring.rotation.x = Math.random() * Math.PI;
+                    group.add(ring);
+                    group.userData.ring = ring;
+                }
+
+                // 创建标签
+                const div = document.createElement('div');
+                div.className = 'planet-label';
+                // 显示名称
+                div.innerHTML = `${data.name}`;
+                labelContainer.appendChild(div);
+                group.userData.label = div;
+                group.userData.key = key;
+
+                scene.add(group);
+                nodeMeshes[key] = group;
+            });
+
+            // 连线
+            const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.08 });
+            CONNECTIONS.forEach(pair => {
+                const n1 = NODES[pair[0]];
+                const n2 = NODES[pair[1]];
+                if(!n1 || !n2) return;
+                const p1 = new THREE.Vector3(...n1.pos);
+                const p2 = new THREE.Vector3(...n2.pos);
+                const mid = p1.clone().add(p2).multiplyScalar(0.5).add(mid.clone().sub(new THREE.Vector3()).normalize().multiplyScalar(p1.distanceTo(p2) * 0.2));
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(new THREE.QuadraticBezierCurve3(p1, mid, p2).getPoints(20)), lineMat);
+                scene.add(line);
+            });
+        }
+
+        function startExperience() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('canvas-container').style.opacity = 1;
+                document.getElementById('ui-layer').style.opacity = 1;
+                isRunning = true;
+                startTime = Date.now();
+                animate();
+                moveCameraTo('overview', 0);
+            }, 800);
+        }
+
+        function moveCameraTo(targetKey, duration) {
+            let targetPos, lookAtPos;
+            activeNodeKey = (targetKey !== 'overview' && targetKey !== 'end') ? targetKey : null;
+
+            if (targetKey === 'overview') {
+                targetPos = { x: 0, y: 100, z: 500 };
+                lookAtPos = { x: 0, y: 0, z: 0 };
+            } else if (targetKey === 'end') {
+                targetPos = { x: 0, y: 0, z: 800 };
+                lookAtPos = { x: 0, y: 0, z: 0 };
+            } else {
+                const node = NODES[targetKey];
+                targetPos = { x: node.pos[0] + 40, y: node.pos[1] + 20, z: node.pos[2] + 80 };
+                lookAtPos = { x: node.pos[0], y: node.pos[1], z: node.pos[2] };
+                updateInfoPanel(targetKey);
+            }
+
+            new TWEEN.Tween(camera.position).to(targetPos, duration || 3000).easing(TWEEN.Easing.Cubic.InOut).start();
+            
+            const currentLook = new THREE.Vector3();
+            camera.getWorldDirection(currentLook);
+            const currentLookAt = camera.position.clone().add(currentLook.multiplyScalar(100));
+            const lookObj = { x: currentLookAt.x, y: currentLookAt.y, z: currentLookAt.z };
+            
+            new TWEEN.Tween(lookObj)
+                .to(lookAtPos, duration || 3000)
+                .easing(TWEEN.Easing.Cubic.InOut)
+                .onUpdate(() => camera.lookAt(lookObj.x, lookObj.y, lookObj.z))
+                .start();
+        }
+
+        function updateInfoPanel(key) {
+            const data = NODES[key];
+            const panel = document.getElementById('info-panel');
+            panel.classList.remove('visible');
+            setTimeout(() => {
+                panel.querySelector('.info-title').textContent = data.name;
+                panel.querySelector('.info-title').style.color = '#' + data.color.toString(16).padStart(6,'0');
+                panel.querySelector('.info-subtitle').textContent = data.subtitle;
+                panel.querySelector('.info-body p').textContent = data.desc;
+                const tagContainer = panel.querySelector('.keywords');
+                tagContainer.innerHTML = '';
+                data.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'keyword';
+                    span.textContent = tag;
+                    tagContainer.appendChild(span);
+                });
+                panel.classList.add('visible');
+            }, 500);
+        }
+
+        function checkTimeline(elapsed) {
+            if (currentTimelineIdx >= TIMELINE.length) return;
+            const nextEvent = TIMELINE[currentTimelineIdx];
+            if (elapsed >= nextEvent.t) {
+                if (nextEvent.target === 'end') {
+                    document.getElementById('ending-screen').style.opacity = 1;
+                    document.getElementById('ui-layer').style.opacity = 0;
+                } else {
+                    let duration = 4000;
+                    if (TIMELINE[currentTimelineIdx+1]) duration = Math.min((TIMELINE[currentTimelineIdx+1].t - nextEvent.t) * 0.8, 5000);
+                    moveCameraTo(nextEvent.target, Math.max(2000, duration));
+                    if(nextEvent.ch) {
+                        document.querySelector('.chapter-num').textContent = `CHAPTER ${nextEvent.ch}`;
+                        document.querySelector('.chapter-title').textContent = nextEvent.title;
+                    }
+                }
+                currentTimelineIdx++;
+            }
+        }
+
+        function updateLabels() {
+            Object.keys(nodeMeshes).forEach(key => {
+                const mesh = nodeMeshes[key];
+                const div = mesh.userData.label;
+                const tempV = mesh.position.clone();
+                tempV.project(camera);
+
+                // 1. 判断是否在相机前方 (z < 1) 且在屏幕范围内
+                if (tempV.z > 1 || Math.abs(tempV.x) > 1.2 || Math.abs(tempV.y) > 1.2) {
+                    div.style.opacity = 0;
+                    return;
+                }
+
+                const x = (tempV.x * .5 + .5) * window.innerWidth;
+                const y = (-(tempV.y * .5) + .5) * window.innerHeight;
+                div.style.left = `${x}px`;
+                div.style.top = `${y}px`;
+
+                // 2. 距离逻辑：计算不透明度
+                const dist = camera.position.distanceTo(mesh.position);
+                
+                // 如果是当前激活聚焦的节点，始终高亮
+                if (key === activeNodeKey) {
+                    div.classList.add('active');
+                    div.style.opacity = 1;
+                    div.style.transform = `translate(-50%, -150%)`; // 激活时稍微向上浮动
+                } else {
+                    div.classList.remove('active');
+                    // 基础透明度算法：距离越远越淡，但最低保留 0.4 透明度，确保始终可见
+                    let opacity = 1 - (dist / 1200); 
+                    opacity = Math.max(0.4, opacity);
+                    
+                    div.style.opacity = opacity;
+                    div.style.transform = `translate(-50%, -50%)`; // 默认位置
+                    
+                    // 简单的缩放模拟景深
+                    const scale = Math.max(0.8, 1 - dist/2000);
+                    div.style.fontSize = `${12 * scale}px`;
+                }
+            });
+        }
+
+        function animate() {
+            if (!isRunning) return;
+            requestAnimationFrame(animate);
+            TWEEN.update();
+
+            const elapsed = Date.now() - startTime;
+            checkTimeline(elapsed);
+            document.getElementById('progress-bar').style.width = `${Math.min((elapsed / 70000) * 100, 100)}%`;
+
+            Object.values(nodeMeshes).forEach(mesh => {
+                if (mesh.userData.ring) {
+                    mesh.userData.ring.rotation.z += 0.002;
+                    mesh.userData.ring.rotation.x += 0.001;
+                }
+                mesh.position.y += Math.sin(Date.now() * 0.001 + mesh.position.x) * 0.05;
+            });
+            starField[0].rotation.y = Date.now() * 0.00005;
+
+            updateLabels();
+            renderer.render(scene, camera);
+        }
+
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        init();
+    </script>
+</body>
+</html>

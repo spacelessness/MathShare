@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hilbert空间：无穷维度的几何学</title>
+    
+    <!-- 引入 Reveal.js 样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css" id="theme">
+    <!-- 引入 FontAwesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* 自定义样式以匹配原PPT风格 */
+        :root {
+            --main-color: #002b36; /* 深蓝文字 */
+            --accent-color: #d35400; /* 橙色强调 */
+            --bg-color: #fdfdfd;
+            --box-bg: #eef2f3;
+        }
+        body { background-color: var(--bg-color); }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            color: var(--main-color);
+            font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif;
+            text-transform: none;
+        }
+        .reveal .slide-number { color: var(--accent-color); font-size: 20px; }
+        
+        /* 布局工具类 */
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .col-50 { flex: 1; }
+        .col-30 { flex: 0.3; }
+        .col-70 { flex: 0.7; }
+        
+        /* 强调框 */
+        .box {
+            background: var(--box-bg);
+            border-left: 5px solid var(--main-color);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: left;
+        }
+        .box.highlight {
+            border-left-color: var(--accent-color);
+            background: rgba(211, 84, 0, 0.05);
+        }
+        
+        /* 补充页面的特殊标记 */
+        .new-slide-badge {
+            position: absolute;
+            top: -20px;
+            right: 0;
+            background: var(--accent-color);
+            color: white;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 0 0 5px 5px;
+            font-weight: bold;
+        }
+
+        /* 图表绘制辅助 */
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            border-left: 2px solid #333;
+            border-bottom: 2px solid #333;
+            margin: 20px auto;
+        }
+        .bar { background: var(--main-color); display: inline-block; width: 20px; margin-right: 5px; vertical-align: bottom;}
+        
+        /* 视觉隐喻图样式 */
+        .black-hole {
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, #000 0%, #333 40%, transparent 70%);
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+        }
+        .spectrum-gradient {
+            width: 100%; height: 50px;
+            background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71, #3498db, #8e44ad);
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        
+        /* 文字大小调整 */
+        .reveal p, .reveal li { font-size: 28px; line-height: 1.6; color: #333; }
+        .small-text { font-size: 0.7em; color: #666; }
+        strong { color: var(--accent-color); }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: 封面 -->
+            <section>
+                <h1>Hilbert空间</h1>
+                <h2>无穷维度的几何学</h2>
+                <div style="margin-top: 50px;">
+                    <i class="fas fa-project-diagram fa-3x" style="color:var(--main-color)"></i>
+                    <i class="fas fa-arrow-right fa-2x" style="margin: 0 20px; color:#ccc;"></i>
+                    <i class="fas fa-wave-square fa-3x" style="color:var(--accent-color)"></i>
+                </div>
+                <p style="margin-top: 40px; color: #666;">连接线性代数与泛函分析的桥梁</p>
+            </section>
+
+            <!-- Slide 2: 核心动机 -->
+            <section>
+                <h3>核心动机：将几何直觉推广到无穷</h3>
+                <div class="flex-container">
+                    <div class="col-50 box">
+                        <h4>有限维 (Finite $\mathbb{R}^n$)</h4>
+                        <div style="text-align:center; padding:20px;">
+                            <i class="fas fa-cube fa-4x"></i>
+                        </div>
+                        <ul>
+                            <li>向量长度 (Length)</li>
+                            <li>夹角 (Angle)</li>
+                            <li>正交分解</li>
+                            <li>矩阵对角化</li>
+                        </ul>
+                    </div>
+                    <div class="col-50 box highlight">
+                        <h4>无穷维 (Infinite Hilbert)</h4>
+                        <div style="text-align:center; padding:20px;">
+                            <i class="fas fa-signature fa-4x"></i>
+                        </div>
+                        <ul>
+                            <li>范数 $\|x\|$ (Norm)</li>
+                            <li>内积 $\langle x,y \rangle$</li>
+                            <li>投影定理</li>
+                            <li>谱定理</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="small-text" style="margin-top:20px;">关键洞察：在无穷维中，极限与收敛可能失效。Hilbert空间提供了严格的结构来保证几何直觉依然适用。</p>
+            </section>
+
+            <!-- Slide 3: 空间层级 -->
+            <section>
+                <h3>空间层级：数学结构的“俄罗斯套娃”</h3>
+                <div style="position: relative; width: 600px; height: 400px; margin: 0 auto;">
+                    <!-- SVG Drawing for nested circles -->
+                    <svg width="600" height="400">
+                        <ellipse cx="300" cy="200" rx="280" ry="180" fill="none" stroke="#333" stroke-width="2"/>
+                        <text x="300" y="50" text-anchor="middle" fill="#333" font-size="20">线性空间 (Linear)</text>
+                        
+                        <ellipse cx="300" cy="220" rx="220" ry="140" fill="none" stroke="#666" stroke-width="2"/>
+                        <text x="300" y="110" text-anchor="middle" fill="#666" font-size="20">赋范空间 (+长度 $\|x\|$)</text>
+                        
+                        <ellipse cx="300" cy="240" rx="160" ry="100" fill="none" stroke="#d35400" stroke-width="2"/>
+                        <text x="300" y="170" text-anchor="middle" fill="#d35400" font-size="20">Banach空间 (+完备性)</text>
+                        
+                        <ellipse cx="300" cy="260" rx="100" ry="60" fill="#002b36" stroke="none"/>
+                        <text x="300" y="265" text-anchor="middle" fill="white" font-size="20">Hilbert空间 (+内积)</text>
+                    </svg>
+                </div>
+                <p>Hilbert空间是“最好的”无穷维空间，拥有最完美的几何结构。</p>
+            </section>
+
+            <!-- Slide 4: 定义 -->
+            <section>
+                <h3>定义：完美空间的公式</h3>
+                <div class="box highlight" style="text-align:center; font-size: 1.2em;">
+                    \[ \text{Hilbert Space} = \text{内积空间} + \text{完备性} \]
+                </div>
+                <div class="flex-container">
+                    <div class="col-50 box">
+                        <h4>几何 (Geometry)</h4>
+                        <ul>
+                            <li>内积 $\langle x,y \rangle$ 导出范数 $\|x\| = \sqrt{\langle x,x \rangle}$</li>
+                            <li>定义夹角与<strong>正交性</strong></li>
+                            <li>Cauchy-Schwarz 不等式</li>
+                        </ul>
+                    </div>
+                    <div class="col-50 box">
+                        <h4>分析 (Analysis)</h4>
+                        <ul>
+                            <li><strong>完备性 (Completeness)</strong></li>
+                            <li>保证 Cauchy 列收敛 (极限存在)</li>
+                            <li>空间中没有“漏洞”</li>
+                            <li>级数收敛有效</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: 典型空间 -->
+            <section>
+                <h3>典型空间：从数组到量子态</h3>
+                <div class="flex-container" style="font-size: 0.8em;">
+                    <div class="col-30 box">
+                        <h5>欧几里得 $\mathbb{R}^n$</h5>
+                        <p>我们熟悉的有限维空间。</p>
+                        <i class="fas fa-arrows-alt fa-2x"></i>
+                    </div>
+                    <div class="col-30 box">
+                        <h5>序列空间 $\ell^2$</h5>
+                        <p>平方可和数列。</p>
+                        \[ \sum |x_n|^2 < \infty \]
+                        <small>所有可分无穷维Hilbert空间同构于此。</small>
+                    </div>
+                    <div class="col-30 box highlight">
+                        <h5>函数空间 $L^2(\Omega)$</h5>
+                        <p>平方可积函数。</p>
+                        \[ \int |f|^2 d\mu < \infty \]
+                        <small>量子力学的家园。</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW SUPPLEMENT SLIDE 1: 完备性详解 -->
+            <section data-transition="zoom">
+                <div class="new-slide-badge">New: 深度解析</div>
+                <h3>完备性的代价：从连续函数到 $L^2$</h3>
+                <p class="small-text">为什么 $C[a,b]$ 不够？为什么要引入 Lebesgue 积分？</p>
+                
+                <div class="flex-container">
+                    <div class="col-50">
+                        <div style="border: 2px dashed #ccc; padding: 20px; border-radius: 10px;">
+                            <h5 style="color:#d35400"><i class="fas fa-exclamation-triangle"></i> 连续空间的“漏洞”</h5>
+                            <!-- SVG Visualization of Sequence converging to Discontinuous function -->
+                            <svg width="300" height="150" viewBox="0 0 300 150">
+                                <path d="M 10,140 Q 150,140 290,10" stroke="#ccc" fill="none" stroke-width="2" stroke-dasharray="5,5"/>
+                                <path d="M 10,140 L 140,140 L 160,10 L 290,10" stroke="#d35400" fill="none" stroke-width="3"/>
+                                <text x="150" y="145" text-anchor="middle" font-size="12">Cauchy列在逼近...</text>
+                                <text x="220" y="30" font-size="12" fill="#d35400">极限是不连续的！</text>
+                            </svg>
+                            <p style="font-size: 20px;">若仅限于黎曼积分/连续函数，柯西列的<strong>极限不存在</strong>（跑出了空间外）。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-50 box">
+                        <h5><i class="fas fa-shield-alt"></i> $L^2$ 的救赎</h5>
+                        <ul style="font-size: 22px;">
+                            <li><strong>Lebesgue 积分：</strong> 重新定义“积分”，使其对极限运算封闭。</li>
+                            <li><strong>等价类概念：</strong> 在 $L^2$ 中，元素不是单个函数，而是“几乎处处相等”的函数族。</li>
+                            <li><strong>代价：</strong> 无法讨论单点的值 $f(x_0)$，只能讨论整体能量 $\int |f|^2$。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box highlight" style="text-align: center; margin-top: 20px;">
+                    <i class="fas fa-quote-left"></i> 完备性保证了我们在无穷维空间中讨论“极限”时，脚下永远有坚实的地面。
+                </div>
+            </section>
+
+            <!-- Slide 6: 正交性 -->
+            <section>
+                <h3>无穷维中的几何：正交性</h3>
+                <p>当 $\langle x,y \rangle = 0$ 时</p>
+                <div class="flex-container">
+                    <div class="col-50 box">
+                        <h5>勾股定理 (Pythagorean)</h5>
+                        \[ x \perp y \Rightarrow \|x+y\|^2 = \|x\|^2 + \|y\|^2 \]
+                        <div style="height: 100px; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Pythagorean.svg/320px-Pythagorean.svg.png') no-repeat center; background-size: contain;"></div>
+                    </div>
+                    <div class="col-50 box">
+                        <h5>平行四边形法则</h5>
+                        <p style="font-size: 0.6em;">检验 Banach 空间是否为 Hilbert 空间的试金石</p>
+                        \[ \|x+y\|^2 + \|x-y\|^2 = 2(\|x\|^2 + \|y\|^2) \]
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: 投影定理 -->
+            <section>
+                <h3>投影定理：寻找最佳逼近</h3>
+                <p>最小二乘法与信号降噪的数学基础</p>
+                
+                <div class="flex-container">
+                    <div class="col-40">
+                         <!-- CSS Simple 3D Plane Visualization -->
+                         <div style="perspective: 500px; margin-top: 30px;">
+                            <div style="width: 200px; height: 150px; background: rgba(0, 43, 54, 0.3); transform: rotateX(45deg); border: 2px solid #002b36; margin: 0 auto; position: relative;">
+                                <div style="position:absolute; bottom:0; left:20px; color:#002b36; font-weight:bold;">M (闭子空间)</div>
+                                <div style="position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #d35400; border-radius: 50%;"></div>
+                                <div style="position: absolute; top: -80px; left: 50%; width: 6px; height: 6px; background: #002b36; border-radius: 50%;"></div>
+                                <div style="position: absolute; top: -75px; left: 50.5%; width: 2px; height: 130px; background: #666; border-left: 2px dashed #666;"></div>
+                            </div>
+                            <div style="text-align: center; margin-top: -20px;">
+                                <span style="color: #d35400;">$P_M x$ (最佳逼近)</span>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="col-60 box">
+                        <h5>正交分解 (Orthogonal Decomposition)</h5>
+                        \[ H = M \oplus M^\perp \]
+                        \[ x = P_M x + (x - P_M x) \]
+                        <p style="font-size: 24px;">结论：在<strong>闭子空间 M</strong> 中存在唯一的点使得距离最小。</p>
+                        <p style="font-size: 20px; color: #666;">注：若 M 不闭，投影可能不存在。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: 正交基 -->
+            <section>
+                <h3>正交基：函数的坐标系</h3>
+                <p>就像 $\vec{i}, \vec{j}, \vec{k}$ 描述3D空间，正交基 $\{e_n\}$ 描述函数空间。</p>
+                <div style="padding: 20px; font-size: 1.2em;">
+                    \[ f(x) = \sum_{n=1}^{\infty} c_n e_n(x) \]
+                </div>
+                
+                <div class="box highlight">
+                    <h5>Parseval 等式 (能量守恒)</h5>
+                    \[ \|x\|^2 = \sum_{n=1}^{\infty} |\langle x, e_n \rangle|^2 \]
+                    <p style="font-size: 0.7em;">信号的总能量等于各频率分量能量之和。</p>
+                </div>
+                <p class="small-text">例子：Fourier级数, Legendre多项式, Hermite函数。</p>
+            </section>
+
+            <!-- NEW SUPPLEMENT SLIDE 2: 基底奥秘 -->
+            <section data-transition="zoom">
+                <div class="new-slide-badge">New: 结构洞察</div>
+                <h3>无穷维的搭建：代数 vs 分析</h3>
+                <p class="small-text">Hamel Basis 与 Schauder Basis 的本质区别</p>
+
+                <table style="font-size: 24px; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--main-color); color: white;">
+                            <th style="padding: 10px;">有限维 (Linear Algebra)</th>
+                            <th style="padding: 10px;">Hilbert空间 (Functional Analysis)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border-bottom: 1px solid #ccc; padding: 15px;">
+                                <strong>Hamel Basis</strong><br>
+                                有限线性组合<br>
+                                \( x = \sum_{i=1}^{N} c_i e_i \)
+                            </td>
+                            <td style="border-bottom: 1px solid #ccc; padding: 15px; background: rgba(211, 84, 0, 0.05);">
+                                <strong>Schauder Basis</strong><br>
+                                无穷级数收敛<br>
+                                \( x = \lim_{N \to \infty} \sum_{i=1}^{N} c_i e_i \)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px;">纯代数运算</td>
+                            <td style="padding: 15px;">
+                                依赖<strong>距离(范数)</strong>与<strong>完备性</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="flex-container" style="margin-top: 30px;">
+                    <div class="col-70 box">
+                        <h5><i class="fas fa-balance-scale"></i> 若基底不完备？</h5>
+                        <p style="font-size: 22px;">变成 <strong>Bessel 不等式</strong>：\( \|x\|^2 \ge \sum |c_n|^2 \)</p>
+                        <p style="font-size: 20px; color: var(--accent-color);">这意味着发生了“能量泄露”，部分信息丢失在基底张成的空间之外。</p>
+                    </div>
+                    <div class="col-30">
+                        <!-- Triangle visualization -->
+                        <svg width="150" height="100">
+                            <line x1="10" y1="90" x2="140" y2="90" stroke="#333" stroke-width="2"/>
+                            <line x1="10" y1="90" x2="100" y2="10" stroke="#d35400" stroke-width="3"/>
+                            <text x="50" y="40" fill="#d35400">\|x\|</text>
+                            <text x="60" y="105" font-size="12">分量和 (投影)</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: 算子与对偶性 -->
+            <section>
+                <h3>算子与对偶性</h3>
+                <div class="box">
+                    <h5>Riesz 表示定理 (Riesz Representation)</h5>
+                    <p>任何连续线性泛函 $\phi(x)$ 都可以写成内积形式：</p>
+                    \[ \phi(x) = \langle x, y \rangle \]
+                    <p>结论：$H^* \cong H$ (自对偶性)</p>
+                </div>
+                <p>有界线性算子 $T: H \to H$。把矩阵的概念推广到无穷维（如积分算子、微分算子）。</p>
+                <p class="small-text">它允许我们将“测量”视为“几何对象”，这是量子力学狄拉克符号的数学基础。</p>
+            </section>
+
+            <!-- Slide 10: 算子分类 -->
+            <section>
+                <h3>算子的分类</h3>
+                <p>基于伴随算子 $T^*$ 的关系 ($\langle Tx, y \rangle = \langle x, T^*y \rangle$)</p>
+                
+                <div class="flex-container" style="flex-wrap: wrap;">
+                    <div class="box highlight" style="width: 45%;">
+                        <strong>自伴算子 (Self-Adjoint)</strong><br>
+                        $T = T^*$<br>
+                        对应实数，物理中的可观测量。
+                    </div>
+                    <div class="box" style="width: 45%;">
+                        <strong>幺正算子 (Unitary)</strong><br>
+                        $T^*T = I$<br>
+                        保持能量不变的旋转或演化。
+                    </div>
+                    <div class="box" style="width: 45%;">
+                        <strong>紧算子 (Compact)</strong><br>
+                        表现最像有限维矩阵的算子。
+                    </div>
+                    <div class="box" style="width: 45%;">
+                        <strong>正算子 (Positive)</strong><br>
+                        $\langle Tx, x \rangle \ge 0$<br>
+                        能量总是非负的。
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW SUPPLEMENT SLIDE 3: 算子本质 -->
+            <section data-transition="zoom">
+                <div class="new-slide-badge">New: 几何光谱</div>
+                <h3>算子的几何光谱：紧算子与连续谱</h3>
+                
+                <div class="flex-container">
+                    <div class="col-50 box" style="height: 400px;">
+                        <h5><i class="fas fa-compress-arrows-alt"></i> 紧算子 (Compact)</h5>
+                        <p style="font-size: 20px;">无穷维中的“有限维幽灵”。</p>
+                        
+                        <div class="black-hole"></div>
+                        <p style="font-size: 18px; text-align: center;">将单位球压缩为“相对紧集”</p>
+                        
+                        <ul style="font-size: 20px; margin-top: 10px;">
+                            <li>谱几乎都是特征值（除了0）。</li>
+                            <li>Fredholm 理论的基础。</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-50 box" style="height: 400px;">
+                        <h5><i class="fas fa-rainbow"></i> 连续谱 (Continuous)</h5>
+                        <p style="font-size: 20px;">矩阵中不存在的现象：$Tx = \lambda x$ 无解，但 $(T-\lambda I)$ 不可逆。</p>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-around;">
+                                <div style="border-left: 2px solid #333; height: 30px;"></div>
+                                <div style="border-left: 2px solid #333; height: 30px;"></div>
+                                <div style="border-left: 2px solid #333; height: 30px;"></div>
+                            </div>
+                            <span style="font-size: 16px;">点谱 (离散)</span>
+                            
+                            <div class="spectrum-gradient"></div>
+                            <span style="font-size: 16px;">连续谱 (能带/散射态)</span>
+                        </div>
+                        
+                        <p style="font-size: 18px;">例子：乘法算子 $Tf(t) = t \cdot f(t)$</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: 谱理论 -->
+            <section>
+                <h3>谱理论：特征值的无穷维演变</h3>
+                <p>谱 $\sigma(T)$ 是使得 $T - \lambda I$ 不可逆的 $\lambda$ 的集合。</p>
+                <div class="spectrum-gradient" style="height: 80px; position: relative;">
+                    <div style="position: absolute; left: 10%; top:0; bottom:0; width: 2px; background: white;"></div>
+                    <div style="position: absolute; left: 20%; top:0; bottom:0; width: 2px; background: white;"></div>
+                    <div style="position: absolute; left: 25%; top:0; bottom:0; width: 2px; background: white;"></div>
+                </div>
+                <div class="flex-container" style="margin-top: 10px; font-size: 0.8em;">
+                    <div>点谱<br>(特征值)</div>
+                    <div>连续谱</div>
+                    <div>剩余谱</div>
+                </div>
+                <div class="box" style="margin-top: 30px;">
+                    <ul>
+                        <li>自伴算子的谱总是实数 ($\subset \mathbb{R}$)</li>
+                        <li>幺正算子的谱在单位圆上 ($\subset \{z: |z|=1\}$)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Slide 12: 谱定理 -->
+            <section>
+                <h3>谱定理：算子的对角化</h3>
+                <p>即使在无穷维，我们也能将算子解构为简单的部分。</p>
+                
+                <div class="flex-container">
+                    <div class="col-50">
+                        <h5 style="color: #666;">有限维 (Finite)</h5>
+                        \[ A = \sum \lambda_i P_i \]
+                        <p>特征值求和</p>
+                    </div>
+                    <div class="col-50" style="border-left: 2px solid #ccc;">
+                        <h5 style="color: var(--accent-color);">无穷维 (Infinite)</h5>
+                        \[ T = \int \lambda dE(\lambda) \]
+                        <p>谱测度积分</p>
+                    </div>
+                </div>
+                
+                <div class="box highlight" style="margin-top: 30px;">
+                    <h5>紧自伴算子 (Compact Self-Adjoint)</h5>
+                    \[ Tx = \sum \lambda_n \langle x, e_n \rangle e_n \]
+                    <p style="font-size: 0.8em;">存在由特征向量组成的正交基，完美推广了矩阵对角化。</p>
+                </div>
+            </section>
+
+            <!-- Slide 13: 应用一 量子力学 -->
+            <section>
+                <h3>应用一：量子力学的语言</h3>
+                <p>“量子态居住在 Hilbert 空间中。”</p>
+                
+                <table style="width: 100%; font-size: 0.8em;">
+                    <tr style="background: #002b36; color: white;">
+                        <th>物理概念</th>
+                        <th>数学对象</th>
+                    </tr>
+                    <tr>
+                        <td>态空间 (State Space)</td>
+                        <td>Hilbert空间 $H$</td>
+                    </tr>
+                    <tr style="background: #eee;">
+                        <td>量子态 (State)</td>
+                        <td>单位向量 $|\psi\rangle$</td>
+                    </tr>
+                    <tr>
+                        <td>可观测量 (Observable)</td>
+                        <td>自伴算子 $A$</td>
+                    </tr>
+                    <tr style="background: #eee;">
+                        <td>测量结果 (Measurement)</td>
+                        <td>谱 $\sigma(A)$</td>
+                    </tr>
+                    <tr>
+                        <td>时间演化 (Evolution)</td>
+                        <td>幺正算子 $U(t)$</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Slide 14: 应用二 机器学习 -->
+            <section>
+                <h3>应用二：从信号处理到机器学习</h3>
+                <div class="flex-container">
+                    <div class="col-50 box">
+                        <h5>信号处理</h5>
+                        <p>Fourier分析是 $L^2$ 空间中的正交分解。</p>
+                        <i class="fas fa-wave-square"></i> 采样定理
+                    </div>
+                    <div class="col-50 box highlight">
+                        <h5>机器学习 (Machine Learning)</h5>
+                        <p>再生核 Hilbert 空间 (RKHS) 与支持向量机 (SVM)。</p>
+                        <p class="small-text">Kernel Trick: \( K(x,y) = \langle \phi(x), \phi(y) \rangle \)</p>
+                        <i class="fas fa-brain"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: 全景总结 -->
+            <section>
+                <h3>全景总结</h3>
+                
+                <div class="box" style="text-align: center; font-size: 1.2em;">
+                    Hilbert空间 = 完备 + 内积 <br>
+                    <span style="font-size: 0.8em; color: var(--accent-color);">核心性质：自对偶性 ($H \cong H^*$)</span>
+                </div>
+
+                <div class="flex-container" style="font-size: 0.8em; margin-top: 20px;">
+                    <div class="col-30">
+                        <strong>几何</strong><br>
+                        Cauchy-Schwarz<br>
+                        $H = M \oplus M^\perp$
+                    </div>
+                    <div class="col-30">
+                        <strong>算子</strong><br>
+                        Riesz 表示定理<br>
+                        谱定理
+                    </div>
+                    <div class="col-30">
+                        <strong>应用</strong><br>
+                        Parseval 等式<br>
+                        量子力学 / RKHS
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; font-size: 0.6em; color: #999;">
+                    <hr>
+                    <p>Hilbert空间为处理“无穷”提供了一个严密而优雅的框架，让我们能像处理普通向量一样处理函数和场。</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            center: true,
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
+            plugins: [ RevealMath.MathJax3 ]
+        });
+    </script>
+</body>
+</html>

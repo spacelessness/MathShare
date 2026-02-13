@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强迫症咖啡师 | The OCD Barista</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0806;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        .cinema-container {
+            width: 100vw;
+            height: 56.25vw;
+            max-height: 100vh;
+            max-width: 177.78vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #1c1410 0%, #261c16 50%, #1a1310 100%);
+        }
+        
+        /* 电影黑边 */
+        .letterbox {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 6%;
+            background: #000;
+            z-index: 100;
+        }
+        .letterbox.top { top: 0; }
+        .letterbox.bottom { bottom: 0; }
+        
+        /* 场景容器 */
+        .scene {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        
+        .scene.visible {
+            opacity: 1;
+        }
+        
+        /* 咖啡厅背景层 */
+        .cafe-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(255,200,150,0.08) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 80%, rgba(180,140,100,0.05) 0%, transparent 30%),
+                linear-gradient(180deg, #1c1410 0%, #2a1f18 100%);
+        }
+        
+        /* 装饰光斑 */
+        .light-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .light-orb:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 180, 100, 0.15);
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        
+        .light-orb:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            background: rgba(200, 150, 100, 0.1);
+            top: 60%;
+            right: 15%;
+            animation-delay: -3s;
+        }
+        
+        .light-orb:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 200, 150, 0.12);
+            bottom: 20%;
+            left: 10%;
+            animation-delay: -5s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+        
+        /* 咖啡豆装饰 */
+        .coffee-beans {
+            position: absolute;
+            bottom: 15%;
+            left: 8%;
+            opacity: 0.6;
+        }
+        
+        .bean {
+            width: 12px;
+            height: 18px;
+            background: linear-gradient(135deg, #3d2517 0%, #2a1810 100%);
+            border-radius: 50%;
+            position: absolute;
+            transform: rotate(var(--rotate));
+        }
+        
+        .bean::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 12px;
+            background: #1a0f0a;
+            left: 50%;
+            top: 3px;
+            transform: translateX(-50%);
+        }
+        
+        .bean:nth-child(1) { --rotate: 30deg; left: 0; top: 0; }
+        .bean:nth-child(2) { --rotate: -45deg; left: 20px; top: 10px; }
+        .bean:nth-child(3) { --rotate: 60deg; left: 8px; top: 25px; }
+        
+        /* 植物装饰 */
+        .plant {
+            position: absolute;
+            right: 8%;
+            bottom: 20%;
+            opacity: 0.5;
+        }
+        
+        .leaf {
+            width: 20px;
+            height: 35px;
+            background: linear-gradient(135deg, #2d4a3d 0%, #1e3d2a 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute;
+            transform-origin: bottom center;
+        }
+        
+        .leaf:nth-child(1) { transform: rotate(-30deg); left: 0; }
+        .leaf:nth-child(2) { transform: rotate(0deg); left: 15px; }
+        .leaf:nth-child(3) { transform: rotate(30deg); left: 30px; }
+        
+        /* 主内容区域 - 黄金分割布局 */
+        .main-content {
+            position: absolute;
+            inset: 8% 5%;
+            display: grid;
+            grid-template-columns: 1fr 1.618fr;
+            gap: 5%;
+            align-items: center;
+        }
+        
+        /* 咖啡师区域 */
+        .barista-section {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100%;
+            padding-bottom: 10%;
+        }
+        
+        .barista {
+            position: relative;
+            transform-origin: bottom center;
+            transition: transform 1s ease;
+        }
+        
+        .barista-body {
+            position: relative;
+            width: 100px;
+            height: 180px;
+        }
+        
+        /* 头部 */
+        .head {
+            position: absolute;
+            width: 55px;
+            height: 65px;
+            background: linear-gradient(135deg, #f0d5b8 0%, #e0c0a0 100%);
+            border-radius: 50% 50% 48% 48%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset -3px -3px 10px rgba(0,0,0,0.08);
+        }
+        
+        /* 头发 */
+        .hair {
+            position: absolute;
+            width: 58px;
+            height: 30px;
+            background: linear-gradient(180deg, #2a1810 0%, #3d2517 100%);
+            border-radius: 50% 50% 30% 30%;
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .hair::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 15px;
+            background: #2a1810;
+            border-radius: 50%;
+            left: 10px;
+            top: 20px;
+        }
+        
+        /* 眼睛 */
+        .eyes {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .eye {
+            width: 8px;
+            height: 8px;
+            background: #2a1810;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            top: 1px;
+            left: 2px;
+        }
+        
+        /* 眉毛 */
+        .eyebrow {
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background: #2a1810;
+            border-radius: 2px;
+            top: 16px;
+            transition: all 0.5s ease;
+        }
+        
+        .eyebrow.left { left: 14px; transform: rotate(-5deg); }
+        .eyebrow.right { right: 14px; transform: rotate(5deg); }
+        
+        /* 嘴巴 */
+        .mouth {
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            border: 2px solid #a67c5b;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.5s ease;
+        }
+        
+        /* 身体 - 围裙 */
+        .torso {
+            position: absolute;
+            width: 70px;
+            height: 90px;
+            background: linear-gradient(180deg, #f5f0e8 0%, #e8e0d5 100%);
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .apron {
+            position: absolute;
+            width: 60px;
+            height: 75px;
+            background: linear-gradient(180deg, #2d5a3d 0%, #234530 100%);
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px 3px 15px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .apron::before {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 20px;
+            background: #234530;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* 手臂 */
+        .arm {
+            position: absolute;
+            width: 15px;
+            height: 50px;
+            background: linear-gradient(90deg, #f0d5b8, #e0c0a0);
+            border-radius: 8px;
+            top: 60px;
+            transform-origin: top center;
+            transition: transform 0.15s ease;
+        }
+        
+        .arm.left { left: 5px; transform: rotate(-20deg); }
+        .arm.right { right: 5px; transform: rotate(20deg); }
+        
+        .hand {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #f0d5b8;
+            border-radius: 50%;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* 咖啡杯区域 */
+        .cup-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .cup-stage {
+            position: relative;
+            transform: scale(1.2);
+        }
+        
+        /* 杯垫 */
+        .saucer {
+            position: absolute;
+            width: 140px;
+            height: 20px;
+            background: linear-gradient(180deg, #f8f5f0 0%, #e0d8d0 100%);
+            border-radius: 50%;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* 咖啡杯 */
+        .coffee-cup {
+            width: 110px;
+            height: 85px;
+            background: linear-gradient(135deg, #faf8f5 0%, #f0ebe5 50%, #e5dfd8 100%);
+            border-radius: 5px 5px 45px 45px;
+            position: relative;
+            box-shadow: 
+                inset -8px 0 15px rgba(0,0,0,0.05),
+                0 10px 40px rgba(0,0,0,0.25);
+        }
+        
+        .cup-rim {
+            position: absolute;
+            width: 115px;
+            height: 10px;
+            background: linear-gradient(180deg, #fff 0%, #f0ebe5 100%);
+            border-radius: 50%;
+            top: -3px;
+            left: -2.5px;
+        }
+        
+        .cup-handle {
+            position: absolute;
+            width: 28px;
+            height: 38px;
+            border: 7px solid #f0ebe5;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            right: -28px;
+            top: 12px;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 咖啡液面 */
+        .coffee-surface {
+            position: absolute;
+            width: 95px;
+            height: 95px;
+            background: radial-gradient(circle at 35% 35%, #6b4423 0%, #4a2c17 40%, #3a2010 100%);
+            border-radius: 50%;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.4);
+        }
+        
+        /* 咖啡光泽 */
+        .coffee-shine {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            top: 15px;
+            left: 20px;
+            filter: blur(5px);
+        }
+        
+        /* 粒子画布 */
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        
+        /* 蒸汽 */
+        .steam-container {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+        }
+        
+        .steam {
+            position: absolute;
+            width: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            bottom: 0;
+            animation: steamRise 3s ease-out infinite;
+        }
+        
+        .steam:nth-child(1) { left: 20px; height: 25px; animation-delay: 0s; }
+        .steam:nth-child(2) { left: 38px; height: 30px; animation-delay: 0.8s; }
+        .steam:nth-child(3) { left: 55px; height: 22px; animation-delay: 1.6s; }
+        
+        @keyframes steamRise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0.4; }
+            50% { transform: translateY(-25px) scaleX(1.5); opacity: 0.2; }
+            100% { transform: translateY(-50px) scaleX(2); opacity: 0; }
+        }
+        
+        /* 搅拌勺 */
+        .spoon {
+            position: absolute;
+            width: 5px;
+            height: 90px;
+            background: linear-gradient(90deg, #c9b896, #a89878, #c9b896);
+            border-radius: 2px;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            transform-origin: bottom center;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .spoon::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(180deg, #c9b896, #a89878);
+            border-radius: 50%;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .spoon.visible { opacity: 1; }
+        
+        /* 电钻 */
+        .drill {
+            position: absolute;
+            top: -90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        .drill.visible { opacity: 1; }
+        
+        .drill-body {
+            width: 70px;
+            height: 40px;
+            background: linear-gradient(180deg, #e85a3c 0%, #c44829 100%);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .drill-handle {
+            position: absolute;
+            width: 25px;
+            height: 50px;
+            background: linear-gradient(90deg, #333, #444, #333);
+            border-radius: 5px;
+            right: -5px;
+            top: -5px;
+        }
+        
+        .drill-bit {
+            position: absolute;
+            width: 45px;
+            height: 6px;
+            background: linear-gradient(90deg, #999, #bbb, #999);
+            left: -45px;
+            top: 17px;
+            border-radius: 1px;
+        }
+        
+        .drill-bit::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: -5px;
+            border-right: 15px solid #aaa;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+        
+        /* 热力图覆盖层 */
+        .heatmap-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 8, 6, 0.95);
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        .heatmap-overlay.visible {
+            opacity: 1;
+        }
+        
+        #heatmapCanvas {
+            width: min(50vh, 45vw);
+            height: min(50vh, 45vw);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 60px rgba(255,100,50,0.3),
+                0 0 120px rgba(255,80,30,0.1);
+        }
+        
+        /* 字幕 */
+        .subtitle {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.9);
+            font-size: clamp(14px, 1.8vw, 24px);
+            font-weight: 300;
+            text-align: center;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 200;
+            max-width: 75%;
+            line-height: 2;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle.visible {
+            opacity: 1;
+        }
+        
+        /* 结尾文字 */
+        .ending-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 250;
+            opacity: 0;
+            transition: opacity 2s ease;
+            background: radial-gradient(ellipse at center, rgba(26,19,16,0.9) 0%, rgba(10,8,6,0.98) 100%);
+        }
+        
+        .ending-text.visible {
+            opacity: 1;
+        }
+        
+        .ending-main {
+            font-size: clamp(28px, 5vw, 72px);
+            font-weight: 300;
+            color: #d4a574;
+            letter-spacing: 0.5em;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease 0.5s;
+        }
+        
+        .ending-text.visible .ending-main {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .ending-sub {
+            font-size: clamp(12px, 1.5vw, 20px);
+            font-weight: 300;
+            color: rgba(180,150,120,0.7);
+            letter-spacing: 0.3em;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.5s ease 1.2s;
+        }
+        
+        .ending-text.visible .ending-sub {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .ending-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #8b7355, transparent);
+            margin: 25px 0;
+            opacity: 0;
+            transition: opacity 1.5s ease 1s;
+        }
+        
+        .ending-text.visible .ending-line {
+            opacity: 1;
+        }
+        
+        .ending-quote {
+            font-size: clamp(11px, 1.2vw, 16px);
+            font-style: italic;
+            color: rgba(150,130,110,0.6);
+            letter-spacing: 0.2em;
+            max-width: 60%;
+            text-align: center;
+            line-height: 2;
+            opacity: 0;
+            transition: opacity 1.5s ease 2s;
+        }
+        
+        .ending-text.visible .ending-quote {
+            opacity: 1;
+        }
+        
+        /* 标题画面 */
+        .title-screen {
+            position: absolute;
+            inset: 0;
+            background: #0a0806;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            transition: opacity 1.5s ease;
+        }
+        
+        .title-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 4vw, 56px);
+            font-weight: 400;
+            font-style: italic;
+            color: #d4a574;
+            letter-spacing: 0.3em;
+            text-shadow: 0 0 40px rgba(212,165,116,0.3);
+            margin-bottom: 15px;
+        }
+        
+        .main-title-cn {
+            font-size: clamp(16px, 2vw, 32px);
+            font-weight: 300;
+            color: #8b7355;
+            letter-spacing: 0.8em;
+            margin-bottom: 60px;
+        }
+        
+        .start-btn {
+            padding: 18px 60px;
+            font-size: clamp(12px, 1.2vw, 16px);
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 300;
+            background: transparent;
+            border: 1px solid rgba(212,165,116,0.5);
+            color: #d4a574;
+            cursor: pointer;
+            letter-spacing: 0.5em;
+            transition: all 0.5s ease;
+        }
+        
+        .start-btn:hover {
+            background: rgba(212,165,116,0.1);
+            border-color: #d4a574;
+            letter-spacing: 0.7em;
+            padding: 18px 70px;
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            position: absolute;
+            bottom: 4%;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 1px;
+            z-index: 150;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .progress-bar.visible {
+            opacity: 1;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b7355, #d4a574);
+            border-radius: 1px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        /* 胶片颗粒 */
+        .film-grain {
+            position: absolute;
+            inset: 0;
+            opacity: 0.025;
+            pointer-events: none;
+            z-index: 99;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        /* 暗角 */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 98;
+        }
+        
+        /* 动画状态 */
+        .shake-gentle {
+            animation: shakeGentle 0.15s ease-in-out infinite;
+        }
+        
+        @keyframes shakeGentle {
+            0%, 100% { transform: translateX(-50%) rotate(-1deg); }
+            50% { transform: translateX(-50%) rotate(1deg); }
+        }
+        
+        .shake-intense {
+            animation: shakeIntense 0.08s linear infinite;
+        }
+        
+        @keyframes shakeIntense {
+            0%, 100% { transform: translateX(-50%) rotate(-2deg) translateY(-1px); }
+            50% { transform: translateX(-50%) rotate(2deg) translateY(1px); }
+        }
+        
+        /* 咖啡师表情变化 */
+        .barista.relaxed .eye {
+            height: 3px;
+            border-radius: 3px;
+        }
+        
+        .barista.relaxed .mouth {
+            width: 15px;
+            height: 8px;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .barista.enlightened .eye {
+            height: 10px;
+        }
+        
+        .barista.enlightened .eyebrow.left {
+            transform: rotate(-15deg) translateY(-3px);
+        }
+        
+        .barista.enlightened .eyebrow.right {
+            transform: rotate(15deg) translateY(-3px);
+        }
+        
+        .barista.serene {
+            transform: scale(0.95);
+        }
+        
+        .barista.serene .eye {
+            height: 2px;
+            border-radius: 2px;
+        }
+        
+        .barista.serene .mouth {
+            width: 18px;
+            height: 5px;
+            border: none;
+            background: #a67c5b;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cinema-container">
+        <div class="letterbox top"></div>
+        <div class="letterbox bottom"></div>
+        <div class="film-grain"></div>
+        <div class="vignette"></div>
+        
+        <!-- 标题画面 -->
+        <div class="title-screen" id="titleScreen">
+            <div class="main-title">The OCD Barista</div>
+            <div class="main-title-cn">强迫症咖啡师</div>
+            <button class="start-btn" onclick="startFilm()">开始观影</button>
+        </div>
+        
+        <!-- 主场景 -->
+        <div class="scene" id="mainScene">
+            <div class="cafe-bg"></div>
+            <div class="light-orb"></div>
+            <div class="light-orb"></div>
+            <div class="light-orb"></div>
+            
+            <div class="coffee-beans">
+                <div class="bean"></div>
+                <div class="bean"></div>
+                <div class="bean"></div>
+            </div>
+            
+            <div class="plant">
+                <div class="leaf"></div>
+                <div class="leaf"></div>
+                <div class="leaf"></div>
+            </div>
+            
+            <div class="main-content">
+                <!-- 咖啡师 -->
+                <div class="barista-section">
+                    <div class="barista" id="barista">
+                        <div class="barista-body">
+                            <div class="head">
+                                <div class="hair"></div>
+                                <div class="eyebrow left"></div>
+                                <div class="eyebrow right"></div>
+                                <div class="eyes">
+                                    <div class="eye"></div>
+                                    <div class="eye"></div>
+                                </div>
+                                <div class="mouth"></div>
+                            </div>
+                            <div class="torso"></div>
+                            <div class="apron"></div>
+                            <div class="arm left"><div class="hand"></div></div>
+                            <div class="arm right"><div class="hand"></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 咖啡杯 -->
+                <div class="cup-section">
+                    <div class="cup-stage" id="cupStage">
+                        <div class="steam-container">
+                            <div class="steam"></div>
+                            <div class="steam"></div>
+                            <div class="steam"></div>
+                        </div>
+                        <div class="coffee-cup">
+                            <div class="cup-rim"></div>
+                            <div class="cup-handle"></div>
+                            <div class="coffee-surface" id="coffeeSurface">
+                                <div class="coffee-shine"></div>
+                                <canvas id="particleCanvas"></canvas>
+                            </div>
+                        </div>
+                        <div class="saucer"></div>
+                        <div class="spoon" id="spoon"></div>
+                        <div class="drill" id="drill">
+                            <div class="drill-bit"></div>
+                            <div class="drill-body"></div>
+                            <div class="drill-handle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 热力图 -->
+        <div class="heatmap-overlay" id="heatmapOverlay">
+            <canvas id="heatmapCanvas" width="500" height="500"></canvas>
+        </div>
+        
+        <!-- 结尾画面 -->
+        <div class="ending-text" id="endingText">
+            <div class="ending-main">稳稳的内核</div>
+            <div class="ending-line"></div>
+            <div class="ending-sub">THE UNMOVABLE CORE</div>
+            <div class="ending-quote">
+                "在所有的变化之中，总有一点保持不变。<br>
+                这不是顽固，而是宇宙给予的锚点。"
+            </div>
+        </div>
+        
+        <!-- 字幕 -->
+        <div class="subtitle" id="subtitle"></div>
+        
+        <!-- 进度条 -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <script>
+        // 粒子类
+        class Particle {
+            constructor(x, y, centerX, centerY, isFixed = false) {
+                this.x = x;
+                this.y = y;
+                this.originX = x;
+                this.originY = y;
+                this.centerX = centerX;
+                this.centerY = centerY;
+                this.isFixed = isFixed;
+                this.angle = Math.atan2(y - centerY, x - centerX);
+                this.radius = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                this.baseRadius = this.radius;
+                this.velocity = 0;
+                this.size = isFixed ? 5 : 2.5;
+            }
+            
+            update(intensity, time) {
+                if (this.isFixed) {
+                    // 不动点：微微震颤但始终回归
+                    const tremor = Math.sin(time * 0.005) * 0.3 * intensity;
+                    this.x = this.originX + tremor;
+                    this.y = this.originY + tremor * 0.5;
+                    this.velocity = 0;
+                    return;
+                }
+                
+                // 旋转运动
+                const rotateSpeed = intensity * 0.08;
+                this.angle += rotateSpeed;
+                
+                // 添加径向扰动
+                const radialNoise = Math.sin(time * 0.01 + this.angle * 3) * intensity * 2;
+                this.radius = this.baseRadius + radialNoise;
+                
+                // 限制半径
+                this.radius = Math.max(5, Math.min(this.radius, 42));
+                
+                const newX = this.centerX + Math.cos(this.angle) * this.radius;
+                const newY = this.centerY + Math.sin(this.angle) * this.radius;
+                
+                this.velocity = Math.sqrt((newX - this.x) ** 2 + (newY - this.y) ** 2);
+                
+                this.x = newX;
+                this.y = newY;
+            }
+            
+            getColor() {
+                if (this.isFixed) return '#00ff88';
+                
+                const v = Math.min(this.velocity * 8, 1);
+                const r = Math.floor(80 + 175 * v);
+                const g = Math.floor(60 + 40 * (1 - v));
+                const b = Math.floor(40 + 20 * (1 - v));
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.getColor();
+                ctx.fill();
+                
+                if (this.isFixed) {
+                    ctx.save();
+                    ctx.shadowColor = '#00ff88';
+                    ctx.shadowBlur = 12;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+        }
+        
+        // 全局状态
+        let particles = [];
+        let canvas, ctx, heatCanvas, heatCtx;
+        let animationId;
+        let startTime = 0;
+        let intensity = 0;
+        let fixedPointIndex = -1;
+        
+        const TOTAL_DURATION = 48000;
+        
+        const timeline = [
+            { time: 0, text: '', action: 'intro' },
+            { time: 2000, text: '在城市的某个角落', action: null },
+            { time: 4500, text: '有一位追求极致的咖啡师', action: null },
+            { time: 7500, text: '他有一个执念——', action: null },
+            { time: 10000, text: '让咖啡中的每一个分子，都改变位置', action: 'startStir' },
+            { time: 13000, text: '于是，他开始搅拌...', action: null },
+            { time: 16000, text: '更快一些...', action: 'faster' },
+            { time: 19000, text: '再快...', action: 'evenFaster' },
+            { time: 22000, text: '"不够！还不够！"', action: 'drill' },
+            { time: 25000, text: '', action: null },
+            { time: 28000, text: '终于，他停了下来', action: 'stop' },
+            { time: 31000, text: '让我们看看结果...', action: 'heatmap' },
+            { time: 34000, text: '', action: null },
+            { time: 36000, text: '"想要彻底改变一切？"', action: null },
+            { time: 38500, text: '"数学说：没门。"', action: null },
+            { time: 41000, text: '"总有一个顽固分子，在原地静静地看着你。"', action: null },
+            { time: 44000, text: '—— 布劳威尔不动点定理', action: 'ending' },
+            { time: 47000, text: '', action: 'final' }
+        ];
+        
+        function initParticles() {
+            canvas = document.getElementById('particleCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = 95;
+            canvas.height = 95;
+            
+            heatCanvas = document.getElementById('heatmapCanvas');
+            heatCtx = heatCanvas.getContext('2d');
+            
+            const centerX = 47.5;
+            const centerY = 47.5;
+            
+            particles = [];
+            
+            // 创建粒子
+            for (let i = 0; i < 80; i++) {
+                const angle = (i / 80) * Math.PI * 2 + Math.random() * 0.5;
+                const dist = 8 + Math.random() * 35;
+                const x = centerX + Math.cos(angle) * dist;
+                const y = centerY + Math.sin(angle) * dist;
+                particles.push(new Particle(x, y, centerX, centerY, false));
+            }
+            
+            // 不动点
+            const fixedAngle = Math.random() * Math.PI * 2;
+            const fixedDist = 10 + Math.random() * 15;
+            const fixedX = centerX + Math.cos(fixedAngle) * fixedDist;
+            const fixedY = centerY + Math.sin(fixedAngle) * fixedDist;
+            fixedPointIndex = particles.length;
+            particles.push(new Particle(fixedX, fixedY, centerX, centerY, true));
+        }
+        
+        function drawParticles(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update(intensity, time);
+                p.draw(ctx);
+            });
+        }
+        
+        function drawHeatmap() {
+            const size = 500;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const scale = size / 95;
+            
+            // 背景
+            heatCtx.fillStyle = '#1a0f0a';
+            heatCtx.beginPath();
+            heatCtx.arc(centerX, centerY, 230, 0, Math.PI * 2);
+            heatCtx.fill();
+            
+            // 粒子轨迹热力
+            particles.forEach(p => {
+                if (p.isFixed) return;
+                
+                const x = p.x * scale;
+                const y = p.y * scale;
+                
+                const gradient = heatCtx.createRadialGradient(x, y, 0, x, y, 20);
+                gradient.addColorStop(0, p.getColor());
+                gradient.addColorStop(1, 'transparent');
+                
+                heatCtx.beginPath();
+                heatCtx.arc(x, y, 20, 0, Math.PI * 2);
+                heatCtx.fillStyle = gradient;
+                heatCtx.fill();
+            });
+            
+            // 不动点
+            const fp = particles[fixedPointIndex];
+            const fpX = fp.x * scale;
+            const fpY = fp.y * scale;
+            
+            // 外圈动画
+            heatCtx.beginPath();
+            heatCtx.arc(fpX, fpY, 35, 0, Math.PI * 2);
+            heatCtx.strokeStyle = '#00ff88';
+            heatCtx.lineWidth = 3;
+            heatCtx.stroke();
+            
+            // 十字
+            heatCtx.beginPath();
+            heatCtx.moveTo(fpX - 20, fpY);
+            heatCtx.lineTo(fpX + 20, fpY);
+            heatCtx.moveTo(fpX, fpY - 20);
+            heatCtx.lineTo(fpX, fpY + 20);
+            heatCtx.strokeStyle = '#00ff88';
+            heatCtx.lineWidth = 2;
+            heatCtx.stroke();
+            
+            // 中心点
+            heatCtx.beginPath();
+            heatCtx.arc(fpX, fpY, 10, 0, Math.PI * 2);
+            heatCtx.fillStyle = '#00ff88';
+            heatCtx.shadowColor = '#00ff88';
+            heatCtx.shadowBlur = 20;
+            heatCtx.fill();
+            heatCtx.shadowBlur = 0;
+            
+            // 标签
+            heatCtx.font = '600 18px "Noto Serif SC", serif';
+            heatCtx.fillStyle = '#00ff88';
+            heatCtx.fillText('不动点', fpX + 45, fpY - 5);
+            heatCtx.font = '14px Arial';
+            heatCtx.fillStyle = 'rgba(0, 255, 136, 0.7)';
+            heatCtx.fillText('Fixed Point', fpX + 45, fpY + 15);
+            
+            // 图例
+            const legendY = 440;
+            const gradient = heatCtx.createLinearGradient(160, legendY, 340, legendY);
+            gradient.addColorStop(0, 'rgb(80, 100, 60)');
+            gradient.addColorStop(1, 'rgb(255, 100, 60)');
+            
+            heatCtx.fillStyle = gradient;
+            heatCtx.fillRect(160, legendY, 180, 8);
+            
+            heatCtx.font = '12px "Noto Serif SC", serif';
+            heatCtx.fillStyle = '#888';
+            heatCtx.fillText('静止', 160, legendY + 25);
+            heatCtx.fillText('高速', 320, legendY + 25);
+        }
+        
+        function showSubtitle(text) {
+            const sub = document.getElementById('subtitle');
+            if (text) {
+                sub.textContent = text;
+                sub.classList.add('visible');
+            } else {
+                sub.classList.remove('visible');
+            }
+        }
+        
+        function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            
+            // 更新进度条
+            const progress = Math.min(elapsed / TOTAL_DURATION, 1);
+            document.getElementById('progressFill').style.width = `${progress * 100}%`;
+            
+            // 处理时间线
+            let currentEvent = null;
+            for (let i = timeline.length - 1; i >= 0; i--) {
+                if (elapsed >= timeline[i].time) {
+                    currentEvent = timeline[i];
+                    break;
+                }
+            }
+            
+            if (currentEvent) {
+                showSubtitle(currentEvent.text);
+                
+                const spoon = document.getElementById('spoon');
+                const drill = document.getElementById('drill');
+                const cupStage = document.getElementById('cupStage');
+                const barista = document.getElementById('barista');
+                const heatmapOverlay = document.getElementById('heatmapOverlay');
+                const endingText = document.getElementById('endingText');
+                
+                switch (currentEvent.action) {
+                    case 'startStir':
+                        spoon.classList.add('visible');
+                        intensity = 0.3;
+                        break;
+                    case 'faster':
+                        intensity = 0.6;
+                        cupStage.classList.add('shake-gentle');
+                        break;
+                    case 'evenFaster':
+                        intensity = 1.2;
+                        cupStage.classList.remove('shake-gentle');
+                        cupStage.classList.add('shake-intense');
+                        barista.classList.add('enlightened');
+                        break;
+                    case 'drill':
+                        spoon.classList.remove('visible');
+                        drill.classList.add('visible');
+                        intensity = 2;
+                        break;
+                    case 'stop':
+                        drill.classList.remove('visible');
+                        cupStage.classList.remove('shake-intense');
+                        intensity = 0.1;
+                        barista.classList.remove('enlightened');
+                        barista.classList.add('relaxed');
+                        break;
+                    case 'heatmap':
+                        intensity = 0;
+                        heatmapOverlay.classList.add('visible');
+                        drawHeatmap();
+                        break;
+                    case 'ending':
+                        heatmapOverlay.classList.remove('visible');
+                        barista.classList.remove('relaxed');
+                        barista.classList.add('serene');
+                        break;
+                    case 'final':
+                        endingText.classList.add('visible');
+                        break;
+                }
+            }
+            
+            // 搅拌动画
+            if (intensity > 0) {
+                const spoon = document.getElementById('spoon');
+                const speed = intensity * 400;
+                spoon.style.transform = `translateX(-50%) rotate(${elapsed * speed / 1000}deg)`;
+                
+                // 手臂动画
+                const armAngle = Math.sin(elapsed * 0.01 * intensity) * 10;
+                document.querySelector('.arm.left').style.transform = `rotate(${-20 + armAngle}deg)`;
+                document.querySelector('.arm.right').style.transform = `rotate(${20 - armAngle}deg)`;
+            }
+            
+            // 更新粒子
+            drawParticles(elapsed);
+            
+            // 继续动画
+            if (elapsed < TOTAL_DURATION + 3000) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        function startFilm() {
+            document.getElementById('titleScreen').classList.add('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('mainScene').classList.add('visible');
+                document.getElementById('progressBar').classList.add('visible');
+                initParticles();
+                drawParticles(0);
+                animationId = requestAnimationFrame(animate);
+            }, 800);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            initParticles();
+            drawParticles(0);
+        });
+    </script>
+</body>
+</html>

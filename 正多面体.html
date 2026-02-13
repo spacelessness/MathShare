@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正多面体对称群 - 3D自动演示</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent-blue: #4a90d9;
+            --accent-gold: #d4a574;
+            --accent-rose: #c27c7c;
+            --accent-purple: #8b7cb3;
+            --accent-sage: #7ba084;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 顶部标题 */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: linear-gradient(180deg, rgba(248,249,250,0.95) 0%, rgba(248,249,250,0) 100%);
+            pointer-events: none;
+        }
+
+        .main-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 1s ease 0.5s forwards;
+        }
+
+        .main-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        /* 当前多面体信息 */
+        .poly-info-panel {
+            position: fixed;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            padding: 35px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            min-width: 320px;
+            backdrop-filter: blur(10px);
+        }
+
+        .poly-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .poly-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .poly-english {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 18px 15px;
+            background: linear-gradient(135deg, #f8f9fa, #f0f2f5);
+            border-radius: 12px;
+        }
+
+        .info-value {
+            font-family: 'Times New Roman', serif;
+            font-size: 2rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .group-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--accent-blue), #6ba3e0);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* 当前操作显示 */
+        .operation-display {
+            position: fixed;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            padding: 30px 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .operation-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .operation-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.6rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .operation-desc {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .operation-visual {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+            border-radius: 15px;
+        }
+
+        .rotation-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            animation: rotateIcon 2s linear infinite;
+        }
+
+        @keyframes rotateIcon {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rotation-icon.paused {
+            animation: none;
+        }
+
+        .angle-display {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        .angle-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 底部数学洞见 */
+        .insight-panel {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            padding: 25px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .insight-label {
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .insight-text {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        /* 进度指示器 */
+        .progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            z-index: 200;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* 序列指示器 */
+        .sequence-indicator {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .seq-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .seq-dot.active {
+            background: var(--accent-blue);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(74, 144, 217, 0.5);
+        }
+
+        .seq-dot.completed {
+            background: var(--accent-gold);
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .fade-transition {
+            transition: opacity 0.5s ease;
+        }
+
+        /* 轴标签 */
+        .axis-label {
+            position: absolute;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- 顶部标题 -->
+    <div class="top-header">
+        <h1 class="main-title">正多面体与对称群</h1>
+        <p class="main-subtitle">Platonic Solids and Their Symmetry Groups</p>
+    </div>
+
+    <!-- 左侧多面体信息 -->
+    <div class="poly-info-panel" id="polyInfoPanel">
+        <div class="poly-name">
+            <div class="poly-icon" id="polyIcon" style="background: var(--accent-blue);">△</div>
+            <span id="polyName">正四面体</span>
+        </div>
+        <div class="poly-english" id="polyEnglish">Tetrahedron</div>
+        
+        <div class="group-badge">
+            <span>对称群</span>
+            <span id="groupName">A₄</span>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-value" id="infoOrder">12</div>
+                <div class="info-label">群的阶</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="infoVertices">4</div>
+                <div class="info-label">顶点</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="infoEdges">6</div>
+                <div class="info-label">棱</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="infoFaces">4</div>
+                <div class="info-label">面</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧操作显示 -->
+    <div class="operation-display" id="operationDisplay">
+        <div class="operation-title">当前对称操作</div>
+        <div class="operation-name" id="opName">恒等变换</div>
+        <div class="operation-desc" id="opDesc">保持不变的恒等映射 e</div>
+        
+        <div class="operation-visual">
+            <div class="rotation-icon paused" id="rotationIcon" style="background: var(--accent-sage);">e</div>
+            <div>
+                <div class="angle-display" id="angleDisplay">0°</div>
+                <div class="angle-label">旋转角度</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部洞见 -->
+    <div class="insight-panel" id="insightPanel">
+        <div class="insight-label">💡 数学洞见</div>
+        <div class="insight-text" id="insightText">
+            正四面体的旋转群是交错群 A₄，包含12个元素。它是 S₄ 的唯一非平凡正规子群。
+        </div>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- 序列指示器 -->
+    <div class="sequence-indicator" id="sequenceIndicator"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ========== 全局变量 ==========
+        let scene, camera, renderer;
+        let currentPolyhedron, currentAxes = [], currentLabels = [];
+        let animationId;
+        let isTransitioning = false;
+
+        // ========== 多面体数据 ==========
+        const polyhedra = [
+            {
+                type: 'tetrahedron',
+                name: '正四面体',
+                english: 'Tetrahedron',
+                icon: '△',
+                group: 'A₄',
+                order: 12,
+                vertices: 4,
+                edges: 6,
+                faces: 4,
+                color: 0x4a90d9,
+                insight: '正四面体的旋转群是交错群 A₄，包含12个元素：1个恒等变换 + 8个三阶旋转 + 3个二阶旋转。A₄ 是最小的非阿贝尔群之一，也是 S₄ 的唯一非平凡正规子群。',
+                operations: [
+                    { name: '恒等变换', desc: '保持不变的恒等映射 e', axis: [0,1,0], angle: 0, symbol: 'e', duration: 2000 },
+                    { name: '顶点轴旋转 120°', desc: '绕顶点到对面中心的轴旋转', axis: [0,1,0], angle: 2*Math.PI/3, symbol: '↻', duration: 2500 },
+                    { name: '顶点轴旋转 240°', desc: '同一轴反向旋转，等价于旋转两次', axis: [0,1,0], angle: 4*Math.PI/3, symbol: '↻', duration: 2500 },
+                    { name: '棱中点轴旋转 180°', desc: '绕对棱中点连线旋转，二阶操作', axis: [1,0,0], angle: Math.PI, symbol: '⟲', duration: 2500 }
+                ]
+            },
+            {
+                type: 'cube',
+                name: '正六面体',
+                english: 'Cube',
+                icon: '▢',
+                group: 'S₄',
+                order: 48,
+                vertices: 8,
+                edges: 12,
+                faces: 6,
+                color: 0xd4a574,
+                insight: '正方体的旋转群有24个元素，同构于对称群 S₄。加上反射共48个元素（Oₕ群）。有趣的是，正方体的4条体对角线的所有排列方式，恰好对应这24个旋转！',
+                operations: [
+                    { name: '恒等变换', desc: '保持不变的恒等映射 e', axis: [0,1,0], angle: 0, symbol: 'e', duration: 2000 },
+                    { name: '面心轴旋转 90°', desc: '绕垂直于面的轴旋转，四阶操作', axis: [0,1,0], angle: Math.PI/2, symbol: '↻', duration: 2500 },
+                    { name: '面心轴旋转 180°', desc: '绕面心轴旋转半周', axis: [0,1,0], angle: Math.PI, symbol: '⟲', duration: 2500 },
+                    { name: '体对角线轴旋转 120°', desc: '绕体对角线旋转，三阶操作', axis: [1,1,1], angle: 2*Math.PI/3, symbol: '↻', duration: 2500 },
+                    { name: '棱中点轴旋转 180°', desc: '绕对棱中点连线旋转', axis: [1,0,1], angle: Math.PI, symbol: '⟲', duration: 2500 }
+                ]
+            },
+            {
+                type: 'octahedron',
+                name: '正八面体',
+                english: 'Octahedron',
+                icon: '◇',
+                group: 'S₄',
+                order: 48,
+                vertices: 6,
+                edges: 12,
+                faces: 8,
+                color: 0xc27c7c,
+                insight: '正八面体与正方体互为对偶，共享完全相同的对称群 S₄。正方体的8个顶点对应正八面体的8个面，6个面对应6个顶点。这种对偶性是柏拉图立体的美妙特征。',
+                operations: [
+                    { name: '恒等变换', desc: '保持不变的恒等映射 e', axis: [0,1,0], angle: 0, symbol: 'e', duration: 2000 },
+                    { name: '顶点轴旋转 90°', desc: '绕对顶点连线旋转，四阶操作', axis: [0,1,0], angle: Math.PI/2, symbol: '↻', duration: 2500 },
+                    { name: '顶点轴旋转 180°', desc: '绕顶点轴旋转半周', axis: [0,1,0], angle: Math.PI, symbol: '⟲', duration: 2500 },
+                    { name: '面心轴旋转 120°', desc: '绕对面中心连线旋转，三阶操作', axis: [1,1,1], angle: 2*Math.PI/3, symbol: '↻', duration: 2500 }
+                ]
+            },
+            {
+                type: 'dodecahedron',
+                name: '正十二面体',
+                english: 'Dodecahedron',
+                icon: '⬠',
+                group: 'A₅',
+                order: 120,
+                vertices: 20,
+                edges: 30,
+                faces: 12,
+                color: 0x8b7cb3,
+                insight: '正十二面体的旋转群是交错群 A₅，这是最小的非阿贝尔单群！正是因为 A₅ 没有非平凡正规子群，伽罗瓦证明了一般五次方程没有根式解——这是数学史上最深刻的发现之一。',
+                operations: [
+                    { name: '恒等变换', desc: '保持不变的恒等映射 e', axis: [0,1,0], angle: 0, symbol: 'e', duration: 2000 },
+                    { name: '面心轴旋转 72°', desc: '绕五边形面中心轴旋转，五阶操作', axis: [0,1,0], angle: 2*Math.PI/5, symbol: '↻', duration: 2500 },
+                    { name: '面心轴旋转 144°', desc: '绕同一轴旋转两次', axis: [0,1,0], angle: 4*Math.PI/5, symbol: '↻', duration: 2500 },
+                    { name: '顶点轴旋转 120°', desc: '绕对顶点连线旋转，三阶操作', axis: [1,0.618,0], angle: 2*Math.PI/3, symbol: '↻', duration: 2500 }
+                ]
+            },
+            {
+                type: 'icosahedron',
+                name: '正二十面体',
+                english: 'Icosahedron',
+                icon: '⬡',
+                group: 'A₅',
+                order: 120,
+                vertices: 12,
+                edges: 30,
+                faces: 20,
+                color: 0x7ba084,
+                insight: '正二十面体拥有五种正多面体中最多的面（20个）和最高的对称性。其对称群 A₅ 有60个旋转。这种结构在自然界中广泛存在：病毒外壳、富勒烯分子、甚至某些浮游生物都呈现二十面体对称。',
+                operations: [
+                    { name: '恒等变换', desc: '保持不变的恒等映射 e', axis: [0,1,0], angle: 0, symbol: 'e', duration: 2000 },
+                    { name: '顶点轴旋转 72°', desc: '绕对顶点连线旋转，五阶操作', axis: [0,1,0], angle: 2*Math.PI/5, symbol: '↻', duration: 2500 },
+                    { name: '顶点轴旋转 144°', desc: '绕同一轴旋转两次', axis: [0,1,0], angle: 4*Math.PI/5, symbol: '↻', duration: 2500 },
+                    { name: '面心轴旋转 120°', desc: '绕对面中心连线旋转，三阶操作', axis: [1,1,1], angle: 2*Math.PI/3, symbol: '↻', duration: 2500 }
+                ]
+            }
+        ];
+
+        // 当前状态
+        let currentPolyIndex = 0;
+        let currentOpIndex = 0;
+        let autoPlayTimer = null;
+        let baseRotation = { x: 0, y: 0 };
+
+        // ========== 初始化 ==========
+        function init() {
+            const container = document.getElementById('canvas-container');
+
+            // 场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f4f8);
+
+            // 相机
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(5, 4, 6);
+            camera.lookAt(0, 0, 0);
+
+            // 渲染器
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // 光照
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(10, 15, 10);
+            mainLight.castShadow = true;
+            scene.add(mainLight);
+
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            fillLight.position.set(-10, 5, -10);
+            scene.add(fillLight);
+
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
+            rimLight.position.set(0, -10, 0);
+            scene.add(rimLight);
+
+            // 地面网格
+            const gridHelper = new THREE.GridHelper(12, 24, 0xdddddd, 0xeeeeee);
+            gridHelper.position.y = -2.5;
+            scene.add(gridHelper);
+
+            // 创建序列指示器
+            createSequenceIndicator();
+
+            // 窗口调整
+            window.addEventListener('resize', onWindowResize);
+
+            // 开始动画循环
+            animate();
+
+            // 延迟启动自动播放
+            setTimeout(() => {
+                startAutoPlay();
+            }, 1500);
+        }
+
+        // ========== 创建序列指示器 ==========
+        function createSequenceIndicator() {
+            const container = document.getElementById('sequenceIndicator');
+            container.innerHTML = '';
+            polyhedra.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'seq-dot' + (i === 0 ? ' active' : '');
+                container.appendChild(dot);
+            });
+        }
+
+        // ========== 更新序列指示器 ==========
+        function updateSequenceIndicator(index) {
+            const dots = document.querySelectorAll('.seq-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i < index) dot.classList.add('completed');
+                if (i === index) dot.classList.add('active');
+            });
+        }
+
+        // ========== 创建多面体 ==========
+        function createPolyhedron(data) {
+            // 清除现有
+            if (currentPolyhedron) {
+                scene.remove(currentPolyhedron);
+            }
+            clearAxes();
+
+            let geometry;
+            const size = 1.8;
+
+            switch(data.type) {
+                case 'tetrahedron':
+                    geometry = new THREE.TetrahedronGeometry(size);
+                    break;
+                case 'cube':
+                    geometry = new THREE.BoxGeometry(size * 1.3, size * 1.3, size * 1.3);
+                    break;
+                case 'octahedron':
+                    geometry = new THREE.OctahedronGeometry(size);
+                    break;
+                case 'dodecahedron':
+                    geometry = new THREE.DodecahedronGeometry(size);
+                    break;
+                case 'icosahedron':
+                    geometry = new THREE.IcosahedronGeometry(size);
+                    break;
+            }
+
+            // 材质
+            const material = new THREE.MeshPhysicalMaterial({
+                color: data.color,
+                transparent: true,
+                opacity: 0.75,
+                metalness: 0.1,
+                roughness: 0.2,
+                clearcoat: 0.4,
+                clearcoatRoughness: 0.2,
+                side: THREE.DoubleSide
+            });
+
+            currentPolyhedron = new THREE.Mesh(geometry, material);
+
+            // 边框
+            const edges = new THREE.EdgesGeometry(geometry);
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x333333,
+                linewidth: 2,
+                transparent: true,
+                opacity: 0.8
+            });
+            const wireframe = new THREE.LineSegments(edges, lineMaterial);
+            currentPolyhedron.add(wireframe);
+
+            // 顶点球
+            const positions = geometry.attributes.position;
+            const vertices = [];
+            for (let i = 0; i < positions.count; i++) {
+                const v = new THREE.Vector3(positions.getX(i), positions.getY(i), positions.getZ(i));
+                let unique = true;
+                for (const existing of vertices) {
+                    if (v.distanceTo(existing) < 0.01) { unique = false; break; }
+                }
+                if (unique) vertices.push(v);
+            }
+
+            vertices.forEach(v => {
+                const sphere = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.08),
+                    new THREE.MeshBasicMaterial({ color: 0xd4a574 })
+                );
+                sphere.position.copy(v);
+                currentPolyhedron.add(sphere);
+            });
+
+            scene.add(currentPolyhedron);
+            
+            // 重置旋转
+            baseRotation = { x: 0, y: 0 };
+            
+            // 创建对称轴
+            createAxes(data.type, data.color);
+        }
+
+        // ========== 创建对称轴 ==========
+        function createAxes(type, color) {
+            clearAxes();
+            
+            const axisConfigs = {
+                tetrahedron: [
+                    { dir: [0, 1, 0], color: 0x4a90d9 },
+                    { dir: [1, -0.4, 0], color: 0xd4a574 },
+                    { dir: [-0.5, -0.4, 0.866], color: 0xc27c7c }
+                ],
+                cube: [
+                    { dir: [1, 0, 0], color: 0xff6b6b },
+                    { dir: [0, 1, 0], color: 0x4ecdc4 },
+                    { dir: [0, 0, 1], color: 0x45b7d1 },
+                    { dir: [1, 1, 1], color: 0xf9ca24 }
+                ],
+                octahedron: [
+                    { dir: [1, 0, 0], color: 0xff6b6b },
+                    { dir: [0, 1, 0], color: 0x4ecdc4 },
+                    { dir: [0, 0, 1], color: 0x45b7d1 }
+                ],
+                dodecahedron: [
+                    { dir: [0, 1, 0], color: 0x8b7cb3 },
+                    { dir: [1, 0.618, 0], color: 0x4a90d9 }
+                ],
+                icosahedron: [
+                    { dir: [0, 1, 0], color: 0x7ba084 },
+                    { dir: [1, 0.618, 0], color: 0xd4a574 }
+                ]
+            };
+
+            const configs = axisConfigs[type] || [];
+            
+            configs.forEach(config => {
+                const dir = new THREE.Vector3(...config.dir).normalize();
+                const length = 4;
+                
+                const points = [
+                    dir.clone().multiplyScalar(-length),
+                    dir.clone().multiplyScalar(length)
+                ];
+                
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const material = new THREE.LineDashedMaterial({
+                    color: config.color,
+                    dashSize: 0.15,
+                    gapSize: 0.08,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const line = new THREE.Line(geometry, material);
+                line.computeLineDistances();
+                scene.add(line);
+                currentAxes.push(line);
+
+                // 端点
+                [length, -length].forEach(l => {
+                    const sphere = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.06),
+                        new THREE.MeshBasicMaterial({ color: config.color, transparent: true, opacity: 0.8 })
+                    );
+                    sphere.position.copy(dir.clone().multiplyScalar(l));
+                    scene.add(sphere);
+                    currentAxes.push(sphere);
+                });
+            });
+        }
+
+        // ========== 清除对称轴 ==========
+        function clearAxes() {
+            currentAxes.forEach(obj => scene.remove(obj));
+            currentAxes = [];
+        }
+
+        // ========== 更新UI ==========
+        function updateUI(polyData, opData) {
+            // 多面体信息
+            document.getElementById('polyIcon').textContent = polyData.icon;
+            document.getElementById('polyIcon').style.background = `#${polyData.color.toString(16).padStart(6, '0')}`;
+            document.getElementById('polyName').textContent = polyData.name;
+            document.getElementById('polyEnglish').textContent = polyData.english;
+            document.getElementById('groupName').textContent = polyData.group;
+            document.getElementById('infoOrder').textContent = polyData.order;
+            document.getElementById('infoVertices').textContent = polyData.vertices;
+            document.getElementById('infoEdges').textContent = polyData.edges;
+            document.getElementById('infoFaces').textContent = polyData.faces;
+            document.getElementById('insightText').textContent = polyData.insight;
+
+            // 操作信息
+            document.getElementById('opName').textContent = opData.name;
+            document.getElementById('opDesc').textContent = opData.desc;
+            
+            const rotIcon = document.getElementById('rotationIcon');
+            rotIcon.textContent = opData.symbol;
+            rotIcon.style.background = `#${polyData.color.toString(16).padStart(6, '0')}`;
+            
+            const angleDeg = Math.round(opData.angle * 180 / Math.PI);
+            document.getElementById('angleDisplay').textContent = angleDeg + '°';
+
+            if (opData.angle === 0) {
+                rotIcon.classList.add('paused');
+            } else {
+                rotIcon.classList.remove('paused');
+            }
+        }
+
+        // ========== 播放操作动画 ==========
+        function playOperation(polyData, opData, onComplete) {
+            if (!currentPolyhedron) {
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const axis = new THREE.Vector3(...opData.axis).normalize();
+            const totalAngle = opData.angle;
+            const duration = opData.duration;
+            const startTime = Date.now();
+            const startQuat = currentPolyhedron.quaternion.clone();
+
+            function animateOp() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                
+                // 缓动
+                const easeT = t < 0.5 
+                    ? 4 * t * t * t 
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                // 更新进度条
+                const totalOps = polyData.operations.length;
+                const polyProgress = currentPolyIndex / polyhedra.length;
+                const opProgress = (currentOpIndex + easeT) / totalOps / polyhedra.length;
+                document.getElementById('progressBar').style.width = ((polyProgress + opProgress) * 100) + '%';
+
+                // 应用旋转
+                if (totalAngle !== 0) {
+                    const angle = totalAngle * easeT;
+                    const quat = new THREE.Quaternion().setFromAxisAngle(axis, angle);
+                    currentPolyhedron.quaternion.copy(startQuat).multiply(quat);
+                }
+
+                if (t < 1) {
+                    requestAnimationFrame(animateOp);
+                } else {
+                    if (onComplete) onComplete();
+                }
+            }
+
+            animateOp();
+        }
+
+        // ========== 切换到下一个多面体 ==========
+        function transitionToPolyhedron(index, onComplete) {
+            isTransitioning = true;
+            
+            // 淡出
+            const panels = ['polyInfoPanel', 'operationDisplay', 'insightPanel'];
+            panels.forEach(id => {
+                document.getElementById(id).style.opacity = '0';
+            });
+
+            setTimeout(() => {
+                const data = polyhedra[index];
+                createPolyhedron(data);
+                updateSequenceIndicator(index);
+                updateUI(data, data.operations[0]);
+                
+                // 淡入
+                panels.forEach(id => {
+                    document.getElementById(id).style.opacity = '1';
+                });
+
+                setTimeout(() => {
+                    isTransitioning = false;
+                    if (onComplete) onComplete();
+                }, 500);
+            }, 500);
+        }
+
+        // ========== 自动播放 ==========
+        function startAutoPlay() {
+            currentPolyIndex = 0;
+            currentOpIndex = 0;
+            
+            transitionToPolyhedron(0, () => {
+                playNextOperation();
+            });
+        }
+
+        function playNextOperation() {
+            const polyData = polyhedra[currentPolyIndex];
+            const opData = polyData.operations[currentOpIndex];
+            
+            updateUI(polyData, opData);
+
+            playOperation(polyData, opData, () => {
+                // 下一个操作
+                currentOpIndex++;
+                
+                if (currentOpIndex >= polyData.operations.length) {
+                    // 切换到下一个多面体
+                    currentOpIndex = 0;
+                    currentPolyIndex++;
+                    
+                    if (currentPolyIndex >= polyhedra.length) {
+                        // 循环
+                        currentPolyIndex = 0;
+                    }
+                    
+                    setTimeout(() => {
+                        transitionToPolyhedron(currentPolyIndex, () => {
+                            playNextOperation();
+                        });
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        playNextOperation();
+                    }, 800);
+                }
+            });
+        }
+
+        // ========== 窗口调整 ==========
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // ========== 动画循环 ==========
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            // 缓慢自转（叠加在操作动画之上）
+            if (currentPolyhedron && !isTransitioning) {
+                baseRotation.y += 0.003;
+                
+                // 相机缓慢环绕
+                const time = Date.now() * 0.0001;
+                camera.position.x = 7 * Math.cos(time);
+                camera.position.z = 7 * Math.sin(time);
+                camera.position.y = 4 + Math.sin(time * 2) * 0.5;
+                camera.lookAt(0, 0, 0);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // ========== 启动 ==========
+        init();
+    </script>
+</body>
+</html>
