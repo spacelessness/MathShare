@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率论与数理统计 20 题通关 - PPT讲稿</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-gradient: linear-gradient(135deg, #080c16 0%, #131b2e 50%, #0e1525 100%);
+            --text-main: #dce1e8;
+            --accent-gold: #e8b84b;
+            --accent-cyan: #4fc3f7;
+            --accent-green: #66bb6a;
+            --accent-red: #ef5350;
+            --accent-purple: #ab47bc;
+            --accent-orange: #ffa726;
+            --box-bg: rgba(255, 255, 255, 0.04);
+            --box-border: 1px solid rgba(255, 255, 255, 0.12);
+            --font-family: 'Noto Serif SC', 'Georgia', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050810; color: var(--text-main);
+            font-family: var(--font-family);
+            display: flex; flex-direction: column; align-items: center; gap: 50px; padding: 50px 20px;
+        }
+
+        .slide {
+            width: 1280px; min-height: 720px; height: auto;
+            background: var(--bg-gradient);
+            position: relative; overflow: visible;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+            padding: 48px 65px 40px; display: flex; flex-direction: column;
+        }
+
+        .slide::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 32px 32px; pointer-events: none; z-index: 0;
+        }
+
+        .slide::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-gold));
+            z-index: 2;
+        }
+
+        .content { z-index: 1; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+        h1 {
+            font-size: 38px; color: #fff; margin-bottom: 22px; font-weight: 700;
+            border-bottom: 2px solid var(--accent-purple); padding-bottom: 10px; width: 100%;
+            flex-shrink: 0; letter-spacing: 1px;
+        }
+        h1 .topic-num {
+            color: var(--accent-gold); margin-right: 14px;
+            font-size: 34px;
+        }
+
+        h2 {
+            font-size: 22px; color: var(--accent-cyan); margin-bottom: 10px; margin-top: 0;
+            flex-shrink: 0; font-weight: 700;
+        }
+        h3 { font-size: 19px; color: var(--accent-gold); margin: 8px 0; }
+
+        .box {
+            background: var(--box-bg); border: var(--box-border);
+            padding: 14px 20px; border-radius: 8px; margin-bottom: 12px;
+            font-size: 18px; line-height: 1.7;
+        }
+
+        .question-box {
+            background: rgba(79, 195, 247, 0.08);
+            border: 1px solid rgba(79, 195, 247, 0.35);
+            border-left: 4px solid var(--accent-cyan);
+        }
+
+        .answer-box {
+            background: rgba(232, 184, 75, 0.04);
+            border: 1px solid rgba(232, 184, 75, 0.25);
+        }
+
+        .tip-box {
+            background: rgba(102, 187, 106, 0.08);
+            border: 1px solid rgba(102, 187, 106, 0.35);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .warn-box {
+            background: rgba(239, 83, 80, 0.08);
+            border: 1px solid rgba(239, 83, 80, 0.3);
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .formula-box {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid var(--accent-gold);
+            text-align: center; padding: 16px; border-radius: 8px;
+        }
+
+        .highlight-gold { color: var(--accent-gold); font-weight: bold; }
+        .highlight-cyan { color: var(--accent-cyan); font-weight: bold; }
+        .highlight-green { color: var(--accent-green); font-weight: bold; }
+        .highlight-red { color: var(--accent-red); font-weight: bold; }
+        .highlight-purple { color: var(--accent-purple); font-weight: bold; }
+
+        .row { display: flex; gap: 22px; flex: 1; min-height: 0; }
+        .col { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+        .tag {
+            display: inline-block; padding: 3px 12px; border-radius: 15px;
+            font-size: 13px; margin-right: 8px; font-weight: bold;
+        }
+        .tag-point { background: var(--accent-cyan); color: #000; }
+        .tag-method { background: var(--accent-gold); color: #000; }
+        .tag-hard { background: var(--accent-red); color: #fff; }
+
+        .step { margin: 5px 0; padding-left: 16px; border-left: 2px solid rgba(255,255,255,0.15); }
+        .step-num {
+            display: inline-flex; width: 22px; height: 22px;
+            background: var(--accent-purple); color: #fff;
+            border-radius: 50%; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: bold; margin-right: 8px; flex-shrink: 0;
+        }
+
+        .result-box {
+            background: linear-gradient(90deg, rgba(232,184,75,0.15), transparent);
+            border-left: 4px solid var(--accent-gold);
+            padding: 12px 20px; margin-top: 12px;
+            font-size: 21px; flex-shrink: 0; border-radius: 0 6px 6px 0;
+        }
+
+        .separator-bar {
+            width: 100%; text-align: center; color: #444; margin: 10px 0; font-size: 13px;
+            letter-spacing: 3px;
+        }
+
+        /* 封面 */
+        .cover-slide .content {
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .cover-title { font-size: 54px; color: #fff; margin-bottom: 15px; font-weight: 700; }
+        .cover-subtitle { font-size: 26px; color: var(--accent-purple); margin-bottom: 35px; }
+
+        /* 目录 */
+        .toc-item {
+            display: flex; align-items: center; padding: 11px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 20px;
+        }
+        .toc-num {
+            width: 38px; height: 38px; background: var(--accent-purple);
+            color: #fff; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            font-weight: bold; margin-right: 18px; flex-shrink: 0; font-size: 16px;
+        }
+        .toc-count { margin-left: auto; color: #666; font-size: 16px; }
+
+        /* 表格 */
+        table { width: 100%; border-collapse: collapse; font-size: 16px; }
+        th {
+            background: rgba(171, 71, 188, 0.2); color: var(--accent-purple);
+            padding: 9px 10px; text-align: left; font-size: 15px;
+        }
+        td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+
+        .arrow { font-size: 20px; color: var(--accent-gold); margin: 0 6px; }
+
+        .page-num {
+            position: relative; text-align: right; color: #444;
+            font-size: 13px; margin-top: 15px; flex-shrink: 0;
+        }
+
+        ul, ol { padding-left: 22px; }
+        li { margin: 3px 0; }
+
+        mjx-container { overflow-x: auto; overflow-y: hidden; }
+
+        .grid-2x2 {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 封面 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 25px;">🎲</div>
+            <div class="cover-title">概率论与数理统计 <span style="color: var(--accent-gold);">20</span> 题通关</div>
+            <div class="cover-subtitle">Probability Theory & Mathematical Statistics</div>
+            <div style="width: 450px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-cyan), transparent); margin: 25px 0;"></div>
+            <div style="font-size: 19px; color: #888; line-height: 2;">
+                <p>覆盖五大模块 · 每题都是经典母题</p>
+                <p style="color: var(--accent-gold);">理解概率思维 × 掌握计算技巧 × 举一反三</p>
+            </div>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-point">随机事件</div>
+                <div class="tag" style="background: var(--accent-purple); color: #fff;">随机变量</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">数字特征</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">多维分布</div>
+                <div class="tag" style="background: var(--accent-red); color: #fff;">极限定理</div>
+            </div>
+        </div>
+        <div class="page-num">1 / 30</div>
+    </div>
+
+    <!-- ==================== 目录 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>📋 目录 · Table of Contents</h1>
+
+            <div style="display: flex; gap: 35px; flex: 1; align-items: center;">
+                <div style="flex: 1.2;">
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅰ</div>
+                        <div>随机事件与概率</div>
+                        <div class="toc-count">4 题（#01 — #04）</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅱ</div>
+                        <div>随机变量及其分布</div>
+                        <div class="toc-count">4 题（#05 — #08）</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅲ</div>
+                        <div>数字特征</div>
+                        <div class="toc-count">4 题（#09 — #12）</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅳ</div>
+                        <div>多维随机变量</div>
+                        <div class="toc-count">4 题（#13 — #16）</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅴ</div>
+                        <div>极限定理与统计基础</div>
+                        <div class="toc-count">4 题（#17 — #20）</div>
+                    </div>
+                </div>
+
+                <div style="flex: 0.8;">
+                    <div class="box" style="border: 2px solid var(--accent-purple);">
+                        <h3>🎯 学习建议</h3>
+                        <p style="font-size: 17px;">
+                            <strong>第一遍：</strong>逐题精读，搞懂每一步<br>
+                            <strong>第二遍：</strong>遮住过程，独立求解<br>
+                            <strong>第三遍：</strong>做变式题，检验掌握
+                        </p>
+                    </div>
+                    <div class="box tip-box" style="font-size: 16px;">
+                        <p>💡 概率论的关键：<br>
+                        <strong>建模能力</strong>（把文字变成数学）<br>
+                        <strong>公式联动</strong>（全概率↔贝叶斯）<br>
+                        <strong>分布识别</strong>（见题知分布）</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">2 / 30</div>
+    </div>
+
+    <!-- ==================== PART I 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART I ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 15px; opacity: 0.25;">Ⅰ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">随机事件与概率</h1>
+            <p style="font-size: 22px; color: var(--accent-purple); margin-top: 5px;">Random Events &amp; Probability</p>
+            <div style="margin-top: 35px; display: flex; gap: 18px;">
+                <div class="tag tag-point">古典概型</div>
+                <div class="tag tag-point">条件概率</div>
+                <div class="tag tag-point">全概率公式</div>
+                <div class="tag tag-point">贝叶斯公式</div>
+                <div class="tag tag-point">事件独立性</div>
+            </div>
+        </div>
+        <div class="page-num">3 / 30</div>
+    </div>
+
+    <!-- ==================== 题1 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">01</span>古典概型</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 古典概型 · 组合计数
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    袋中有 5 个红球、3 个白球，从中不放回地取 3 个球。<br>
+                    求恰好取到 2 个红球的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>确认模型：<span class="highlight-cyan">古典概型</span>（等可能、有限样本空间）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>样本空间总数：
+                            <div style="margin: 6px 0 6px 32px;">
+                                从 8 个球中取 3 个：\( \binom{8}{3} = \dfrac{8!}{3!\cdot 5!} = 56 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>事件 A ="恰好 2 红 1 白"：
+                            <div style="margin: 6px 0 6px 32px;">
+                                红球取 2：\( \binom{5}{2} = 10 \)<br>
+                                白球取 1：\( \binom{3}{1} = 3 \)<br>
+                                合计：\( 10 \times 3 = 30 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>计算概率：\( P(A) = \dfrac{30}{56} = \dfrac{15}{28} \)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>古典概型公式</h2>
+                    <div class="box formula-box">
+                        <div style="font-size: 24px; color: var(--accent-gold);">
+                            \( P(A) = \dfrac{|A|}{|\Omega|} = \dfrac{\text{事件A的样本点数}}{\text{总样本点数}} \)
+                        </div>
+                    </div>
+
+                    <h2>组合公式速查</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <table>
+                            <tr><th>公式</th><th>含义</th></tr>
+                            <tr><td>\( \binom{n}{k} = \dfrac{n!}{k!(n-k)!} \)</td><td>n 选 k（不分顺序）</td></tr>
+                            <tr><td>\( A_n^k = \dfrac{n!}{(n-k)!} \)</td><td>n 选 k（分顺序）</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 解题套路</h3>
+                        <p style="font-size: 15px;">① 判断是否等可能 → ② 算总数 → ③ 算有利数 → ④ 相除</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(\text{恰好2红}) = \dfrac{\binom{5}{2}\binom{3}{1}}{\binom{8}{3}} = \boxed{\dfrac{15}{28}} \)
+            </div>
+        </div>
+        <div class="page-num">4 / 30</div>
+    </div>
+
+    <!-- ==================== 题2 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">02</span>条件概率与乘法公式</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 条件概率 · 乘法公式
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    盒中有 4 件正品、2 件次品。先取一件不放回，再取一件。<br>
+                    求两件都是正品的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>定义事件：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( A \)= 第一件正品，\( B \)= 第二件正品
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>第一件正品：\( P(A) = \dfrac{4}{6} = \dfrac{2}{3} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>已知第一件正品，第二件也正品：
+                            <div style="margin: 6px 0 6px 32px;">
+                                此时剩 3 正 2 次，\( P(B|A) = \dfrac{3}{5} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>乘法公式：
+                            <div style="margin: 6px 0 6px 32px; font-size: 20px;">
+                                \( P(AB) = P(A) \cdot P(B|A) = \dfrac{2}{3} \times \dfrac{3}{5} = \dfrac{2}{5} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>核心公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 20px; margin-bottom: 10px;">条件概率：</p>
+                        <div style="font-size: 24px; color: var(--accent-gold);">
+                            \( P(B|A) = \dfrac{P(AB)}{P(A)} \)
+                        </div>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 12px 0;">
+                        <p style="font-size: 20px; margin-bottom: 10px;">乘法公式：</p>
+                        <div style="font-size: 24px; color: var(--accent-gold);">
+                            \( P(AB) = P(A) \cdot P(B|A) \)
+                        </div>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 条件概率的本质</h3>
+                        <p style="font-size: 15px;">在<span class="highlight-gold">缩小的样本空间</span>中重新计算概率。</p>
+                        <p style="font-size: 15px;">已知 A 发生 → 样本空间从 Ω 缩小到 A。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(\text{两件都是正品}) = \dfrac{2}{3} \times \dfrac{3}{5} = \boxed{\dfrac{2}{5}} \)
+            </div>
+        </div>
+        <div class="page-num">5 / 30</div>
+    </div>
+
+    <!-- ==================== 题3 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">03</span>全概率公式与贝叶斯公式</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 全概率 · 贝叶斯（考试必考！）
+                <div style="font-size: 22px; margin-top: 10px; text-align: center;">
+                    工厂有甲、乙、丙三条生产线，产量比为 2:3:5。次品率分别为 2%、1%、3%。<br>
+                    (1) 随机取一件，求次品率；(2) 若取到次品，求来自丙线的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>(1) 全概率公式求总次品率</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>设 \(B_1, B_2, B_3\) = 来自甲、乙、丙，\(A\) = 次品
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( P(B_1)=0.2,\; P(B_2)=0.3,\; P(B_3)=0.5 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( P(A|B_1)=0.02,\; P(A|B_2)=0.01,\; P(A|B_3)=0.03 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>全概率：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( P(A) = \sum_{i=1}^{3} P(B_i)P(A|B_i) \)<br>
+                                \( = 0.2 \times 0.02 + 0.3 \times 0.01 + 0.5 \times 0.03 \)<br>
+                                \( = 0.004 + 0.003 + 0.015 = 0.022 \)
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>(2) 贝叶斯公式求"反向概率"</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <p>\( P(B_3|A) = \dfrac{P(B_3)P(A|B_3)}{P(A)} = \dfrac{0.5 \times 0.03}{0.022} = \dfrac{0.015}{0.022} = \dfrac{15}{22} \)</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>公式对比</h2>
+                    <div class="box formula-box" style="font-size: 17px; text-align: left; padding: 15px 20px;">
+                        <p><strong style="color: var(--accent-cyan);">全概率公式（由因求果）：</strong></p>
+                        <p style="text-align: center; font-size: 19px; margin: 8px 0;">\( P(A) = \sum P(B_i)P(A|B_i) \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 12px 0;">
+                        <p><strong style="color: var(--accent-gold);">贝叶斯公式（由果溯因）：</strong></p>
+                        <p style="text-align: center; font-size: 19px; margin: 8px 0;">\( P(B_j|A) = \dfrac{P(B_j)P(A|B_j)}{\sum P(B_i)P(A|B_i)} \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 记忆口诀</h3>
+                        <p style="font-size: 15px;"><strong>全概率：</strong>已知各"原因"的概率 → 求"结果"概率</p>
+                        <p style="font-size: 15px;"><strong>贝叶斯：</strong>已知"结果"发生 → 反推"原因"概率</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 易错点</h3>
+                        <p style="font-size: 15px;">贝叶斯的<strong>分母是全概率</strong>，不是 \(P(B_j)\)！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                (1) \( P(\text{次品}) = \boxed{0.022} \)　　(2) \( P(\text{来自丙}|\text{次品}) = \boxed{\dfrac{15}{22}} \)
+            </div>
+        </div>
+        <div class="page-num">6 / 30</div>
+    </div>
+
+    <!-- ==================== 题4 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">04</span>事件独立性</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 独立性判断与计算
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    系统由两个独立部件并联，部件可靠性分别为 0.9 和 0.8。求系统可靠性。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>定义事件：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( A \)= 部件1工作，\( B \)= 部件2工作<br>
+                                \( P(A) = 0.9 \)，\( P(B) = 0.8 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span><span class="highlight-cyan">并联</span> = 至少一个工作 = \( A \cup B \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>用对立事件更简单：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( P(A \cup B) = 1 - P(\overline{A}\, \overline{B}) \)<br>
+                                A、B 独立 ⇒ \(\overline{A}\)、\(\overline{B}\) 也独立<br>
+                                \( = 1 - P(\overline{A})P(\overline{B}) \)<br>
+                                \( = 1 - 0.1 \times 0.2 = 1 - 0.02 = 0.98 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>独立性核心公式</h2>
+                    <div class="box formula-box" style="font-size: 17px; text-align: left; padding: 14px 18px;">
+                        <p><strong>定义：</strong>\( P(AB) = P(A) \cdot P(B) \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 10px 0;">
+                        <p><strong>推论：</strong>若 A、B 独立，则以下也独立：</p>
+                        <p>\( \overline{A} \) 与 \( B \)；\( A \) 与 \( \overline{B} \)；\( \overline{A} \) 与 \( \overline{B} \)</p>
+                    </div>
+
+                    <h2>串联 vs 并联</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <table>
+                            <tr><th>结构</th><th>含义</th><th>公式</th></tr>
+                            <tr>
+                                <td>串联</td>
+                                <td>全部工作</td>
+                                <td>\( P(AB) = P(A)P(B) \)</td>
+                            </tr>
+                            <tr>
+                                <td>并联</td>
+                                <td>至少一个</td>
+                                <td>\( 1 - P(\overline{A})P(\overline{B}) \)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 独立 ≠ 互斥</h3>
+                        <p style="font-size: 15px;">互斥：\( AB = \emptyset \)（不能同时发生）</p>
+                        <p style="font-size: 15px;">独立：一个发生不影响另一个的概率</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(\text{系统正常}) = 1 - 0.1 \times 0.2 = \boxed{0.98} \)
+            </div>
+        </div>
+        <div class="page-num">7 / 30</div>
+    </div>
+
+    <!-- ==================== PART II 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART II ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 15px; opacity: 0.25;">Ⅱ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">随机变量及其分布</h1>
+            <p style="font-size: 22px; color: var(--accent-purple);">Random Variables &amp; Distributions</p>
+            <div style="margin-top: 35px; display: flex; gap: 18px;">
+                <div class="tag tag-point">二项分布</div>
+                <div class="tag tag-point">泊松分布</div>
+                <div class="tag tag-point">指数分布</div>
+                <div class="tag tag-point">正态分布</div>
+                <div class="tag tag-point">分布函数</div>
+            </div>
+        </div>
+        <div class="page-num">8 / 30</div>
+    </div>
+
+    <!-- ==================== 题5 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">05</span>二项分布</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 二项分布 B(n,p)
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    射手命中率为 0.6，独立射击 5 次。求恰好命中 3 次的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>识别模型：n 次独立试验，每次 P(成功)=p → <span class="highlight-gold">二项分布</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>参数：\( n = 5 \)，\( p = 0.6 \)，\( X \sim B(5, 0.6) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入公式：
+                            <div style="margin: 8px 0 8px 32px; font-size: 18px;">
+                                \( P(X=3) = \binom{5}{3} (0.6)^3 (0.4)^2 \)<br>
+                                \( = 10 \times 0.216 \times 0.16 \)<br>
+                                \( = 10 \times 0.03456 = 0.3456 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>二项分布公式</h2>
+                    <div class="box formula-box">
+                        <p style="margin-bottom: 8px;">\( X \sim B(n, p) \)</p>
+                        <div style="font-size: 22px; color: var(--accent-gold);">
+                            \( P(X=k) = \binom{n}{k} p^k (1-p)^{n-k} \)
+                        </div>
+                        <p style="font-size: 14px; color: #888; margin-top: 8px;">\( k = 0, 1, 2, \ldots, n \)</p>
+                    </div>
+
+                    <h2>数字特征</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr><td>\( E(X) \)</td><td class="highlight-gold">\( np \)</td></tr>
+                            <tr><td>\( D(X) \)</td><td class="highlight-gold">\( np(1-p) \)</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 识别关键词</h3>
+                        <p style="font-size: 15px;">"独立重复"、"成功/失败"、"n次"、"命中率" → B(n,p)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(X=3) = \binom{5}{3}(0.6)^3(0.4)^2 = \boxed{0.3456} \)
+            </div>
+        </div>
+        <div class="page-num">9 / 30</div>
+    </div>
+
+    <!-- ==================== 题6 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">06</span>泊松分布与泊松近似</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 泊松分布 · 泊松定理
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    某网站每小时平均访问 4 次。求一小时内访问次数不超过 2 次的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>识别：单位时间内事件平均发生次数 → <span class="highlight-gold">泊松分布</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( X \sim P(4) \)，即 \( \lambda = 4 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>计算 \( P(X \leq 2) = P(X=0) + P(X=1) + P(X=2) \)
+                            <div style="margin: 8px 0 8px 32px; font-size: 17px;">
+                                \( P(X=0) = e^{-4} \cdot \dfrac{4^0}{0!} = e^{-4} \approx 0.0183 \)<br>
+                                \( P(X=1) = e^{-4} \cdot \dfrac{4^1}{1!} = 4e^{-4} \approx 0.0733 \)<br>
+                                \( P(X=2) = e^{-4} \cdot \dfrac{4^2}{2!} = 8e^{-4} \approx 0.1465 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( P(X \leq 2) \approx 0.0183 + 0.0733 + 0.1465 = 0.2381 \)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>泊松分布公式</h2>
+                    <div class="box formula-box">
+                        <p style="margin-bottom: 8px;">\( X \sim P(\lambda) \)</p>
+                        <div style="font-size: 22px; color: var(--accent-gold);">
+                            \( P(X=k) = \dfrac{\lambda^k e^{-\lambda}}{k!} \)
+                        </div>
+                        <p style="font-size: 14px; color: #888; margin-top: 8px;">\( k = 0, 1, 2, \ldots \)</p>
+                        <p style="font-size: 16px; margin-top: 8px;">\( E(X) = D(X) = \lambda \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 泊松近似二项</h3>
+                        <p style="font-size: 15px;">当 \( n \) 大、\( p \) 小、\( np \) 适中时：</p>
+                        <p style="font-size: 15px;">\( B(n,p) \approx P(np) \)</p>
+                        <p style="font-size: 14px; color: #888;">经验：\( n \geq 20,\, p \leq 0.05 \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(X \leq 2) = 13e^{-4} \approx \boxed{0.2381} \)
+            </div>
+        </div>
+        <div class="page-num">10 / 30</div>
+    </div>
+
+    <!-- ==================== 题7 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">07</span>正态分布标准化</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 正态分布 · 标准化
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    设 \( X \sim N(70, 100) \)（均值70，方差100），求 \( P(50 < X < 80) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>参数：\( \mu = 70 \)，\( \sigma^2 = 100 \)，\( \sigma = 10 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>标准化：\( Z = \dfrac{X - \mu}{\sigma} \sim N(0,1) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>转化区间：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( P(50 < X < 80) = P\!\left(\dfrac{50-70}{10} < Z < \dfrac{80-70}{10}\right) \)<br>
+                                \( = P(-2 < Z < 1) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>用 \(\Phi\) 函数：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( = \Phi(1) - \Phi(-2) = \Phi(1) - [1-\Phi(2)] \)<br>
+                                \( = 0.8413 - (1 - 0.9772) = 0.8413 - 0.0228 \)<br>
+                                \( = 0.8185 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>标准化公式</h2>
+                    <div class="box formula-box">
+                        <div style="font-size: 24px; color: var(--accent-gold);">
+                            \( Z = \dfrac{X - \mu}{\sigma} \sim N(0,1) \)
+                        </div>
+                    </div>
+
+                    <h2>关键性质</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <table>
+                            <tr><th>性质</th><th>公式</th></tr>
+                            <tr><td>对称性</td><td>\( \Phi(-x) = 1 - \Phi(x) \)</td></tr>
+                            <tr><td>\( P(a < X < b) \)</td><td>\( \Phi\!\left(\dfrac{b-\mu}{\sigma}\right) - \Phi\!\left(\dfrac{a-\mu}{\sigma}\right) \)</td></tr>
+                        </table>
+                    </div>
+
+                    <h2>常用 \(\Phi\) 值</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <table>
+                            <tr><td>\(\Phi(1)\)</td><td>0.8413</td><td>\(\Phi(2)\)</td><td>0.9772</td></tr>
+                            <tr><td>\(\Phi(3)\)</td><td>0.9987</td><td>\(\Phi(1.96)\)</td><td>0.9750</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(50 < X < 80) = \Phi(1) - \Phi(-2) = \boxed{0.8185} \)
+            </div>
+        </div>
+        <div class="page-num">11 / 30</div>
+    </div>
+
+    <!-- ==================== 题8 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">08</span>分布函数与密度函数</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> CDF 与 PDF 的关系
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    设连续型随机变量 \( X \) 的密度函数 \( f(x) = \begin{cases} cx & 0 < x < 2 \\ 0 & \text{其他} \end{cases} \)<br>
+                    (1) 求常数 \( c \)；(2) 求分布函数 \( F(x) \)；(3) 求 \( P(1 < X < 3) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>由归一性求 \( c \)：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( \int_{-\infty}^{+\infty} f(x)\, dx = 1 \) ⇒ \( \int_0^2 cx\, dx = c \cdot \dfrac{x^2}{2}\Big|_0^2 = 2c = 1 \)<br>
+                                ∴ \( c = \dfrac{1}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>求 \( F(x) = \int_{-\infty}^x f(t)\, dt \)：
+                            <div style="margin: 6px 0 6px 32px;">
+                                当 \( x \leq 0 \)：\( F(x) = 0 \)<br>
+                                当 \( 0 < x < 2 \)：\( F(x) = \int_0^x \dfrac{t}{2} dt = \dfrac{x^2}{4} \)<br>
+                                当 \( x \geq 2 \)：\( F(x) = 1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( P(1 < X < 3) = F(3) - F(1) = 1 - \dfrac{1}{4} = \dfrac{3}{4} \)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>核心关系</h2>
+                    <div class="box formula-box" style="font-size: 17px; text-align: left; padding: 14px 18px;">
+                        <p><strong style="color: var(--accent-cyan);">密度 → 分布：</strong></p>
+                        <p style="text-align: center;">\( F(x) = \int_{-\infty}^x f(t)\, dt \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 10px 0;">
+                        <p><strong style="color: var(--accent-gold);">分布 → 密度：</strong></p>
+                        <p style="text-align: center;">\( f(x) = F'(x) \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 10px 0;">
+                        <p><strong style="color: var(--accent-green);">求概率：</strong></p>
+                        <p style="text-align: center;">\( P(a < X < b) = F(b) - F(a) \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 三件武器</h3>
+                        <p style="font-size: 15px;">① 归一性求参数：\(\int f = 1\)</p>
+                        <p style="font-size: 15px;">② 积分求 F(x)：分段讨论</p>
+                        <p style="font-size: 15px;">③ F(b)−F(a) 求概率</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( c = \boxed{\dfrac{1}{2}} \)，\( F(x) = \begin{cases} 0 & x \leq 0 \\ x^2/4 & 0<x<2 \\ 1 & x \geq 2 \end{cases} \)，\( P(1<X<3) = \boxed{\dfrac{3}{4}} \)
+            </div>
+        </div>
+        <div class="page-num">12 / 30</div>
+    </div>
+
+    <!-- ==================== PART III 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART III ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 15px; opacity: 0.25;">Ⅲ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">数字特征</h1>
+            <p style="font-size: 22px; color: var(--accent-purple);">Numerical Characteristics</p>
+            <div style="margin-top: 35px; display: flex; gap: 18px;">
+                <div class="tag tag-point">期望</div>
+                <div class="tag tag-point">方差</div>
+                <div class="tag tag-point">协方差</div>
+                <div class="tag tag-point">相关系数</div>
+                <div class="tag tag-point">切比雪夫不等式</div>
+            </div>
+        </div>
+        <div class="page-num">13 / 30</div>
+    </div>
+
+    <!-- ==================== 题9 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">09</span>数学期望</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 期望的定义与性质
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    设 \( X \) 的分布律为：\( P(X=-1)=0.3,\; P(X=0)=0.5,\; P(X=2)=0.2 \)<br>
+                    求 \( E(X) \) 和 \( E(3X+2) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>期望定义（离散型）：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( E(X) = \sum x_i p_i \)<br>
+                                \( = (-1)(0.3) + (0)(0.5) + (2)(0.2) \)<br>
+                                \( = -0.3 + 0 + 0.4 = 0.1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>利用线性性质：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( E(3X+2) = 3E(X) + 2 = 3(0.1) + 2 = 2.3 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>期望公式汇总</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 12px 18px;">
+                        <p><strong>离散型：</strong>\( E(X) = \sum x_i p_i \)</p>
+                        <p><strong>连续型：</strong>\( E(X) = \int_{-\infty}^{+\infty} x f(x)\, dx \)</p>
+                        <p><strong>函数：</strong>\( E(g(X)) = \sum g(x_i) p_i \) 或 \( \int g(x)f(x)\, dx \)</p>
+                    </div>
+
+                    <h2>重要性质</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <p>① \( E(aX+b) = aE(X) + b \)</p>
+                        <p>② \( E(X+Y) = E(X) + E(Y) \)（<span class="highlight-green">总成立</span>）</p>
+                        <p>③ X、Y 独立时：\( E(XY) = E(X) \cdot E(Y) \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 期望 = 加权平均</h3>
+                        <p style="font-size: 15px;">每个值乘以它出现的概率再求和。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( E(X) = \boxed{0.1} \)，\( E(3X+2) = \boxed{2.3} \)
+            </div>
+        </div>
+        <div class="page-num">14 / 30</div>
+    </div>
+
+    <!-- ==================== 题10 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">10</span>方差</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 方差计算 · 计算公式
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    承上题 \( X \)，求 \( D(X) \) 和 \( D(3X+2) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>先求 \( E(X^2) \)：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( E(X^2) = (-1)^2(0.3) + 0^2(0.5) + 2^2(0.2) \)<br>
+                                \( = 0.3 + 0 + 0.8 = 1.1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>用<span class="highlight-gold">计算公式</span>：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( D(X) = E(X^2) - [E(X)]^2 = 1.1 - 0.01 = 1.09 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>方差的性质：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( D(3X+2) = 3^2 \cdot D(X) = 9 \times 1.09 = 9.81 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>方差核心公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 16px; margin-bottom: 8px;">定义式：</p>
+                        <p>\( D(X) = E\!\left[(X - E(X))^2\right] \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 10px 0;">
+                        <p style="font-size: 16px; margin-bottom: 8px;"><span class="highlight-gold">计算公式</span>（更好用！）：</p>
+                        <p style="font-size: 22px; color: var(--accent-gold);">\( D(X) = E(X^2) - [E(X)]^2 \)</p>
+                    </div>
+
+                    <h2>重要性质</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <p>① \( D(aX+b) = a^2 D(X) \)（<span class="highlight-red">常数不影响方差</span>）</p>
+                        <p>② \( D(C) = 0 \)</p>
+                        <p>③ X、Y 独立：\( D(X \pm Y) = D(X) + D(Y) \)</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 易错</h3>
+                        <p style="font-size: 15px;">\( D(X+Y) = D(X) + D(Y) \) 需要<strong>独立</strong>！<br>否则要加 \( 2\text{Cov}(X,Y) \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( D(X) = \boxed{1.09} \)，\( D(3X+2) = \boxed{9.81} \)
+            </div>
+        </div>
+        <div class="page-num">15 / 30</div>
+    </div>
+
+    <!-- ==================== 题11 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">11</span>协方差与相关系数</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 协方差 · 相关系数
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    设 \( E(X)=1,\; E(Y)=2,\; D(X)=4,\; D(Y)=9,\; E(XY)=5 \)<br>
+                    求 \( \text{Cov}(X,Y) \)、\( \rho_{XY} \) 和 \( D(X+Y) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>协方差：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( \text{Cov}(X,Y) = E(XY) - E(X)E(Y) \)<br>
+                                \( = 5 - 1 \times 2 = 3 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>相关系数：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( \rho_{XY} = \dfrac{\text{Cov}(X,Y)}{\sqrt{D(X)}\sqrt{D(Y)}} = \dfrac{3}{\sqrt{4}\cdot\sqrt{9}} = \dfrac{3}{6} = 0.5 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( D(X+Y) \)：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( = D(X) + D(Y) + 2\text{Cov}(X,Y) \)<br>
+                                \( = 4 + 9 + 6 = 19 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>核心公式</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 12px 18px;">
+                        <p><strong style="color: var(--accent-cyan);">协方差：</strong></p>
+                        <p style="text-align: center; font-size: 18px;">\( \text{Cov}(X,Y) = E(XY) - E(X)E(Y) \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 8px 0;">
+                        <p><strong style="color: var(--accent-gold);">相关系数：</strong></p>
+                        <p style="text-align: center; font-size: 18px;">\( \rho = \dfrac{\text{Cov}(X,Y)}{\sqrt{D(X)D(Y)}} \in [-1,1] \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 8px 0;">
+                        <p><strong style="color: var(--accent-green);">方差的一般公式：</strong></p>
+                        <p style="text-align: center; font-size: 18px;">\( D(X \pm Y) = D(X) + D(Y) \pm 2\text{Cov} \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 \(\rho\) 的含义</h3>
+                        <p style="font-size: 15px;">\( |\rho| = 1 \)：线性相关</p>
+                        <p style="font-size: 15px;">\( \rho = 0 \)：不相关（不一定独立！）</p>
+                        <p style="font-size: 15px;">独立 ⇒ 不相关，反之不一定</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \text{Cov} = \boxed{3} \)，\( \rho = \boxed{0.5} \)，\( D(X+Y) = \boxed{19} \)
+            </div>
+        </div>
+        <div class="page-num">16 / 30</div>
+    </div>
+
+    <!-- ==================== 题12 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">12</span>切比雪夫不等式</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 切比雪夫不等式
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    设 \( E(X) = 10,\; D(X) = 4 \)。估计 \( P(|X - 10| \geq 6) \) 的上界。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>识别形式：\( |X - \mu| \geq \varepsilon \)，其中 \(\mu = 10\)，\(\varepsilon = 6\)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>代入切比雪夫不等式：
+                            <div style="margin: 8px 0 8px 32px; font-size: 20px;">
+                                \( P(|X - 10| \geq 6) \leq \dfrac{D(X)}{6^2} = \dfrac{4}{36} = \dfrac{1}{9} \)
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>等价形式</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <p>取对立事件：</p>
+                        <p>\( P(|X-10| < 6) \geq 1 - \dfrac{1}{9} = \dfrac{8}{9} \)</p>
+                        <p>即 X 落在 \( (4, 16) \) 内的概率至少 \( \dfrac{8}{9} \approx 88.9\% \)</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>切比雪夫不等式</h2>
+                    <div class="box formula-box">
+                        <div style="font-size: 22px; color: var(--accent-gold);">
+                            \( P(|X - \mu| \geq \varepsilon) \leq \dfrac{D(X)}{\varepsilon^2} \)
+                        </div>
+                        <p style="font-size: 14px; color: #888; margin-top: 8px;">对任意 \(\varepsilon > 0\) 成立</p>
+                    </div>
+
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong>等价写法：</strong></p>
+                        <p>\( P(|X - \mu| < \varepsilon) \geq 1 - \dfrac{D(X)}{\varepsilon^2} \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 意义</h3>
+                        <p style="font-size: 15px;">方差越小，X 集中在均值附近的概率越大。</p>
+                        <p style="font-size: 15px;">只需知道 \(E(X)\) 和 \(D(X)\)，<strong>无需知道分布</strong>！</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 注意</h3>
+                        <p style="font-size: 15px;">估计比较粗糙，只是上界/下界。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(|X - 10| \geq 6) \leq \boxed{\dfrac{1}{9}} \approx 0.111 \)
+            </div>
+        </div>
+        <div class="page-num">17 / 30</div>
+    </div>
+
+    <!-- ==================== PART IV 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART IV ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 15px; opacity: 0.25;">Ⅳ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">多维随机变量</h1>
+            <p style="font-size: 22px; color: var(--accent-purple);">Multivariate Random Variables</p>
+            <div style="margin-top: 35px; display: flex; gap: 18px;">
+                <div class="tag tag-point">联合分布</div>
+                <div class="tag tag-point">边缘分布</div>
+                <div class="tag tag-point">条件分布</div>
+                <div class="tag tag-point">独立性判断</div>
+            </div>
+        </div>
+        <div class="page-num">18 / 30</div>
+    </div>
+
+    <!-- ==================== 题13 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">13</span>联合分布与边缘分布（离散型）</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 联合分布律 · 边缘分布 · 独立性
+                <div style="font-size: 22px; margin-top: 10px; text-align: center;">
+                    (X, Y) 的联合分布律如下表。求边缘分布并判断 X、Y 是否独立。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.2;">
+                    <h2>联合分布律</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table style="text-align: center;">
+                            <tr>
+                                <th>X \ Y</th><th>Y=0</th><th>Y=1</th><th style="color: var(--accent-gold);">\(p_{i\cdot}\)</th>
+                            </tr>
+                            <tr>
+                                <td><strong>X=0</strong></td><td>1/4</td><td>1/4</td><td class="highlight-gold">1/2</td>
+                            </tr>
+                            <tr>
+                                <td><strong>X=1</strong></td><td>1/4</td><td>1/4</td><td class="highlight-gold">1/2</td>
+                            </tr>
+                            <tr>
+                                <td style="color: var(--accent-cyan);"><strong>\(p_{\cdot j}\)</strong></td>
+                                <td class="highlight-cyan">1/2</td>
+                                <td class="highlight-cyan">1/2</td>
+                                <td>1</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <h2>边缘分布计算</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <p><span class="highlight-gold">X 的边缘</span>：对每一行求和</p>
+                        <p>\( P(X=0) = \frac{1}{4} + \frac{1}{4} = \frac{1}{2} \)，\( P(X=1) = \frac{1}{2} \)</p>
+                        <hr style="border: 0; border-top: 1px solid #333; margin: 8px 0;">
+                        <p><span class="highlight-cyan">Y 的边缘</span>：对每一列求和</p>
+                        <p>\( P(Y=0) = \frac{1}{4} + \frac{1}{4} = \frac{1}{2} \)，\( P(Y=1) = \frac{1}{2} \)</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>独立性判断</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <p>检验：是否<strong>每个格子</strong>都满足：</p>
+                        <p style="text-align: center; color: var(--accent-gold); font-size: 20px;">\( p_{ij} = p_{i\cdot} \cdot p_{\cdot j} \)</p>
+                        <p>验证 \( P(X=0, Y=0) = \frac{1}{4} \stackrel{?}{=} \frac{1}{2} \times \frac{1}{2} = \frac{1}{4} \) <span class="highlight-green">✓</span></p>
+                        <p>其余三格同理均成立 ✓</p>
+                        <p style="margin-top: 8px;"><strong>结论：X 与 Y <span class="highlight-green">独立</span></strong></p>
+                    </div>
+
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 12px 18px;">
+                        <p><strong>边缘分布：</strong></p>
+                        <p>\( p_{i\cdot} = \sum_j p_{ij} \)（行求和）</p>
+                        <p>\( p_{\cdot j} = \sum_i p_{ij} \)（列求和）</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 8px 0;">
+                        <p><strong>独立性：</strong>每个 \( p_{ij} = p_{i\cdot} \cdot p_{\cdot j} \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 口诀</h3>
+                        <p style="font-size: 15px;">行求和得 X 边缘，列求和得 Y 边缘。<br>联合 = 边缘之积 ⇔ 独立。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                X、Y 的边缘分布均为 \( P=\frac{1}{2} \) 的 0-1 分布，且 \( \boxed{\text{X 与 Y 独立}} \)
+            </div>
+        </div>
+        <div class="page-num">19 / 30</div>
+    </div>
+
+    <!-- ==================== 题14 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">14</span>二维连续型联合密度</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 联合密度 · 边缘密度 · 求概率
+                <div style="font-size: 22px; margin-top: 10px; text-align: center;">
+                    设 \( (X,Y) \) 的联合密度 \( f(x,y) = \begin{cases} 6(1-y) & 0 < x < y < 1 \\ 0 & \text{其他} \end{cases} \)<br>
+                    (1) 求 \( P(X < \frac{1}{2}, Y < \frac{1}{2}) \)；(2) 求 X 的边缘密度 \( f_X(x) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>(1) 求概率</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>画出积分区域：\( 0 < x < y < 1 \) 与 \( x < \frac{1}{2}, y < \frac{1}{2} \) 的交集
+                            <div style="margin: 6px 0 6px 32px;">
+                                交集：\( 0 < x < y < \frac{1}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>二重积分（先 y 后 x）：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( P = \int_0^{1/2}\!\int_x^{1/2} 6(1-y)\, dy\, dx \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>先积 y：\( \int_x^{1/2} 6(1-y)\, dy = 6\!\left[y - \frac{y^2}{2}\right]_x^{1/2} = 6\!\left[\frac{3}{8} - x + \frac{x^2}{2}\right] \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>再积 x 并化简得 \( P = \dfrac{1}{8} \)
+                        </div>
+                    </div>
+
+                    <h2>(2) 边缘密度</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <p>\( f_X(x) = \int_{-\infty}^{+\infty} f(x,y)\, dy = \int_x^1 6(1-y)\, dy \)（当 \(0<x<1\)）</p>
+                        <p>\( = 6\!\left[y - \frac{y^2}{2}\right]_x^1 = 6\!\left[\frac{1}{2} - x + \frac{x^2}{2}\right] = 3(1-x)^2 \)</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>关键技巧</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong style="color: var(--accent-gold);">① 画区域！</strong>先画出 \(f \neq 0\) 的区域，再与所求区域取交集。</p>
+                        <hr style="border: 0; border-top: 1px solid #333; margin: 8px 0;">
+                        <p><strong style="color: var(--accent-cyan);">② 确定积分限</strong>：固定外层变量，看内层变量的范围。</p>
+                    </div>
+
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 12px 18px;">
+                        <p><strong>求概率：</strong></p>
+                        <p>\( P((X,Y) \in D) = \iint_D f(x,y)\, dx\, dy \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 8px 0;">
+                        <p><strong>边缘密度：</strong></p>
+                        <p>\( f_X(x) = \int_{-\infty}^{+\infty} f(x,y)\, dy \)</p>
+                        <p>\( f_Y(y) = \int_{-\infty}^{+\infty} f(x,y)\, dx \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 积分限口诀</h3>
+                        <p style="font-size: 15px;">求 \(f_X\)：x 固定，y 在非零区域积分。<br>求 \(f_Y\)：y 固定，x 在非零区域积分。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                (1) \( P = \boxed{\dfrac{1}{8}} \)　(2) \( f_X(x) = \boxed{3(1-x)^2} \)，\( 0 < x < 1 \)
+            </div>
+        </div>
+        <div class="page-num">20 / 30</div>
+    </div>
+
+    <!-- ==================== 题15 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">15</span>条件分布</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 条件密度函数
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    承 #14 题，\( f(x,y) = 6(1-y) \)（\( 0<x<y<1 \)）。求 \( f_{Y|X}(y|x) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>条件密度公式：
+                            <div style="margin: 6px 0 6px 32px; font-size: 20px;">
+                                \( f_{Y|X}(y|x) = \dfrac{f(x,y)}{f_X(x)} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>已知 \( f(x,y) = 6(1-y) \)，\( f_X(x) = 3(1-x)^2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：
+                            <div style="margin: 6px 0 6px 32px; font-size: 20px;">
+                                \( f_{Y|X}(y|x) = \dfrac{6(1-y)}{3(1-x)^2} = \dfrac{2(1-y)}{(1-x)^2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>定义域：给定 \(x\)，有 \( x < y < 1 \)
+                        </div>
+                    </div>
+
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong>验证归一性：</strong></p>
+                        <p>\( \int_x^1 \dfrac{2(1-y)}{(1-x)^2}\, dy = \dfrac{2}{(1-x)^2} \cdot \dfrac{(1-x)^2}{2} = 1 \) ✓</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>条件分布公式</h2>
+                    <div class="box formula-box" style="font-size: 17px; text-align: left; padding: 14px 18px;">
+                        <p><strong style="color: var(--accent-cyan);">连续型条件密度：</strong></p>
+                        <p style="text-align: center; font-size: 20px;">\( f_{Y|X}(y|x) = \dfrac{f(x,y)}{f_X(x)} \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 10px 0;">
+                        <p><strong style="color: var(--accent-gold);">离散型条件分布：</strong></p>
+                        <p style="text-align: center; font-size: 20px;">\( P(Y=y_j | X=x_i) = \dfrac{p_{ij}}{p_{i\cdot}} \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 理解</h3>
+                        <p style="font-size: 15px;">条件密度 = 联合密度 ÷ 边缘密度</p>
+                        <p style="font-size: 15px;">类比条件概率：\( P(B|A) = \dfrac{P(AB)}{P(A)} \)</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 别忘记</h3>
+                        <p style="font-size: 15px;">条件密度的定义域也要写清楚！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( f_{Y|X}(y|x) = \boxed{\dfrac{2(1-y)}{(1-x)^2}} \)，\( x < y < 1 \)
+            </div>
+        </div>
+        <div class="page-num">21 / 30</div>
+    </div>
+
+    <!-- ==================== 题16 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">16</span>随机变量函数的分布</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> Y=g(X) 的分布
+                <div style="font-size: 26px; margin-top: 10px; text-align: center;">
+                    设 \( X \sim U(0, 2) \)，求 \( Y = X^2 \) 的密度函数
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>方法：分布函数法（万能法）</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>X 的密度：\( f_X(x) = \frac{1}{2} \)，\( 0 < x < 2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>Y 的范围：\( x \in (0,2) \Rightarrow y = x^2 \in (0,4) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>求 Y 的分布函数（\( 0 < y < 4 \)）：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( F_Y(y) = P(Y \leq y) = P(X^2 \leq y) = P(X \leq \sqrt{y}) \)<br>
+                                （因 \(X > 0\)，不用考虑负根）<br>
+                                \( = \int_0^{\sqrt{y}} \frac{1}{2}\, dx = \frac{\sqrt{y}}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>求导得密度：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( f_Y(y) = F_Y'(y) = \frac{1}{2} \cdot \frac{1}{2\sqrt{y}} = \frac{1}{4\sqrt{y}} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>分布函数法三步走</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 14px 18px;">
+                        <p><span class="step-num">1</span><strong>写出</strong> \( F_Y(y) = P(Y \leq y) = P(g(X) \leq y) \)</p>
+                        <p><span class="step-num">2</span><strong>转化</strong>为 X 的概率（解不等式）</p>
+                        <p><span class="step-num">3</span><strong>求导</strong> \( f_Y(y) = F_Y'(y) \)</p>
+                    </div>
+
+                    <h2>公式法（单调函数）</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <p>若 \( y = g(x) \) 严格单调，反函数 \( x = h(y) \)：</p>
+                        <div style="text-align: center; color: var(--accent-gold); font-size: 18px; margin: 8px 0;">
+                            \( f_Y(y) = f_X(h(y)) \cdot |h'(y)| \)
+                        </div>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 选择方法</h3>
+                        <p style="font-size: 15px;"><strong>单调函数</strong>→公式法（更快）</p>
+                        <p style="font-size: 15px;"><strong>非单调函数</strong>→分布函数法（万能）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( f_Y(y) = \begin{cases} \boxed{\dfrac{1}{4\sqrt{y}}} & 0 < y < 4 \\ 0 & \text{其他} \end{cases} \)
+            </div>
+        </div>
+        <div class="page-num">22 / 30</div>
+    </div>
+
+    <!-- ==================== PART V 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART V ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 15px; opacity: 0.25;">Ⅴ</div>
+            <h1 style="border: none; text-align: center; font-size: 48px;">极限定理与统计基础</h1>
+            <p style="font-size: 22px; color: var(--accent-purple);">Limit Theorems &amp; Statistical Foundations</p>
+            <div style="margin-top: 35px; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-point">大数定律</div>
+                <div class="tag tag-point">中心极限定理</div>
+                <div class="tag tag-point">矩估计</div>
+                <div class="tag tag-point">最大似然估计</div>
+            </div>
+        </div>
+        <div class="page-num">23 / 30</div>
+    </div>
+
+    <!-- ==================== 题17 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">17</span>大数定律</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 大数定律的理解与应用
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    抛硬币 10000 次，正面朝上的频率接近 0.5。这用什么定理解释？<br>
+                    如何精确表述？
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>精确表述</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>设 \( X_i \) 为第 i 次抛硬币结果（正面=1，反面=0）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( X_1, X_2, \ldots \) 独立同分布，\( E(X_i) = 0.5 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>频率 = \( \bar{X}_n = \dfrac{1}{n}\sum_{i=1}^n X_i \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>由<span class="highlight-gold">辛钦大数定律</span>：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( \bar{X}_n \xrightarrow{P} E(X) = 0.5 \)
+                            </div>
+                            <p style="margin-left: 32px; font-size: 16px;">即 \( \forall \varepsilon > 0 \)，\( \lim_{n\to\infty} P(|\bar{X}_n - 0.5| \geq \varepsilon) = 0 \)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>三大大数定律</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <table>
+                            <tr><th>名称</th><th>条件</th><th>结论</th></tr>
+                            <tr>
+                                <td class="highlight-gold">切比雪夫</td>
+                                <td>两两不相关，方差有界</td>
+                                <td>\( \bar{X}_n \xrightarrow{P} \frac{1}{n}\sum E(X_i) \)</td>
+                            </tr>
+                            <tr>
+                                <td class="highlight-gold">辛钦</td>
+                                <td>iid，期望存在</td>
+                                <td>\( \bar{X}_n \xrightarrow{P} \mu \)</td>
+                            </tr>
+                            <tr>
+                                <td class="highlight-gold">伯努利</td>
+                                <td>n 重伯努利试验</td>
+                                <td>\( \frac{n_A}{n} \xrightarrow{P} p \)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 核心思想</h3>
+                        <p style="font-size: 15px;">样本均值在概率意义下趋近于总体期望。</p>
+                        <p style="font-size: 15px;">"大量重复试验中，频率趋于概率"。</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 注意</h3>
+                        <p style="font-size: 15px;">\( \xrightarrow{P} \) 是<strong>依概率收敛</strong>，不是几乎处处收敛。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                由辛钦大数定律：\( \boxed{\bar{X}_n \xrightarrow{P} 0.5} \)（频率依概率收敛于概率）
+            </div>
+        </div>
+        <div class="page-num">24 / 30</div>
+    </div>
+
+    <!-- ==================== 题18 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">18</span>中心极限定理</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 林德伯格-列维中心极限定理
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    某保险公司有 10000 份同类保单，每份索赔概率 0.01，索赔额均值 2万，标准差 1万。<br>
+                    估计总索赔额超过 230万的概率。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>设 \( X_i \) 为第 i 份保单的索赔额（含不索赔=0的情况）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>简化处理：设有效索赔笔数 \( N \sim B(10000, 0.01) \)<br>
+                            期望索赔笔数 \( E(N) = 100 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>总索赔 \( S = \sum_{i=1}^{100} Y_i \)（近似 100 笔独立索赔）<br>
+                            \( E(S) = 100 \times 2 = 200 \) 万<br>
+                            \( D(S) = 100 \times 1^2 = 100 \)，\( \sigma_S = 10 \) 万
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>由 CLT：\( S \stackrel{\text{近似}}{\sim} N(200, 100) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">5</span>\( P(S > 230) = 1 - \Phi\!\left(\dfrac{230 - 200}{10}\right) = 1 - \Phi(3) \approx 0.0013 \)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>中心极限定理</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 14px 18px;">
+                        <p><strong style="color: var(--accent-gold);">林德伯格-列维 CLT：</strong></p>
+                        <p>设 \( X_1, X_2, \ldots \) iid，\( E(X_i) = \mu \)，\( D(X_i) = \sigma^2 \)</p>
+                        <p style="text-align: center; font-size: 18px; margin: 8px 0; color: var(--accent-gold);">
+                            \( \dfrac{\sum X_i - n\mu}{\sigma\sqrt{n}} \xrightarrow{d} N(0,1) \)
+                        </p>
+                        <p>即 \( \sum X_i \stackrel{\text{近似}}{\sim} N(n\mu,\, n\sigma^2) \)</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 应用口诀</h3>
+                        <p style="font-size: 15px;">① 求出 \( \sum X \) 的均值和方差</p>
+                        <p style="font-size: 15px;">② 近似为正态分布</p>
+                        <p style="font-size: 15px;">③ 标准化后查 \(\Phi\) 表</p>
+                    </div>
+
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>经验：</strong>\( n \geq 30 \) 时近似效果就不错。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( P(S > 230) \approx 1 - \Phi(3) \approx \boxed{0.0013} \)
+            </div>
+        </div>
+        <div class="page-num">25 / 30</div>
+    </div>
+
+    <!-- ==================== 题19 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">19</span>矩估计</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 矩估计法
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    设总体 X 的密度 \( f(x;\theta) = \begin{cases} (\theta+1)x^\theta & 0 < x < 1 \\ 0 & \text{其他} \end{cases} \)（\(\theta > -1\)）<br>
+                    求 \(\theta\) 的矩估计量。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>计算总体一阶矩（期望）：
+                            <div style="margin: 6px 0 6px 32px; font-size: 17px;">
+                                \( E(X) = \int_0^1 x \cdot (\theta+1)x^\theta\, dx = (\theta+1)\int_0^1 x^{\theta+1}\, dx \)<br>
+                                \( = (\theta+1) \cdot \dfrac{1}{\theta+2} = \dfrac{\theta+1}{\theta+2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>令总体矩 = 样本矩：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( \dfrac{\theta+1}{\theta+2} = \bar{X} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>解出 \(\theta\)：
+                            <div style="margin: 6px 0 6px 32px; font-size: 18px;">
+                                \( (\theta+1) = \bar{X}(\theta+2) \)<br>
+                                \( \theta + 1 = \bar{X}\theta + 2\bar{X} \)<br>
+                                \( \theta(1-\bar{X}) = 2\bar{X} - 1 \)<br>
+                                \( \hat{\theta} = \dfrac{2\bar{X}-1}{1-\bar{X}} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>矩估计法步骤</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 14px 18px;">
+                        <p><span class="step-num">1</span>计算总体的 k 阶矩 \( \mu_k = E(X^k) \)（含参数 θ）</p>
+                        <p><span class="step-num">2</span>令 \( \mu_k = A_k \)（样本 k 阶矩 \( A_k = \frac{1}{n}\sum X_i^k \)）</p>
+                        <p><span class="step-num">3</span>解方程得 \( \hat{\theta} \)</p>
+                    </div>
+
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong>几个参数就列几个方程：</strong></p>
+                        <p>1 个参数 → 用一阶矩</p>
+                        <p>2 个参数 → 用一阶 + 二阶矩</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 核心思想</h3>
+                        <p style="font-size: 15px;">用<span class="highlight-gold">样本矩替代总体矩</span>。<br>
+                        思路简单，但估计不一定最优。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \hat{\theta} = \boxed{\dfrac{2\bar{X}-1}{1-\bar{X}}} \)
+            </div>
+        </div>
+        <div class="page-num">26 / 30</div>
+    </div>
+
+    <!-- ==================== 题20 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">20</span>最大似然估计（MLE）</h1>
+
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 最大似然估计
+                <div style="font-size: 24px; margin-top: 10px; text-align: center;">
+                    设总体 \( X \sim Exp(\lambda) \)，密度 \( f(x;\lambda) = \lambda e^{-\lambda x} \)（\(x > 0\)）。<br>
+                    由样本 \( x_1, \ldots, x_n \)，求 \(\lambda\) 的最大似然估计。
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box" style="font-size: 17px;">
+                        <div class="step">
+                            <span class="step-num">1</span>写似然函数：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( L(\lambda) = \prod_{i=1}^n \lambda e^{-\lambda x_i} = \lambda^n \, e^{-\lambda \sum x_i} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>取对数（对数似然）：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( \ln L = n\ln\lambda - \lambda \sum x_i \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>对 \(\lambda\) 求导并令其为零：
+                            <div style="margin: 6px 0 6px 32px;">
+                                \( \dfrac{d \ln L}{d\lambda} = \dfrac{n}{\lambda} - \sum x_i = 0 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>解出：
+                            <div style="margin: 6px 0 6px 32px; font-size: 20px;">
+                                \( \hat{\lambda} = \dfrac{n}{\sum x_i} = \dfrac{1}{\bar{x}} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">5</span>验证二阶导 < 0（确认是极大值）✓
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>MLE 四步法</h2>
+                    <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 14px 18px;">
+                        <p><span class="step-num">1</span><strong>写</strong>似然函数 \( L(\theta) = \prod f(x_i; \theta) \)</p>
+                        <p><span class="step-num">2</span><strong>取</strong>对数 \( \ln L(\theta) \)</p>
+                        <p><span class="step-num">3</span><strong>求导</strong>令 \( \dfrac{d\ln L}{d\theta} = 0 \)</p>
+                        <p><span class="step-num">4</span><strong>解出</strong> \( \hat{\theta} \)</p>
+                    </div>
+
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong>验证：</strong>\( E(X) = 1/\lambda \) → \( \hat{\lambda} = 1/\bar{x} \)</p>
+                        <p>与矩估计结果一致（对指数分布）</p>
+                    </div>
+
+                    <div class="tip-box box">
+                        <h3>💡 核心思想</h3>
+                        <p style="font-size: 15px;">找使<span class="highlight-gold">观测数据出现概率最大</span>的参数值。</p>
+                    </div>
+
+                    <div class="warn-box box">
+                        <h3>⚠️ 特殊情况</h3>
+                        <p style="font-size: 15px;">均匀分布 \( U(0,\theta) \) 的 MLE 不能求导！<br>\( \hat{\theta} = \max(x_i) \)（直接分析）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \hat{\lambda}_{MLE} = \dfrac{1}{\bar{X}} = \boxed{\dfrac{n}{\sum_{i=1}^n X_i}} \)
+            </div>
+        </div>
+        <div class="page-num">27 / 30</div>
+    </div>
+
+    <!-- ==================== 常用分布速查 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ APPENDIX ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content">
+            <h1>📊 常用分布速查表</h1>
+
+            <div class="row" style="gap: 18px;">
+                <div class="col">
+                    <h2>离散型分布</h2>
+                    <div class="box" style="font-size: 14px; padding: 12px;">
+                        <table>
+                            <tr><th>分布</th><th>记号</th><th>\(E(X)\)</th><th>\(D(X)\)</th></tr>
+                            <tr>
+                                <td>0-1分布</td>
+                                <td>\(B(1,p)\)</td>
+                                <td>\(p\)</td>
+                                <td>\(p(1-p)\)</td>
+                            </tr>
+                            <tr>
+                                <td>二项分布</td>
+                                <td>\(B(n,p)\)</td>
+                                <td>\(np\)</td>
+                                <td>\(np(1-p)\)</td>
+                            </tr>
+                            <tr>
+                                <td>泊松分布</td>
+                                <td>\(P(\lambda)\)</td>
+                                <td>\(\lambda\)</td>
+                                <td>\(\lambda\)</td>
+                            </tr>
+                            <tr>
+                                <td>几何分布</td>
+                                <td>\(Ge(p)\)</td>
+                                <td>\(1/p\)</td>
+                                <td>\((1-p)/p^2\)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <h2>连续型分布</h2>
+                    <div class="box" style="font-size: 14px; padding: 12px;">
+                        <table>
+                            <tr><th>分布</th><th>记号</th><th>\(E(X)\)</th><th>\(D(X)\)</th></tr>
+                            <tr>
+                                <td>均匀分布</td>
+                                <td>\(U(a,b)\)</td>
+                                <td>\(\frac{a+b}{2}\)</td>
+                                <td>\(\frac{(b-a)^2}{12}\)</td>
+                            </tr>
+                            <tr>
+                                <td>指数分布</td>
+                                <td>\(Exp(\lambda)\)</td>
+                                <td>\(1/\lambda\)</td>
+                                <td>\(1/\lambda^2\)</td>
+                            </tr>
+                            <tr>
+                                <td>正态分布</td>
+                                <td>\(N(\mu,\sigma^2)\)</td>
+                                <td>\(\mu\)</td>
+                                <td>\(\sigma^2\)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>核心概率公式</h2>
+                    <div class="box" style="font-size: 15px; padding: 12px; line-height: 2;">
+                        <p><strong>加法：</strong>\( P(A \cup B) = P(A) + P(B) - P(AB) \)</p>
+                        <p><strong>条件：</strong>\( P(B|A) = \dfrac{P(AB)}{P(A)} \)</p>
+                        <p><strong>全概率：</strong>\( P(A) = \sum P(B_i)P(A|B_i) \)</p>
+                        <p><strong>贝叶斯：</strong>\( P(B_j|A) = \dfrac{P(B_j)P(A|B_j)}{P(A)} \)</p>
+                    </div>
+
+                    <h2>数字特征公式</h2>
+                    <div class="box" style="font-size: 15px; padding: 12px; line-height: 2;">
+                        <p>\( D(X) = E(X^2) - [E(X)]^2 \)</p>
+                        <p>\( E(aX+b) = aE(X)+b \)</p>
+                        <p>\( D(aX+b) = a^2 D(X) \)</p>
+                        <p>\( \text{Cov}(X,Y) = E(XY) - E(X)E(Y) \)</p>
+                        <p>\( D(X \pm Y) = D(X) + D(Y) \pm 2\text{Cov}(X,Y) \)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">28 / 30</div>
+    </div>
+
+    <!-- ==================== 方法论总结 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>🧠 解题方法论总结</h1>
+
+            <div class="row" style="gap: 18px;">
+                <div class="col">
+                    <h2>Ⅰ 事件概率（#01—#04）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>古典概型 → 计数（排列组合）</p>
+                        <p>条件概率 → 缩小样本空间</p>
+                        <p>全概率/贝叶斯 → "由因求果/由果溯因"</p>
+                        <p>独立性 → P(AB) = P(A)·P(B)</p>
+                    </div>
+
+                    <h2>Ⅱ 分布（#05—#08）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>看关键词识别分布类型</p>
+                        <p>正态分布 → 标准化后查表</p>
+                        <p>密度函数 ↔ 分布函数：积分/求导</p>
+                        <p>Y=g(X) → 分布函数法或公式法</p>
+                    </div>
+
+                    <h2>Ⅲ 数字特征（#09—#12）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>期望：加权平均，线性性质</p>
+                        <p>方差：用 \(E(X^2)-[E(X)]^2\)</p>
+                        <p>协方差：\(E(XY)-E(X)E(Y)\)</p>
+                        <p>切比雪夫：只需均值和方差即可估计</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h2>Ⅳ 多维分布（#13—#16）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>离散：联合分布表 → 行/列求和 = 边缘</p>
+                        <p>连续：画区域 → 确定积分限</p>
+                        <p>条件密度 = 联合 ÷ 边缘</p>
+                        <p>独立 ⇔ 联合 = 边缘之积</p>
+                    </div>
+
+                    <h2>Ⅴ 极限定理与估计（#17—#20）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>大数定律：\(\bar{X}_n \xrightarrow{P} \mu\)</p>
+                        <p>CLT：\(\sum X_i\) 近似正态</p>
+                        <p>矩估计：样本矩 = 总体矩</p>
+                        <p>MLE：写L → 取ln → 求导 → 解方程</p>
+                    </div>
+
+                    <div class="box" style="text-align: center; border: 2px solid var(--accent-gold); margin-top: 15px;">
+                        <p style="font-size: 20px; color: var(--accent-gold); margin-bottom: 5px;">
+                            🎯 掌握这 20 题，概率论核心框架尽在手中！
+                        </p>
+                        <p style="font-size: 16px; color: #888; margin-top: 5px;">
+                            下一步：每个题型做 3—5 道变式题巩固强化
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">29 / 30</div>
+    </div>
+
+    <!-- ==================== 结尾页 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 25px;">🎓</div>
+            <div class="cover-title" style="font-size: 48px;">恭喜通关！</div>
+            <div class="cover-subtitle" style="font-size: 22px; color: var(--accent-cyan);">
+                概率论与数理统计 · 20 题核心知识框架
+            </div>
+            <div style="width: 450px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-gold), transparent); margin: 25px 0;"></div>
+            <div style="font-size: 18px; color: #888; line-height: 2.2; max-width: 700px;">
+                <div style="display: flex; gap: 40px; justify-content: center; margin-bottom: 20px;">
+                    <div>
+                        <p>✅ 随机事件与概率</p>
+                        <p>✅ 随机变量及其分布</p>
+                        <p>✅ 数字特征</p>
+                    </div>
+                    <div>
+                        <p>✅ 多维随机变量</p>
+                        <p>✅ 极限定理</p>
+                        <p>✅ 参数估计</p>
+                    </div>
+                </div>
+                <p style="color: var(--accent-gold); font-size: 20px;">
+                    "概率论不是关于确定性的科学，而是关于不确定性的智慧。"
+                </p>
+            </div>
+        </div>
+        <div class="page-num">30 / 30</div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高等数学串讲：从函数到极限</title>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$','$']],
+      displayMath: [['$$','$$']],
+      processEscapes: true
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;700&display=swap');
+
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+
+  :root {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #111640;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.08);
+    --accent-blue: #4facfe;
+    --accent-purple: #a78bfa;
+    --accent-cyan: #22d3ee;
+    --accent-pink: #f472b6;
+    --accent-green: #34d399;
+    --accent-orange: #fb923c;
+    --accent-yellow: #fbbf24;
+    --accent-red: #f87171;
+    --text-primary: #f0f4ff;
+    --text-secondary: rgba(240,244,255,0.7);
+    --text-dim: rgba(240,244,255,0.45);
+    --gradient-1: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-2: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+    --gradient-3: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
+    --gradient-4: linear-gradient(135deg, #fb923c 0%, #fbbf24 100%);
+    --gradient-5: linear-gradient(135deg, #f472b6 0%, #f87171 100%);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  /* ============ SLIDE SYSTEM ============ */
+  .slide {
+    width: 100vw;
+    min-height: 100vh;
+    padding: 50px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(79,172,254,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(167,139,250,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 80%, rgba(34,211,238,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .slide > * { position: relative; z-index: 1; }
+
+  /* Slide separator */
+  .slide + .slide {
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ============ SLIDE NUMBER ============ */
+  .slide-number {
+    position: absolute;
+    bottom: 30px;
+    right: 60px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+    letter-spacing: 2px;
+    z-index: 2;
+  }
+
+  /* ============ SECTION TAG ============ */
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .section-tag.blue { background: rgba(79,172,254,0.15); color: var(--accent-blue); border: 1px solid rgba(79,172,254,0.25); }
+  .section-tag.purple { background: rgba(167,139,250,0.15); color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.25); }
+  .section-tag.cyan { background: rgba(34,211,238,0.15); color: var(--accent-cyan); border: 1px solid rgba(34,211,238,0.25); }
+  .section-tag.green { background: rgba(52,211,153,0.15); color: var(--accent-green); border: 1px solid rgba(52,211,153,0.25); }
+  .section-tag.orange { background: rgba(251,146,60,0.15); color: var(--accent-orange); border: 1px solid rgba(251,146,60,0.25); }
+  .section-tag.pink { background: rgba(244,114,182,0.15); color: var(--accent-pink); border: 1px solid rgba(244,114,182,0.25); }
+
+  /* ============ TITLES ============ */
+  .slide-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .slide-title.large {
+    font-size: 68px;
+  }
+  .slide-title.gradient-text {
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-title .highlight-blue { color: var(--accent-blue); }
+  .slide-title .highlight-purple { color: var(--accent-purple); }
+  .slide-title .highlight-cyan { color: var(--accent-cyan); }
+  .slide-title .highlight-green { color: var(--accent-green); }
+
+  .slide-subtitle {
+    font-size: 24px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 900px;
+  }
+
+  /* ============ CONTENT HELPERS ============ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    margin-top: 20px;
+  }
+  .two-col.gap-30 { gap: 30px; }
+  .two-col.col-40-60 { grid-template-columns: 2fr 3fr; }
+  .two-col.col-60-40 { grid-template-columns: 3fr 2fr; }
+  .two-col.col-45-55 { grid-template-columns: 45fr 55fr; }
+
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+  }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+  }
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-body {
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .card.accent-blue { border-left: 4px solid var(--accent-blue); }
+  .card.accent-purple { border-left: 4px solid var(--accent-purple); }
+  .card.accent-cyan { border-left: 4px solid var(--accent-cyan); }
+  .card.accent-green { border-left: 4px solid var(--accent-green); }
+  .card.accent-orange { border-left: 4px solid var(--accent-orange); }
+  .card.accent-pink { border-left: 4px solid var(--accent-pink); }
+
+  .card.filled-blue { background: rgba(79,172,254,0.08); border-color: rgba(79,172,254,0.2); }
+  .card.filled-purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); }
+  .card.filled-cyan { background: rgba(34,211,238,0.08); border-color: rgba(34,211,238,0.2); }
+  .card.filled-green { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); }
+  .card.filled-orange { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.2); }
+
+  /* ============ FORMULA BOX ============ */
+  .formula-box {
+    background: rgba(79,172,254,0.06);
+    border: 1px solid rgba(79,172,254,0.2);
+    border-radius: 14px;
+    padding: 28px 36px;
+    margin: 20px 0;
+    text-align: center;
+    font-size: 28px;
+    line-height: 1.8;
+  }
+  .formula-box.purple {
+    background: rgba(167,139,250,0.06);
+    border-color: rgba(167,139,250,0.2);
+  }
+  .formula-box.green {
+    background: rgba(52,211,153,0.06);
+    border-color: rgba(52,211,153,0.2);
+  }
+  .formula-box.orange {
+    background: rgba(251,146,60,0.06);
+    border-color: rgba(251,146,60,0.2);
+  }
+  .formula-box.cyan {
+    background: rgba(34,211,238,0.06);
+    border-color: rgba(34,211,238,0.2);
+  }
+  .formula-box.pink {
+    background: rgba(244,114,182,0.06);
+    border-color: rgba(244,114,182,0.2);
+  }
+  .formula-box.large { font-size: 36px; padding: 36px 48px; }
+  .formula-box.highlight {
+    border-width: 2px;
+    box-shadow: 0 0 30px rgba(79,172,254,0.1);
+  }
+
+  /* ============ QUESTION BOX ============ */
+  .question-box {
+    background: linear-gradient(135deg, rgba(251,146,60,0.1), rgba(251,191,36,0.06));
+    border: 1px solid rgba(251,146,60,0.3);
+    border-radius: 14px;
+    padding: 22px 30px;
+    margin: 18px 0;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent-orange);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    line-height: 1.6;
+  }
+  .question-box .icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ============ NOTE BOX ============ */
+  .note-box {
+    background: rgba(167,139,250,0.06);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 14px;
+    padding: 20px 28px;
+    margin: 16px 0;
+    font-size: 19px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.7;
+  }
+  .note-box .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    color: var(--accent-purple);
+  }
+
+  .warn-box {
+    background: rgba(248,113,113,0.06);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 14px;
+    padding: 20px 28px;
+    margin: 16px 0;
+    font-size: 19px;
+    color: rgba(248,113,113,0.9);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.7;
+  }
+
+  /* ============ FLOW / PROCESS ============ */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-item {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 18px 28px;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 140px;
+  }
+  .flow-item.blue { border-color: rgba(79,172,254,0.4); color: var(--accent-blue); background: rgba(79,172,254,0.08); }
+  .flow-item.purple { border-color: rgba(167,139,250,0.4); color: var(--accent-purple); background: rgba(167,139,250,0.08); }
+  .flow-item.cyan { border-color: rgba(34,211,238,0.4); color: var(--accent-cyan); background: rgba(34,211,238,0.08); }
+  .flow-item.green { border-color: rgba(52,211,153,0.4); color: var(--accent-green); background: rgba(52,211,153,0.08); }
+  .flow-item.orange { border-color: rgba(251,146,60,0.4); color: var(--accent-orange); background: rgba(251,146,60,0.08); }
+  .flow-item.pink { border-color: rgba(244,114,182,0.4); color: var(--accent-pink); background: rgba(244,114,182,0.08); }
+
+  .flow-arrow {
+    font-size: 28px;
+    color: var(--text-dim);
+  }
+
+  /* ============ LIST STYLES ============ */
+  .content-list {
+    list-style: none;
+    font-size: 22px;
+    line-height: 2;
+    color: var(--text-secondary);
+  }
+  .content-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .content-list li::before {
+    content: '▸';
+    color: var(--accent-blue);
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .content-list.purple li::before { color: var(--accent-purple); }
+  .content-list.green li::before { color: var(--accent-green); }
+  .content-list.cyan li::before { color: var(--accent-cyan); }
+
+  .content-list li strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ============ TABLE ============ */
+  .styled-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    font-size: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .styled-table thead th {
+    background: rgba(79,172,254,0.12);
+    color: var(--accent-blue);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(79,172,254,0.2);
+  }
+  .styled-table tbody td {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  .styled-table tbody tr:last-child td { border-bottom: none; }
+  .styled-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  .styled-table.purple thead th {
+    background: rgba(167,139,250,0.12);
+    color: var(--accent-purple);
+    border-bottom-color: rgba(167,139,250,0.2);
+  }
+  .styled-table.green thead th {
+    background: rgba(52,211,153,0.12);
+    color: var(--accent-green);
+    border-bottom-color: rgba(52,211,153,0.2);
+  }
+
+  /* ============ DIAGRAM: Unit Circle ============ */
+  .diagram-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .diagram-container svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ============ STEP PROCESS ============ */
+  .step-list {
+    counter-reset: step;
+    list-style: none;
+    font-size: 21px;
+    line-height: 1.7;
+  }
+  .step-list li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+    color: var(--text-secondary);
+  }
+  .step-list li::before {
+    content: counter(step);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--gradient-1);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-list.purple li::before { background: var(--gradient-2); }
+  .step-list.green li::before { background: var(--gradient-3); }
+
+  /* ============ BADGE ============ */
+  .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .badge.blue { background: rgba(79,172,254,0.2); color: var(--accent-blue); }
+  .badge.green { background: rgba(52,211,153,0.2); color: var(--accent-green); }
+  .badge.red { background: rgba(248,113,113,0.2); color: var(--accent-red); }
+
+  /* ============ COVER SLIDE ============ */
+  .cover-slide {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(79,172,254,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(167,139,250,0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 90%, rgba(34,211,238,0.06) 0%, transparent 40%),
+      var(--bg-primary);
+  }
+
+  .cover-slide .main-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #4facfe 0%, #a78bfa 40%, #f472b6 70%, #fb923c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cover-slide .cover-sub {
+    font-size: 30px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 60px;
+    letter-spacing: 4px;
+  }
+
+  .cover-slide .cover-tags {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cover-tag {
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+  }
+
+  /* ============ SECTION DIVIDER ============ */
+  .section-divider {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+  .section-divider .part-label {
+    font-size: 20px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+  .section-divider .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .section-divider .section-desc {
+    font-size: 24px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ============ ICON INLINE ============ */
+  .icon-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .icon-inline.blue { background: rgba(79,172,254,0.15); }
+  .icon-inline.purple { background: rgba(167,139,250,0.15); }
+  .icon-inline.cyan { background: rgba(34,211,238,0.15); }
+  .icon-inline.green { background: rgba(52,211,153,0.15); }
+  .icon-inline.orange { background: rgba(251,146,60,0.15); }
+
+  /* ============ DECORATIVE ============ */
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ============ COMPARISON ============ */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: start;
+    margin: 20px 0;
+  }
+  .comparison .vs {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dim);
+    padding-top: 40px;
+  }
+
+  /* ============ PROOF BLOCK ============ */
+  .proof-block {
+    background: rgba(52,211,153,0.04);
+    border: 1px solid rgba(52,211,153,0.15);
+    border-radius: 14px;
+    padding: 26px 32px;
+    margin: 16px 0;
+  }
+  .proof-block .proof-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-green);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .proof-block .proof-body {
+    font-size: 20px;
+    line-height: 2;
+    color: var(--text-secondary);
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1200px) {
+    .slide { padding: 40px 50px; }
+    .cover-slide .main-title { font-size: 56px; }
+    .slide-title { font-size: 40px; }
+    .slide-title.large { font-size: 50px; }
+    .two-col { grid-template-columns: 1fr; gap: 30px; }
+    .three-col { grid-template-columns: 1fr; gap: 20px; }
+    .formula-box { font-size: 22px; }
+    .formula-box.large { font-size: 28px; }
+  }
+
+  /* ============ NAV BAR ============ */
+  .nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10,14,39,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-bar .nav-title {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+  .nav-bar .nav-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--text-primary);
+  }
+  .nav-progress {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 6px 10px;
+  }
+
+  /* Print styling */
+  @media print {
+    .nav-bar { display: none; }
+    .slide { page-break-after: always; min-height: 100vh; }
+  }
+
+  /* Inline formula size */
+  .formula-inline {
+    font-size: 22px;
+    line-height: 2;
+  }
+  
+  /* Small text helper */
+  .small-text {
+    font-size: 17px;
+    color: var(--text-dim);
+  }
+
+  /* Emphasis text */
+  .em-blue { color: var(--accent-blue); font-weight: 600; }
+  .em-purple { color: var(--accent-purple); font-weight: 600; }
+  .em-cyan { color: var(--accent-cyan); font-weight: 600; }
+  .em-green { color: var(--accent-green); font-weight: 600; }
+  .em-orange { color: var(--accent-orange); font-weight: 600; }
+  .em-pink { color: var(--accent-pink); font-weight: 600; }
+  .em-yellow { color: var(--accent-yellow); font-weight: 600; }
+  .em-red { color: var(--accent-red); font-weight: 600; }
+
+  .text-center { text-align: center; }
+  .mt-10 { margin-top: 10px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-30 { margin-top: 30px; }
+  .mb-10 { margin-bottom: 10px; }
+  .mb-20 { margin-bottom: 20px; }
+  .mb-30 { margin-bottom: 30px; }
+</style>
+</head>
+<body>
+
+<!-- =================== NAV BAR =================== -->
+<div class="nav-bar">
+  <div class="nav-title">高等数学串讲 · 从函数到极限</div>
+  <div class="nav-controls">
+    <button class="nav-btn" onclick="prevSlide()">◀ 上一页</button>
+    <span class="nav-progress" id="slideIndicator">1 / 25</span>
+    <button class="nav-btn" onclick="nextSlide()">下一页 ▶</button>
+  </div>
+</div>
+
+<!-- =================== SLIDE 1: COVER =================== -->
+<div class="slide cover-slide" id="slide-1">
+  <div style="margin-bottom: 30px;">
+    <div style="font-size:16px; color:var(--text-dim); letter-spacing:6px; margin-bottom:30px;">ADVANCED MATHEMATICS</div>
+    <div class="main-title">从函数到极限</div>
+    <div class="cover-sub">高等数学核心概念串讲</div>
+  </div>
+  <div class="cover-tags">
+    <div class="cover-tag">📐 函数与初等函数</div>
+    <div class="cover-tag">🔄 反函数与复合函数</div>
+    <div class="cover-tag">∞ 极限理论</div>
+    <div class="cover-tag">ε-δ 严格定义</div>
+    <div class="cover-tag">≈ 无穷小与等价替换</div>
+  </div>
+  <div style="margin-top:60px; font-size:18px; color:var(--text-dim);">
+    主线思想：用已知逼近未知 · 用有限理解无穷
+  </div>
+  <div class="slide-number">01 / 25</div>
+</div>
+
+<!-- =================== SLIDE 2: ROADMAP =================== -->
+<div class="slide" id="slide-2">
+  <div class="section-tag blue">📍 课程路线</div>
+  <div class="slide-title">串讲<span class="highlight-blue">全景图</span></div>
+  <div class="slide-subtitle">三大板块 · 一条主线：函数是语言，极限是方法，无穷小是工具</div>
+
+  <div class="three-col">
+    <div class="card accent-blue">
+      <div class="card-title" style="color:var(--accent-blue)">
+        <span class="icon-inline blue">I</span> 函数
+      </div>
+      <div class="card-body">
+        <ul class="content-list" style="font-size:18px">
+          <li>函数概念与三要素</li>
+          <li>反函数</li>
+          <li>复合函数</li>
+          <li>初等函数</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card accent-purple">
+      <div class="card-title" style="color:var(--accent-purple)">
+        <span class="icon-inline purple">II</span> 极限
+      </div>
+      <div class="card-body">
+        <ul class="content-list purple" style="font-size:18px">
+          <li>数列极限 · ε-N 定义</li>
+          <li>函数极限 · ε-δ 定义</li>
+          <li>运算法则</li>
+          <li>夹逼准则 · 单调有界</li>
+          <li>两个重要极限</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card accent-green">
+      <div class="card-title" style="color:var(--accent-green)">
+        <span class="icon-inline green">III</span> 无穷小
+      </div>
+      <div class="card-body">
+        <ul class="content-list green" style="font-size:18px">
+          <li>无穷小与无穷大</li>
+          <li>无穷小的比较</li>
+          <li>等价无穷小替换</li>
+          <li>常用等价无穷小表</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row" style="margin-top:36px;">
+    <div class="flow-item blue">函数 — 舞台</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item purple">极限 — 方法</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item green">无穷小 — 语言</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item orange">导数 — 成果</div>
+  </div>
+  <div class="slide-number">02 / 25</div>
+</div>
+
+<!-- =================== SLIDE 3: SECTION I =================== -->
+<div class="slide section-divider" id="slide-3">
+  <div class="part-label">Part I</div>
+  <div class="section-title" style="color:var(--accent-blue)">函数</div>
+  <div class="section-desc">描述世界的语言——输入一个量，输出一个量</div>
+  <div class="glow-orb" style="width:400px;height:400px;background:var(--accent-blue);top:20%;left:60%;"></div>
+  <div class="slide-number">03 / 25</div>
+</div>
+
+<!-- =================== SLIDE 4: FUNCTION CONCEPT =================== -->
+<div class="slide" id="slide-4">
+  <div class="section-tag blue">Part I · 函数</div>
+  <div class="slide-title">函数<span class="highlight-blue">概念</span></div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>扔一个球，$t$ 秒后球在哪里？$h = v_0 t - \frac{1}{2}gt^2$<br>每给一个 $t$，唯一确定一个 $h$ —— 这就是函数。</div>
+  </div>
+
+  <div class="two-col col-60-40">
+    <div>
+      <div class="card filled-blue" style="margin-bottom:20px;">
+        <div class="card-title" style="color:var(--accent-blue)">📋 严格定义</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          设 $D$ 为非空数集。若存在对应法则 $f$，使得对 $D$ 中<span class="em-blue">每一个</span> $x$，都有<span class="em-blue">唯一确定</span>的 $y$ 与之对应，则称 $f$ 为定义在 $D$ 上的函数。
+        </div>
+      </div>
+      
+      <div class="note-box">
+        <span class="icon">💡</span>
+        <div><strong>函数就是一台机器</strong>：输入 $x$，输出 $y = f(x)$。别把它想复杂了。</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="text-align:center; padding:30px;">
+        <div style="font-size:18px; color:var(--accent-blue); font-weight:600; margin-bottom:16px;">两个关键词</div>
+        <svg width="280" height="220" viewBox="0 0 280 220">
+          <!-- Machine box -->
+          <rect x="80" y="60" width="120" height="80" rx="12" fill="rgba(79,172,254,0.1)" stroke="#4facfe" stroke-width="2"/>
+          <text x="140" y="107" fill="#4facfe" font-size="22" text-anchor="middle" font-weight="700">f</text>
+          <!-- Input arrow -->
+          <line x1="20" y1="100" x2="75" y2="100" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+          <text x="15" y="90" fill="#34d399" font-size="20" font-weight="600">x</text>
+          <!-- Output arrow -->
+          <line x1="205" y1="100" x2="255" y2="100" stroke="#f472b6" stroke-width="2.5" marker-end="url(#arrow-pink)"/>
+          <text x="258" y="90" fill="#f472b6" font-size="20" font-weight="600">y</text>
+          <!-- Labels -->
+          <text x="50" y="170" fill="rgba(240,244,255,0.5)" font-size="14">每一个 x</text>
+          <text x="155" y="170" fill="rgba(240,244,255,0.5)" font-size="14">唯一确定 y</text>
+          <text x="50" y="190" fill="#34d399" font-size="13">（不遗漏）</text>
+          <text x="155" y="190" fill="#f472b6" font-size="13">（不分裂）</text>
+          <defs>
+            <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="#34d399"/>
+            </marker>
+            <marker id="arrow-pink" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="#f472b6"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="question-box" style="margin-top:10px;">
+    <div class="icon">❓</div>
+    <div>圆 $x^2 + y^2 = 1$ 是函数吗？—— 不是！$x=0$ 对应 $y=\pm 1$ 两个值。<br>但上半圆 $y = \sqrt{1-x^2}$ 是函数 ✓</div>
+  </div>
+  <div class="slide-number">04 / 25</div>
+</div>
+
+<!-- =================== SLIDE 5: INVERSE FUNCTION =================== -->
+<div class="slide" id="slide-5">
+  <div class="section-tag blue">Part I · 函数</div>
+  <div class="slide-title">反函数：把机器<span class="highlight-cyan">反过来</span>用</div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>知道球的高度 $h$，能不能反过来求时间 $t$？<br>原来 $x \to y$，现在想 $y \to x$。</div>
+  </div>
+
+  <div class="two-col" style="margin-top:16px;">
+    <div>
+      <div class="card filled-cyan" style="margin-bottom:20px;">
+        <div class="card-title" style="color:var(--accent-cyan);">🔄 定义</div>
+        <div class="card-body" style="font-size:20px; line-height:1.9;">
+          若 $y = f(x)$ 是<span class="em-cyan">一一映射</span>，则反过来得到反函数 $x = f^{-1}(y)$
+          <div style="margin-top:12px;">
+            <strong>存在条件</strong>：$f$ 必须严格单调
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title">🔑 核心性质</div>
+        <div class="card-body" style="font-size:20px;">
+          $f^{-1}(f(x)) = x$ &nbsp;&nbsp;且&nbsp;&nbsp; $f(f^{-1}(x)) = x$
+          <div style="margin-top:8px; color:var(--text-dim); font-size:17px;">先正着走再反着走 = 回到原地</div>
+        </div>
+      </div>
+
+      <div class="formula-box cyan" style="font-size:22px;">
+        $y = e^x \;\;\xleftrightarrow{\text{互为反函数}}\;\; y = \ln x$
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div class="card" style="text-align:center; padding:20px 30px;">
+        <div style="font-size:18px; color:var(--accent-cyan); font-weight:600; margin-bottom:12px;">几何意义：关于 $y=x$ 对称</div>
+        <svg width="300" height="300" viewBox="0 0 300 300">
+          <!-- Grid -->
+          <line x1="30" y1="270" x2="280" y2="270" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <line x1="30" y1="270" x2="30" y2="20" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- y = x line -->
+          <line x1="30" y1="270" x2="270" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+          <text x="252" y="45" fill="rgba(255,255,255,0.3)" font-size="14">y=x</text>
+          <!-- e^x curve -->
+          <path d="M30,240 Q80,235 120,210 Q160,175 190,120 Q210,75 230,30" fill="none" stroke="#4facfe" stroke-width="2.5"/>
+          <text x="232" y="25" fill="#4facfe" font-size="15" font-weight="600">$y=e^x$</text>
+          <!-- ln x curve -->
+          <path d="M60,270 Q65,230 90,190 Q125,140 180,110 Q235,85 270,70" fill="none" stroke="#f472b6" stroke-width="2.5"/>
+          <text x="248" y="65" fill="#f472b6" font-size="15" font-weight="600">$y=\ln x$</text>
+          <!-- Point pair -->
+          <circle cx="120" cy="210" r="5" fill="#4facfe"/>
+          <circle cx="210" cy="120" r="5" fill="#f472b6"/>
+          <line x1="120" y1="210" x2="210" y2="120" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="155" y="155" fill="rgba(255,255,255,0.4)" font-size="12">(a,b)↔(b,a)</text>
+          <!-- Axis labels -->
+          <text x="275" y="285" fill="rgba(255,255,255,0.4)" font-size="14">x</text>
+          <text x="15" y="20" fill="rgba(255,255,255,0.4)" font-size="14">y</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">05 / 25</div>
+</div>
+
+<!-- =================== SLIDE 6: COMPOSITE FUNCTION =================== -->
+<div class="slide" id="slide-6">
+  <div class="section-tag blue">Part I · 函数</div>
+  <div class="slide-title">复合函数：机器<span class="highlight-purple">串联</span></div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>高度 $h = g(t)$ 随时间变化，阻力 $F = f(h)$ 随高度变化。<br>$F$ 怎样随 $t$ 变化？—— 串联：$F = f(g(t))$</div>
+  </div>
+
+  <div class="flow-row" style="margin:30px 0;">
+    <div class="flow-item blue" style="min-width:80px;">$x$</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item purple" style="padding:18px 30px;">
+      $u = g(x)$<br><span style="font-size:14px; color:var(--text-dim);">内层函数</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item cyan" style="padding:18px 30px;">
+      $y = f(u)$<br><span style="font-size:14px; color:var(--text-dim);">外层函数</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item green" style="min-width:80px;">$y$</div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="card filled-purple">
+        <div class="card-title" style="color:var(--accent-purple);">📋 定义</div>
+        <div class="card-body" style="font-size:20px; line-height:1.9;">
+          设 $y = f(u)$，$u = g(x)$<br>
+          若 $g(x)$ 的值域 $\subseteq f(u)$ 的定义域<br>
+          则 $y = f(g(x))$ 为<strong>复合函数</strong>
+        </div>
+      </div>
+      
+      <div class="warn-box" style="margin-top:16px;">
+        <span style="font-size:22px; flex-shrink:0;">⚠️</span>
+        <div>不是任意两个函数都能复合！<br>$f(u) = \sqrt{u}$（需 $u \geq 0$）与 $g(x) = -x^2 - 1$（值域 $\leq -1$）<strong>无法复合</strong></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">🧅 "套娃"拆解法</div>
+        <div class="card-body" style="font-size:20px; line-height:2.2;">
+          $y = e^{\sin x}$
+          <div style="margin-top:8px;">
+            <span class="em-purple">外层</span>：$y = e^u$<br>
+            <span class="em-cyan">内层</span>：$u = \sin x$
+          </div>
+          <div style="margin-top:12px; color:var(--text-dim); font-size:17px;">
+            求导时（链式法则）也是一层层剥
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🧅 更深的套娃</div>
+        <div class="card-body" style="font-size:20px; line-height:2.2;">
+          $y = \ln(\cos(x^2 + 1))$
+          <div style="margin-top:8px;">
+            第1层：$v = x^2 + 1$<br>
+            第2层：$u = \cos v$<br>
+            第3层：$y = \ln u$
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">06 / 25</div>
+</div>
+
+<!-- =================== SLIDE 7: ELEMENTARY FUNCTIONS =================== -->
+<div class="slide" id="slide-7">
+  <div class="section-tag blue">Part I · 函数</div>
+  <div class="slide-title"><span class="highlight-blue">初等函数</span>：六类基本积木</div>
+  <div class="slide-subtitle">大量函数都可以由六类"积木"经过四则运算和复合搭建而成</div>
+
+  <div class="three-col" style="gap:20px;">
+    <div class="card accent-blue" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-blue); font-size:20px;">① 常数函数</div>
+      <div class="card-body" style="font-size:19px;">$y = C$<br><span style="color:var(--text-dim);">水平直线</span></div>
+    </div>
+    <div class="card accent-purple" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-purple); font-size:20px;">② 幂函数</div>
+      <div class="card-body" style="font-size:19px;">$y = x^\alpha$<br><span style="color:var(--text-dim);">过点 $(1,1)$</span></div>
+    </div>
+    <div class="card accent-cyan" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-cyan); font-size:20px;">③ 指数函数</div>
+      <div class="card-body" style="font-size:19px;">$y = a^x\;(a>0,a\neq1)$<br><span style="color:var(--text-dim);">过点 $(0,1)$，恒正</span></div>
+    </div>
+    <div class="card accent-green" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-green); font-size:20px;">④ 对数函数</div>
+      <div class="card-body" style="font-size:19px;">$y = \log_a x$<br><span style="color:var(--text-dim);">指数的反函数</span></div>
+    </div>
+    <div class="card accent-orange" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-orange); font-size:20px;">⑤ 三角函数</div>
+      <div class="card-body" style="font-size:19px;">$\sin x,\;\cos x,\;\tan x$<br><span style="color:var(--text-dim);">周期性</span></div>
+    </div>
+    <div class="card accent-pink" style="padding:22px;">
+      <div class="card-title" style="color:var(--accent-pink); font-size:20px;">⑥ 反三角函数</div>
+      <div class="card-body" style="font-size:19px;">$\arcsin x,\;\arctan x$<br><span style="color:var(--text-dim);">三角的反函数</span></div>
+    </div>
+  </div>
+
+  <div class="formula-box" style="margin-top:26px; font-size:22px;">
+    <strong>初等函数</strong> = 基本初等函数 经 <span class="em-blue">有限次</span> 四则运算 + 复合 → <span class="em-blue">一个</span>解析式
+  </div>
+
+  <div class="two-col" style="margin-top:16px; gap:24px;">
+    <div class="card" style="padding:18px 24px;">
+      <div style="color:var(--accent-green); font-weight:600; margin-bottom:8px;">✅ 是初等函数</div>
+      <div style="font-size:19px; color:var(--text-secondary); line-height:2;">
+        $y = x^2 + \sin x$（四则）<br>
+        $y = e^{\tan(\ln x)}$（复合）
+      </div>
+    </div>
+    <div class="card" style="padding:18px 24px;">
+      <div style="color:var(--accent-red); font-weight:600; margin-bottom:8px;">❌ 不是初等函数</div>
+      <div style="font-size:19px; color:var(--text-secondary); line-height:2;">
+        $y = |x| = \begin{cases} x, & x \geq 0 \\ -x, & x < 0 \end{cases}$<br>
+        <span style="font-size:16px; color:var(--text-dim);">（分段定义，非一个解析式）</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">07 / 25</div>
+</div>
+
+<!-- =================== SLIDE 8: SECTION II =================== -->
+<div class="slide section-divider" id="slide-8">
+  <div class="part-label">Part II</div>
+  <div class="section-title" style="color:var(--accent-purple)">极限</div>
+  <div class="section-desc">无穷的驯服术——用无限趋近定义"到不了的值"</div>
+  <div class="glow-orb" style="width:400px;height:400px;background:var(--accent-purple);top:30%;left:20%;"></div>
+  <div class="slide-number">08 / 25</div>
+</div>
+
+<!-- =================== SLIDE 9: WHY LIMIT =================== -->
+<div class="slide" id="slide-9">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">为什么需要<span class="highlight-purple">极限</span>？</div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>圆的面积是 $\pi r^2$，但圆不是多边形。我们怎么算它的面积？</div>
+  </div>
+
+  <div style="display:flex; justify-content:center; margin:30px 0;">
+    <svg width="700" height="200" viewBox="0 0 700 200">
+      <!-- Polygon 1: hexagon -->
+      <g transform="translate(90,100)">
+        <polygon points="60,0 30,52 -30,52 -60,0 -30,-52 30,-52" fill="rgba(167,139,250,0.1)" stroke="#a78bfa" stroke-width="2"/>
+        <text x="0" y="85" fill="rgba(255,255,255,0.5)" font-size="14" text-anchor="middle">正6边形</text>
+      </g>
+      <!-- Arrow -->
+      <text x="170" y="105" fill="rgba(255,255,255,0.3)" font-size="28">→</text>
+      <!-- Polygon 2: dodecagon -->
+      <g transform="translate(270,100)">
+        <polygon points="60,0 52,30 30,52 0,60 -30,52 -52,30 -60,0 -52,-30 -30,-52 0,-60 30,-52 52,-30" fill="rgba(167,139,250,0.12)" stroke="#a78bfa" stroke-width="2"/>
+        <text x="0" y="85" fill="rgba(255,255,255,0.5)" font-size="14" text-anchor="middle">正12边形</text>
+      </g>
+      <!-- Arrow -->
+      <text x="350" y="105" fill="rgba(255,255,255,0.3)" font-size="28">→</text>
+      <!-- Polygon 3: many sides -->
+      <g transform="translate(450,100)">
+        <circle cx="0" cy="0" r="60" fill="rgba(167,139,250,0.14)" stroke="#a78bfa" stroke-width="2" stroke-dasharray="3,2"/>
+        <text x="0" y="85" fill="rgba(255,255,255,0.5)" font-size="14" text-anchor="middle">正24边形</text>
+      </g>
+      <!-- Arrow -->
+      <text x="530" y="105" fill="rgba(255,255,255,0.3)" font-size="28">→ ⋯ →</text>
+      <!-- Circle -->
+      <g transform="translate(630,100)">
+        <circle cx="0" cy="0" r="60" fill="rgba(79,172,254,0.15)" stroke="#4facfe" stroke-width="2.5"/>
+        <text x="0" y="5" fill="#4facfe" font-size="18" text-anchor="middle" font-weight="700">⊙</text>
+        <text x="0" y="85" fill="#4facfe" font-size="14" text-anchor="middle" font-weight="600">圆！</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="two-col col-60-40">
+    <div>
+      <div class="card filled-purple">
+        <div class="card-title" style="color:var(--accent-purple);">💡 极限思想</div>
+        <div class="card-body" style="font-size:22px; line-height:1.9;">
+          无法一步到位得到答案，<br>
+          但可以通过一个<span class="em-purple">无限趋近的过程</span>来<strong>定义</strong>答案。<br><br>
+          边数 $n \to \infty$，面积 $S_n \to \pi r^2$
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">🎯 核心矛盾</div>
+        <div class="card-body" style="font-size:20px; line-height:1.9;">
+          "趋向"到底是什么意思？<br>
+          "越来越接近"够不够精确？<br><br>
+          <span style="color:var(--accent-orange);">→ 需要 ε-δ 语言！</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">09 / 25</div>
+</div>
+
+<!-- =================== SLIDE 10: SEQUENCE LIMIT =================== -->
+<div class="slide" id="slide-10">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">数列极限与 <span class="highlight-purple">$\varepsilon$-$N$ 定义</span></div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>$a_n = \frac{1}{n}$：$1, \frac{1}{2}, \frac{1}{3}, \frac{1}{4}, \ldots$ 趋向 $0$。但 $(-1)^n \cdot \frac{1}{n}$ 在两侧跳动，也趋向 $0$。<br>"越来越接近"不够用——需要更精确的说法！</div>
+  </div>
+
+  <div class="two-col col-45-55" style="margin-top:16px;">
+    <div>
+      <div class="card filled-purple">
+        <div class="card-title" style="color:var(--accent-purple);">📋 $\varepsilon$-$N$ 定义</div>
+        <div class="card-body" style="font-size:20px; line-height:2.2;">
+          $\lim_{n\to\infty} a_n = A$ 的含义：<br><br>
+          对 <span class="em-purple">$\forall\;\varepsilon > 0$</span>（任意精度要求），<br>
+          <span class="em-cyan">$\exists\;N \in \mathbb{N}^+$</span>，使得当 $n > N$ 时：
+        </div>
+      </div>
+      <div class="formula-box purple" style="font-size:32px; margin-top:12px;">
+        $|a_n - A| < \varepsilon$
+      </div>
+    </div>
+
+    <div>
+      <div style="text-align:center; margin-bottom:16px;">
+        <svg width="420" height="220" viewBox="0 0 420 220">
+          <!-- Axis -->
+          <line x1="30" y1="110" x2="400" y2="110" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          <!-- A line -->
+          <line x1="30" y1="110" x2="400" y2="110" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="405" y="115" fill="#a78bfa" font-size="16" font-weight="600">A</text>
+          <!-- Epsilon band -->
+          <rect x="30" y="80" width="370" height="60" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="10" y="85" fill="rgba(167,139,250,0.6)" font-size="13">A+ε</text>
+          <text x="10" y="148" fill="rgba(167,139,250,0.6)" font-size="13">A-ε</text>
+          <!-- Points before N -->
+          <circle cx="60" cy="55" r="4" fill="rgba(248,113,113,0.7)"/>
+          <circle cx="90" cy="160" r="4" fill="rgba(248,113,113,0.7)"/>
+          <circle cx="120" cy="70" r="4" fill="rgba(248,113,113,0.7)"/>
+          <circle cx="150" cy="145" r="4" fill="rgba(248,113,113,0.7)"/>
+          <!-- N divider -->
+          <line x1="180" y1="40" x2="180" y2="190" stroke="rgba(251,146,60,0.5)" stroke-width="2" stroke-dasharray="5,3"/>
+          <text x="175" y="205" fill="var(--accent-orange)" font-size="15" font-weight="600">N</text>
+          <!-- Points after N: all inside band -->
+          <circle cx="210" cy="100" r="4" fill="#34d399"/>
+          <circle cx="240" cy="118" r="4" fill="#34d399"/>
+          <circle cx="270" cy="105" r="4" fill="#34d399"/>
+          <circle cx="300" cy="113" r="4" fill="#34d399"/>
+          <circle cx="330" cy="108" r="4" fill="#34d399"/>
+          <circle cx="360" cy="111" r="4" fill="#34d399"/>
+          <circle cx="385" cy="110" r="4" fill="#34d399"/>
+        </svg>
+      </div>
+      <div class="note-box">
+        <span class="icon">🎯</span>
+        <div style="font-size:19px;">
+          <strong>翻译</strong>：你给精度要求 $\varepsilon$，我找到位置 $N$。<br>
+          从第 $N+1$ 项起，<span class="em-green">所有点</span>都在 $(A-\varepsilon,\;A+\varepsilon)$ 带子内。
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">10 / 25</div>
+</div>
+
+<!-- =================== SLIDE 11: EPSILON-DELTA EXAMPLE =================== -->
+<div class="slide" id="slide-11">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">$\varepsilon$-$N$ 证明<span class="highlight-green">实战</span></div>
+
+  <div class="proof-block" style="max-width:900px;">
+    <div class="proof-title">📝 例题：证明 $\displaystyle\lim_{n\to\infty}\frac{1}{n} = 0$</div>
+    <div class="proof-body">
+      对 $\forall\;\varepsilon > 0$，要使 $\left|\dfrac{1}{n} - 0\right| < \varepsilon$<br><br>
+      只需 $\dfrac{1}{n} < \varepsilon$，即 $n > \dfrac{1}{\varepsilon}$<br><br>
+      取 $N = \left\lfloor \dfrac{1}{\varepsilon} \right\rfloor + 1$，则当 $n > N$ 时：<br><br>
+      $\left|\dfrac{1}{n} - 0\right| = \dfrac{1}{n} < \dfrac{1}{N} \leq \varepsilon$ &nbsp;&nbsp;&nbsp;&nbsp; $\blacksquare$
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:20px;">
+    <div class="question-box" style="margin:0;">
+      <div class="icon">❓</div>
+      <div>$N$ 是唯一的吗？<br>——不是！取更大的值也行。只需要<strong>存在一个</strong>就够了。</div>
+    </div>
+    <div class="note-box" style="margin:0;">
+      <span class="icon">💡</span>
+      <div>证明技巧：先"打草稿"（从 $|a_n - A| < \varepsilon$ 反推出 $n$ 的条件），再"正式书写"（取 $N$，验证）。</div>
+    </div>
+  </div>
+  <div class="slide-number">11 / 25</div>
+</div>
+
+<!-- =================== SLIDE 12: FUNCTION LIMIT ε-δ =================== -->
+<div class="slide" id="slide-12">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">函数极限：<span class="highlight-cyan">$\varepsilon$-$\delta$ 定义</span></div>
+  <div class="slide-subtitle">极限理论的心脏——从离散到连续</div>
+
+  <div class="two-col col-45-55">
+    <div>
+      <div class="card filled-cyan" style="margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-cyan);">📋 定义</div>
+        <div class="card-body" style="font-size:19px; line-height:2;">
+          $\lim_{x \to x_0} f(x) = A$ 的含义：<br><br>
+          $\forall\;\varepsilon > 0$，$\exists\;\delta > 0$，<br>
+          当 $0 < |x - x_0| < \delta$ 时：
+          $$|f(x) - A| < \varepsilon$$
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <span style="font-size:20px;">⚡</span>
+        <div style="font-size:18px;">
+          "$0 < |x - x_0|$" 意味着 <span class="em-red">$x \neq x_0$</span><br>
+          极限与 $f(x_0)$ 的值<strong>无关</strong>！
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="text-align:center; margin-bottom:14px;">
+        <svg width="400" height="260" viewBox="0 0 400 260">
+          <!-- Axes -->
+          <line x1="40" y1="220" x2="380" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <line x1="40" y1="220" x2="40" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <text x="385" y="225" fill="rgba(255,255,255,0.3)" font-size="14">x</text>
+          <text x="30" y="15" fill="rgba(255,255,255,0.3)" font-size="14">y</text>
+          <!-- x0 marker -->
+          <line x1="200" y1="220" x2="200" y2="30" stroke="rgba(251,146,60,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="193" y="240" fill="var(--accent-orange)" font-size="14">$x_0$</text>
+          <!-- A marker -->
+          <line x1="40" y1="100" x2="380" y2="100" stroke="rgba(167,139,250,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="15" y="105" fill="#a78bfa" font-size="14">A</text>
+          <!-- Epsilon band -->
+          <rect x="40" y="75" width="340" height="50" fill="rgba(167,139,250,0.05)" stroke="rgba(167,139,250,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="15" y="80" fill="rgba(167,139,250,0.4)" font-size="12">A+ε</text>
+          <text x="15" y="132" fill="rgba(167,139,250,0.4)" font-size="12">A-ε</text>
+          <!-- Delta band -->
+          <rect x="160" y="30" width="80" height="190" fill="rgba(34,211,238,0.04)" stroke="rgba(34,211,238,0.2)" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="153" y="240" fill="rgba(34,211,238,0.5)" font-size="11">x₀-δ</text>
+          <text x="232" y="240" fill="rgba(34,211,238,0.5)" font-size="11">x₀+δ</text>
+          <!-- Curve -->
+          <path d="M60,180 Q100,160 140,130 Q170,112 200,100 Q230,88 260,82 Q320,70 370,55" fill="none" stroke="#4facfe" stroke-width="2.5"/>
+          <!-- Hollow point at x0 -->
+          <circle cx="200" cy="100" r="5" fill="var(--bg-primary)" stroke="#4facfe" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <div class="proof-block" style="padding:18px 24px;">
+        <div class="proof-title" style="font-size:16px;">📝 例：证明 $\lim_{x\to 3}(2x+1)=7$</div>
+        <div class="proof-body" style="font-size:18px; line-height:2;">
+          $|f(x)-7| = |2x+1-7| = 2|x-3|$<br>
+          要使 $2|x-3| < \varepsilon$，取 $\delta = \varepsilon/2$<br>
+          当 $0<|x-3|<\delta$ 时 $|f(x)-7| < \varepsilon$ &nbsp; $\blacksquare$
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">12 / 25</div>
+</div>
+
+<!-- =================== SLIDE 13: LIMIT RULES =================== -->
+<div class="slide" id="slide-13">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">极限<span class="highlight-blue">运算法则</span></div>
+  <div class="slide-subtitle">不用每次都回到 ε-δ —— 有了法则，极限计算变得高效</div>
+
+  <div class="two-col">
+    <div>
+      <div class="card filled-blue">
+        <div class="card-title" style="color:var(--accent-blue);">📋 四则运算法则</div>
+        <div class="card-body" style="font-size:21px; line-height:2.4;">
+          设 $\lim f(x) = A$，$\lim g(x) = B$，则：<br><br>
+          ① &nbsp; $\lim[f(x) \pm g(x)] = A \pm B$<br>
+          ② &nbsp; $\lim[f(x) \cdot g(x)] = A \cdot B$<br>
+          ③ &nbsp; $\lim\dfrac{f(x)}{g(x)} = \dfrac{A}{B}$ &nbsp;<span style="color:var(--accent-red);">($B \neq 0$)</span><br>
+          ④ &nbsp; $\lim[c \cdot f(x)] = c \cdot A$
+        </div>
+      </div>
+
+      <div class="warn-box" style="margin-top:16px;">
+        <span style="font-size:20px;">⚠️</span>
+        <div style="font-size:18px;">关键前提：两个极限都要<strong>存在且有限</strong>！<br>$\infty - \infty$、$0 \cdot \infty$、$\frac{0}{0}$、$\frac{\infty}{\infty}$ 等不能直接用。</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">推论</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          $\lim [f(x)]^n = [\lim f(x)]^n$ &nbsp;（$n \in \mathbb{N}^+$）
+        </div>
+      </div>
+
+      <div class="proof-block">
+        <div class="proof-title">📝 例题</div>
+        <div class="proof-body" style="font-size:19px; line-height:2.2;">
+          $\displaystyle\lim_{x\to 2}\frac{x^2 - 4}{x-2} = ?$<br><br>
+          直接代入 → $\frac{0}{0}$ 型，不能直接除<br><br>
+          化简：$\dfrac{x^2-4}{x-2} = \dfrac{(x-2)(x+2)}{x-2} = x+2$<br><br>
+          极限不关心 $x=2$ 这个点：$\lim(x+2) = \boxed{4}$
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">13 / 25</div>
+</div>
+
+<!-- =================== SLIDE 14: SQUEEZE & MONOTONE =================== -->
+<div class="slide" id="slide-14">
+  <div class="section-tag purple">Part II · 极限</div>
+  <div class="slide-title">存在性判定：<span class="highlight-green">两大工具</span></div>
+  <div class="slide-subtitle">运算法则要求极限存在才能用——但如果连存不存在都不知道呢？</div>
+
+  <div class="two-col" style="margin-top:10px;">
+    <!-- SQUEEZE -->
+    <div>
+      <div class="card filled-green" style="margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-green); font-size:24px;">🔧 夹逼准则</div>
+        <div class="card-body" style="font-size:19px; line-height:2;">
+          若 $g(x) \leq f(x) \leq h(x)$<br>
+          且 $\lim g(x) = \lim h(x) = A$<br><br>
+          则 $\lim f(x) = A$
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-bottom:16px;">
+        <svg width="300" height="160" viewBox="0 0 300 160">
+          <line x1="20" y1="130" x2="280" y2="130" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- h(x) upper -->
+          <path d="M30,30 Q80,40 130,55 Q180,70 230,75 Q260,78 280,80" fill="none" stroke="var(--accent-cyan)" stroke-width="2" stroke-dasharray="5,3"/>
+          <text x="260" y="72" fill="var(--accent-cyan)" font-size="13">h(x)</text>
+          <!-- g(x) lower -->
+          <path d="M30,120 Q80,110 130,95 Q180,85 230,82 Q260,81 280,80" fill="none" stroke="var(--accent-orange)" stroke-width="2" stroke-dasharray="5,3"/>
+          <text x="260" y="96" fill="var(--accent-orange)" font-size="13">g(x)</text>
+          <!-- f(x) middle -->
+          <path d="M30,70 Q80,80 130,78 Q180,75 230,79 Q260,80 280,80" fill="none" stroke="var(--accent-green)" stroke-width="2.5"/>
+          <text x="260" y="84" fill="var(--accent-green)" font-size="13" font-weight="600">f(x)</text>
+          <!-- Target point -->
+          <circle cx="280" cy="80" r="4" fill="#fff"/>
+          <text x="285" y="78" fill="white" font-size="13" font-weight="600">A</text>
+        </svg>
+      </div>
+
+      <div class="note-box">
+        <span class="icon">💡</span>
+        <div style="font-size:17px;">比喻：一个人被两面墙夹住，两面墙向同一点靠拢，人也必然被挤到那个点。</div>
+      </div>
+    </div>
+
+    <!-- MONOTONE BOUNDED -->
+    <div>
+      <div class="card filled-orange" style="margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-orange); font-size:24px;">🔧 单调有界定理</div>
+        <div class="card-body" style="font-size:19px; line-height:2;">
+          <span class="em-orange">单调递增 + 有上界</span><br>→ 极限必存在<br><br>
+          <span class="em-orange">单调递减 + 有下界</span><br>→ 极限必存在
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-bottom:16px;">
+        <svg width="300" height="160" viewBox="0 0 300 160">
+          <line x1="20" y1="130" x2="280" y2="130" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- Upper bound -->
+          <line x1="20" y1="35" x2="280" y2="35" stroke="rgba(248,113,113,0.4)" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="250" y="28" fill="rgba(248,113,113,0.6)" font-size="13">上界</text>
+          <!-- Limit line -->
+          <line x1="20" y1="45" x2="280" y2="45" stroke="rgba(79,172,254,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="255" y="56" fill="var(--accent-blue)" font-size="13">极限 A</text>
+          <!-- Staircase points -->
+          <circle cx="40" cy="120" r="4" fill="var(--accent-orange)"/>
+          <circle cx="70" cy="100" r="4" fill="var(--accent-orange)"/>
+          <circle cx="100" cy="85" r="4" fill="var(--accent-orange)"/>
+          <circle cx="130" cy="72" r="4" fill="var(--accent-orange)"/>
+          <circle cx="160" cy="62" r="4" fill="var(--accent-orange)"/>
+          <circle cx="190" cy="55" r="4" fill="var(--accent-orange)"/>
+          <circle cx="220" cy="50" r="4" fill="var(--accent-orange)"/>
+          <circle cx="250" cy="47" r="4" fill="var(--accent-orange)"/>
+          <polyline points="40,120 70,100 100,85 130,72 160,62 190,55 220,50 250,47" fill="none" stroke="var(--accent-orange)" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <div class="note-box">
+        <span class="icon">💡</span>
+        <div style="font-size:17px;">只能判定极限<strong>存在</strong>，不能直接给出<strong>值</strong>。求值需要额外技巧。</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">14 / 25</div>
+</div>
+
+<!-- =================== SLIDE 15: FIRST IMPORTANT LIMIT =================== -->
+<div class="slide" id="slide-15">
+  <div class="section-tag pink">Part II · 重要极限</div>
+  <div class="slide-title">第一个重要极限：$\displaystyle\lim_{x\to 0}\frac{\sin x}{x} = 1$</div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>$\frac{\sin x}{x}$ 在 $x=0$ 无定义（$\frac{0}{0}$），$x$ 很小时它趋向什么？</div>
+  </div>
+
+  <div class="two-col col-45-55" style="margin-top:10px;">
+    <div>
+      <div style="text-align:center;">
+        <svg width="320" height="310" viewBox="0 0 320 310">
+          <!-- Circle -->
+          <circle cx="160" cy="155" r="120" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <!-- Center O -->
+          <circle cx="160" cy="155" r="3" fill="white"/>
+          <text x="148" y="175" fill="white" font-size="15" font-weight="600">O</text>
+          <!-- Point A -->
+          <circle cx="280" cy="155" r="4" fill="#4facfe"/>
+          <text x="286" y="160" fill="#4facfe" font-size="15" font-weight="600">A</text>
+          <!-- Point B on circle -->
+          <circle cx="248" cy="85" r="4" fill="#34d399"/>
+          <text x="254" y="80" fill="#34d399" font-size="15" font-weight="600">B</text>
+          <!-- Point D (tangent) -->
+          <circle cx="280" cy="67" r="4" fill="#f472b6"/>
+          <text x="286" y="65" fill="#f472b6" font-size="15" font-weight="600">D</text>
+          <!-- OA line -->
+          <line x1="160" y1="155" x2="280" y2="155" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <!-- OB line (extended to D) -->
+          <line x1="160" y1="155" x2="280" y2="67" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <!-- Tangent line AD -->
+          <line x1="280" y1="155" x2="280" y2="67" stroke="rgba(244,114,182,0.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <!-- Arc -->
+          <path d="M280,155 A120,120 0 0,0 248,85" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+          <!-- B foot -->
+          <line x1="248" y1="85" x2="248" y2="155" stroke="rgba(52,211,153,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- Angle x label -->
+          <path d="M200,155 A40,40 0 0,0 196,140" fill="none" stroke="var(--accent-yellow)" stroke-width="1.5"/>
+          <text x="202" y="140" fill="var(--accent-yellow)" font-size="15" font-weight="600">x</text>
+          <!-- Area labels -->
+          <text x="60" y="280" fill="var(--accent-green)" font-size="14">△OAB</text>
+          <text x="145" y="280" fill="var(--accent-purple)" font-size="14">扇形OAB</text>
+          <text x="230" y="280" fill="var(--accent-pink)" font-size="14">△OAD</text>
+          <text x="100" y="298" fill="rgba(255,255,255,0.5)" font-size="18">≤ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ≤</text>
+        </svg>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px; padding:22px 26px;">
+        <div class="card-title" style="font-size:20px;">📐 三个面积比较（$0 < x < \frac{\pi}{2}$）</div>
+        <div class="card-body" style="font-size:19px; line-height:2.4;">
+          $S_{\triangle OAB} = \dfrac{\sin x}{2}$<br>
+          $S_{\text{扇形}} = \dfrac{x}{2}$<br>
+          $S_{\triangle OAD} = \dfrac{\tan x}{2}$<br><br>
+          因此：$\dfrac{\sin x}{2} \leq \dfrac{x}{2} \leq \dfrac{\tan x}{2}$
+        </div>
+      </div>
+
+      <div class="card" style="padding:22px 26px;">
+        <div class="card-title" style="font-size:20px;">📐 化简得到夹逼</div>
+        <div class="card-body" style="font-size:19px; line-height:2.2;">
+          全体 $\div \frac{\sin x}{2}$，取倒数：
+          $$\cos x \leq \frac{\sin x}{x} \leq 1$$
+          当 $x \to 0$ 时 $\cos x \to 1$<br>
+          由<span class="em-green">夹逼准则</span> → $\dfrac{\sin x}{x} \to 1$ &nbsp; $\blacksquare$
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula-box large highlight" style="margin-top:12px;">
+    $\displaystyle\lim_{x\to 0}\frac{\sin x}{x} = 1$
+  </div>
+  <div class="slide-number">15 / 25</div>
+</div>
+
+<!-- =================== SLIDE 16: NOTE ON RADIAN =================== -->
+<div class="slide" id="slide-16">
+  <div class="section-tag pink">Part II · 重要极限</div>
+  <div class="slide-title">关于第一个重要极限的<span class="highlight-orange">追问</span></div>
+
+  <div class="two-col">
+    <div>
+      <div class="question-box">
+        <div class="icon">❓</div>
+        <div>这里 $x$ 的单位是什么？</div>
+      </div>
+      <div class="card filled-orange" style="margin-top:16px;">
+        <div class="card-title" style="color:var(--accent-orange);">必须是弧度！</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          扇形面积公式 $S = \frac{1}{2}r^2 x$ 中，<br>$x$ 是<span class="em-orange">弧度</span>。<br><br>
+          如果用角度制，公式变为 $S = \frac{\pi}{360}r^2\theta$，<br>
+          最终结果不是 $1$，而是 $\frac{\pi}{180}$。<br><br>
+          <strong>这就是高数中三角函数必须用弧度制的原因！</strong>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="question-box">
+        <div class="icon">❓</div>
+        <div>为什么极限定义不要求 $x = x_0$ 处有定义？</div>
+      </div>
+      <div class="card filled-purple" style="margin-top:16px;">
+        <div class="card-title" style="color:var(--accent-purple);">极限关心"趋势"而非"到达"</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          $f(x) = \frac{\sin x}{x}$ 在 $x=0$ 处<span class="em-red">没有定义</span>（分母为0）<br><br>
+          但 $\lim_{x\to 0}\frac{\sin x}{x} = 1$<br><br>
+          这正是极限的力量：<br>
+          <strong>用无限趋近来定义"到不了的值"</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box" style="margin-top:20px;">
+    <span class="icon">💡</span>
+    <div style="font-size:20px;">由 $\frac{\sin x}{x}$ 是偶函数（$\frac{\sin(-x)}{-x} = \frac{\sin x}{x}$），$x \to 0^-$ 时极限也是 $1$。所以左右极限相等，极限存在。</div>
+  </div>
+  <div class="slide-number">16 / 25</div>
+</div>
+
+<!-- =================== SLIDE 17: SECOND IMPORTANT LIMIT =================== -->
+<div class="slide" id="slide-17">
+  <div class="section-tag pink">Part II · 重要极限</div>
+  <div class="slide-title">第二个重要极限：$e$ 的<span class="highlight-purple">诞生</span></div>
+
+  <div class="question-box">
+    <div class="icon">🏦</div>
+    <div>银行年利率 100%，复利频率无限增大。一年后本息和趋向什么？</div>
+  </div>
+
+  <div class="two-col col-60-40" style="margin-top:12px;">
+    <div>
+      <table class="styled-table purple" style="margin-bottom:16px;">
+        <thead>
+          <tr><th>复利次数 $n$</th><th>$\left(1 + \frac{1}{n}\right)^n$</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$n = 1$</td><td>$2.000\,000$</td></tr>
+          <tr><td>$n = 2$</td><td>$2.250\,000$</td></tr>
+          <tr><td>$n = 12$</td><td>$2.613\,035$</td></tr>
+          <tr><td>$n = 365$</td><td>$2.714\,567$</td></tr>
+          <tr><td>$n = 10000$</td><td>$2.718\,146$</td></tr>
+          <tr><td>$n \to \infty$</td><td style="color:var(--accent-purple); font-weight:700;">$e \approx 2.71828\ldots$</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="card filled-purple">
+        <div class="card-title" style="color:var(--accent-purple);">证明思路</div>
+        <div class="card-body" style="font-size:18px; line-height:2;">
+          <span class="em-green">步骤一</span>：用二项式展开证明 $a_n$ <strong>单调递增</strong><br><br>
+          <span class="em-green">步骤二</span>：证明 $a_n < 3$（<strong>有上界</strong>）<br><br>
+          由<span class="em-orange">单调有界定理</span> → 极限<strong>存在</strong><br><br>
+          将此极限<strong>定义</strong>为 $e$
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula-box large purple highlight" style="margin-top:12px;">
+    $\displaystyle e = \lim_{n\to\infty}\left(1+\frac{1}{n}\right)^n \approx 2.71828\ldots$
+  </div>
+  <div class="slide-number">17 / 25</div>
+</div>
+
+<!-- =================== SLIDE 18: SECOND LIMIT PROOF =================== -->
+<div class="slide" id="slide-18">
+  <div class="section-tag pink">Part II · 重要极限</div>
+  <div class="slide-title">$e$ 的存在性<span class="highlight-green">证明</span></div>
+
+  <div class="two-col">
+    <div>
+      <div class="proof-block">
+        <div class="proof-title">Step 1：单调递增（二项式展开）</div>
+        <div class="proof-body" style="font-size:17px; line-height:2.2;">
+          $a_n = \displaystyle\sum_{k=0}^{n}\binom{n}{k}\frac{1}{n^k}$<br><br>
+          $= 1 + 1 + \displaystyle\sum_{k=2}^{n}\frac{1}{k!}\prod_{j=1}^{k-1}\left(1-\frac{j}{n}\right)$<br><br>
+          当 $n$ 增大时：
+          <ul style="margin-top:8px; padding-left:20px; font-size:16px;">
+            <li>每个 $\left(1-\frac{j}{n}\right)$ 增大</li>
+            <li>$a_{n+1}$ 比 $a_n$ 多一个正项</li>
+          </ul>
+          因此 $a_{n+1} > a_n$，单调递增 ✓
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="proof-block">
+        <div class="proof-title">Step 2：有上界</div>
+        <div class="proof-body" style="font-size:18px; line-height:2.2;">
+          由 $k! \geq 2^{k-1}$（$k \geq 2$）：<br><br>
+          $a_n < 1 + 1 + \displaystyle\sum_{k=2}^{n}\frac{1}{2^{k-1}}$<br><br>
+          $< 1 + 1 + \left(\frac{1}{2} + \frac{1}{4} + \cdots\right)$<br><br>
+          $= 1 + 1 + 1 = 3$<br><br>
+          因此 $a_n < 3$ ✓
+        </div>
+      </div>
+      
+      <div class="formula-box green" style="font-size:20px; margin-top:12px;">
+        单调递增 + 有上界 $\xRightarrow{\text{单调有界定理}}$ 极限存在 $\blacksquare$
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px; padding:18px 28px;">
+    <div class="card-title" style="color:var(--accent-cyan);">🔄 推广形式</div>
+    <div class="card-body" style="font-size:20px;">
+      <span style="display:inline-flex; gap:40px; flex-wrap:wrap;">
+        <span>$\displaystyle\lim_{x\to\infty}\left(1+\frac{1}{x}\right)^x = e$</span>
+        <span>$\displaystyle\lim_{t\to 0}(1+t)^{1/t} = e$</span>
+      </span>
+      <span style="display:block; margin-top:10px; color:var(--text-dim); font-size:17px;">遇到 $(1+\text{→}0)^{\text{→}\infty}$ 即 $1^\infty$ 型 → 联想第二个重要极限！</span>
+    </div>
+  </div>
+  <div class="slide-number">18 / 25</div>
+</div>
+
+<!-- =================== SLIDE 19: SECTION III =================== -->
+<div class="slide section-divider" id="slide-19">
+  <div class="part-label">Part III</div>
+  <div class="section-title" style="color:var(--accent-green)">无穷小与无穷大</div>
+  <div class="section-desc">极限的精细刻画——不仅要知道趋向什么，还要知道趋向多快</div>
+  <div class="glow-orb" style="width:400px;height:400px;background:var(--accent-green);top:40%;left:65%;"></div>
+  <div class="slide-number">19 / 25</div>
+</div>
+
+<!-- =================== SLIDE 20: INFINITESIMAL & INFINITE =================== -->
+<div class="slide" id="slide-20">
+  <div class="section-tag green">Part III · 无穷小</div>
+  <div class="slide-title"><span class="highlight-green">无穷小</span>与<span class="highlight-red">无穷大</span></div>
+
+  <div class="two-col">
+    <div>
+      <div class="card filled-green" style="margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-green); font-size:22px;">无穷小量</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          $\lim f(x) = 0$ 时，称 $f(x)$ 为<span class="em-green">无穷小量</span>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <span style="font-size:20px;">⚠️</span>
+        <div style="font-size:18px;">
+          无穷小是一个<strong>函数</strong>（过程），不是一个很小的<strong>数</strong>！<br>
+          $0.0001$ ≠ 无穷小 &nbsp;|&nbsp; $\frac{1}{n}$ = 无穷小 ✓
+        </div>
+      </div>
+
+      <div class="formula-box green" style="font-size:20px; margin-top:16px;">
+        <strong>核心定理</strong><br>
+        $\lim f(x) = A \;\Longleftrightarrow\; f(x) = A + \alpha(x)$<br>
+        <span style="font-size:17px; color:var(--text-dim);">其中 $\alpha(x)$ 是无穷小 ——"极限值 + 趋于0的误差"</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-left:4px solid var(--accent-red); margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-red); font-size:22px;">无穷大量</div>
+        <div class="card-body" style="font-size:20px; line-height:2;">
+          $|f(x)|$ 可以大于任意给定的正数 $M$<br>
+          记 $\lim f(x) = \infty$<br><br>
+          <span style="color:var(--accent-red); font-size:18px;">注意：无穷大不是极限存在！是一种特殊的发散描述。</span>
+        </div>
+      </div>
+
+      <div class="card" style="text-align:center; padding:24px;">
+        <div style="font-size:20px; font-weight:600; color:var(--accent-cyan); margin-bottom:16px;">倒数关系</div>
+        <svg width="300" height="100" viewBox="0 0 300 100">
+          <rect x="10" y="25" width="100" height="50" rx="10" fill="rgba(52,211,153,0.1)" stroke="var(--accent-green)" stroke-width="1.5"/>
+          <text x="60" y="55" fill="var(--accent-green)" font-size="16" text-anchor="middle" font-weight="600">无穷小</text>
+          <rect x="190" y="25" width="100" height="50" rx="10" fill="rgba(248,113,113,0.1)" stroke="var(--accent-red)" stroke-width="1.5"/>
+          <text x="240" y="55" fill="var(--accent-red)" font-size="16" text-anchor="middle" font-weight="600">无穷大</text>
+          <!-- Arrows -->
+          <path d="M115,40 Q150,20 185,40" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" marker-end="url(#arr-w)"/>
+          <text x="143" y="25" fill="rgba(255,255,255,0.5)" font-size="12" text-anchor="middle">取倒数</text>
+          <path d="M185,60 Q150,80 115,60" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" marker-end="url(#arr-w)"/>
+          <text x="143" y="88" fill="rgba(255,255,255,0.5)" font-size="12" text-anchor="middle">取倒数</text>
+          <defs>
+            <marker id="arr-w" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="rgba(255,255,255,0.4)"/>
+            </marker>
+          </defs>
+        </svg>
+        <div style="font-size:18px; color:var(--text-secondary); margin-top:8px;">
+          $\lim f(x)=\infty \;\Longleftrightarrow\; \lim\frac{1}{f(x)}=0$
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">20 / 25</div>
+</div>
+
+<!-- =================== SLIDE 21: COMPARING INFINITESIMALS =================== -->
+<div class="slide" id="slide-21">
+  <div class="section-tag green">Part III · 无穷小</div>
+  <div class="slide-title">无穷小的<span class="highlight-cyan">比较</span>：速度的较量</div>
+
+  <div class="question-box">
+    <div class="icon">🤔</div>
+    <div>$x \to 0$ 时，$x$、$x^2$、$\sin x$ 都是无穷小。谁趋于 $0$ 更快？</div>
+  </div>
+
+  <table class="styled-table green" style="margin-top:20px;">
+    <thead>
+      <tr>
+        <th style="width:25%;">类型</th>
+        <th style="width:35%;">条件（$\alpha, \beta$ 均为无穷小）</th>
+        <th style="width:40%;">直觉 · 例子</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="em-purple">高阶</span>无穷小</td>
+        <td>$\lim\dfrac{\beta}{\alpha} = 0$</td>
+        <td>$\beta$ 快得多 · $x^2$ vs $x$：$\frac{x^2}{x}=x\to 0$</td>
+      </tr>
+      <tr>
+        <td><span class="em-blue">同阶</span>无穷小</td>
+        <td>$\lim\dfrac{\beta}{\alpha} = c \neq 0$</td>
+        <td>速度相当 · $3x$ vs $x$：$\frac{3x}{x}=3$</td>
+      </tr>
+      <tr>
+        <td><span class="em-green">等价</span>无穷小 $\alpha \sim \beta$</td>
+        <td>$\lim\dfrac{\beta}{\alpha} = 1$</td>
+        <td>速度"一样" · $\sin x$ vs $x$：$\frac{\sin x}{x}\to 1$</td>
+      </tr>
+      <tr>
+        <td>$k$ 阶无穷小</td>
+        <td>$\lim\dfrac{\beta}{\alpha^k} = c \neq 0$</td>
+        <td>$1-\cos x$ 是 $x$ 的 <strong>2 阶</strong>无穷小</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note-box" style="margin-top:20px;">
+    <span class="icon">💡</span>
+    <div style="font-size:20px;">
+      <strong>等价无穷小</strong>是同阶无穷小的<strong>特殊情况</strong>（比值极限恰好等于 $1$）。<br>
+      第一个重要极限 $\frac{\sin x}{x} \to 1$ 正是在说：$\sin x \sim x$（$x\to 0$）
+    </div>
+  </div>
+  <div class="slide-number">21 / 25</div>
+</div>
+
+<!-- =================== SLIDE 22: EQUIVALENT INFINITESIMAL TABLE =================== -->
+<div class="slide" id="slide-22">
+  <div class="section-tag green">Part III · 无穷小</div>
+  <div class="slide-title">常用<span class="highlight-green">等价无穷小</span>表（$x\to 0$）</div>
+  <div class="slide-subtitle">这张表值得背下来——极限计算的核武器</div>
+
+  <div class="two-col gap-30">
+    <div>
+      <table class="styled-table" style="font-size:22px;">
+        <thead><tr><th colspan="2" style="text-align:center;">核心八组（$x \to 0$）</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--accent-blue); font-weight:600;">$\sin x \sim x$</td><td style="color:var(--text-dim);">三角</td></tr>
+          <tr><td style="color:var(--accent-blue); font-weight:600;">$\tan x \sim x$</td><td style="color:var(--text-dim);">三角</td></tr>
+          <tr><td style="color:var(--accent-cyan); font-weight:600;">$\arcsin x \sim x$</td><td style="color:var(--text-dim);">反三角</td></tr>
+          <tr><td style="color:var(--accent-cyan); font-weight:600;">$\arctan x \sim x$</td><td style="color:var(--text-dim);">反三角</td></tr>
+          <tr><td style="color:var(--accent-purple); font-weight:600;">$1-\cos x \sim \dfrac{x^2}{2}$</td><td style="color:var(--text-dim);">二阶</td></tr>
+          <tr><td style="color:var(--accent-green); font-weight:600;">$e^x - 1 \sim x$</td><td style="color:var(--text-dim);">指数</td></tr>
+          <tr><td style="color:var(--accent-green); font-weight:600;">$\ln(1+x) \sim x$</td><td style="color:var(--text-dim);">对数</td></tr>
+          <tr><td style="color:var(--accent-orange); font-weight:600;">$(1+x)^\alpha - 1 \sim \alpha x$</td><td style="color:var(--text-dim);">幂</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="proof-block" style="margin-bottom:14px;">
+        <div class="proof-title">推导：$e^x - 1 \sim x$</div>
+        <div class="proof-body" style="font-size:17px; line-height:2.2;">
+          令 $t = e^x - 1$，则 $x = \ln(1+t)$<br>
+          $\dfrac{e^x-1}{x} = \dfrac{t}{\ln(1+t)}$<br><br>
+          $\dfrac{\ln(1+t)}{t} = \ln(1+t)^{1/t} \to \ln e = 1$<br>
+          <span style="font-size:15px; color:var(--text-dim);">（用了第二个重要极限！）</span><br>
+          所以 $\frac{e^x-1}{x} \to 1$ &nbsp; $\blacksquare$
+        </div>
+      </div>
+
+      <div class="proof-block">
+        <div class="proof-title">推导：$1 - \cos x \sim \frac{x^2}{2}$</div>
+        <div class="proof-body" style="font-size:18px; line-height:2.2;">
+          $1 - \cos x = 2\sin^2\dfrac{x}{2} \sim 2\cdot\left(\dfrac{x}{2}\right)^2 = \dfrac{x^2}{2}$<br>
+          <span style="font-size:15px; color:var(--text-dim);">（用了 $\sin u \sim u$，其中 $u=x/2$）</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">22 / 25</div>
+</div>
+
+<!-- =================== SLIDE 23: REPLACEMENT RULES =================== -->
+<div class="slide" id="slide-23">
+  <div class="section-tag green">Part III · 无穷小</div>
+  <div class="slide-title">等价无穷小<span class="highlight-blue">替换定理</span>与<span class="highlight-red">陷阱</span></div>
+
+  <div class="two-col">
+    <div>
+      <div class="card filled-blue" style="margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-blue); font-size:22px;">✅ 替换定理</div>
+        <div class="card-body" style="font-size:20px; line-height:2.2;">
+          若 $\alpha \sim \alpha'$，$\beta \sim \beta'$，则
+          $$\lim\frac{\alpha}{\beta} = \lim\frac{\alpha'}{\beta'}$$
+          <div style="margin-top:8px; font-size:17px; color:var(--text-dim);">
+            证：$\frac{\alpha}{\beta} = \frac{\alpha}{\alpha'}\cdot\frac{\alpha'}{\beta'}\cdot\frac{\beta'}{\beta}$<br>
+            其中 $\frac{\alpha}{\alpha'}\to 1$，$\frac{\beta'}{\beta}\to 1$
+          </div>
+        </div>
+      </div>
+
+      <div class="proof-block">
+        <div class="proof-title">📝 例题</div>
+        <div class="proof-body" style="font-size:18px; line-height:2.2;">
+          $\displaystyle\lim_{x\to 0}\frac{\tan x - \sin x}{x^3}$<br><br>
+          $= \lim\frac{\sin x\cdot\frac{1-\cos x}{\cos x}}{x^3}$<br><br>
+          替换：$\sin x \sim x$，$1-\cos x \sim \frac{x^2}{2}$，$\cos x\to 1$<br><br>
+          $= \lim\frac{x \cdot \frac{x^2/2}{1}}{x^3} = \boxed{\dfrac{1}{2}}$
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-left:4px solid var(--accent-red); margin-bottom:16px;">
+        <div class="card-title" style="color:var(--accent-red); font-size:22px;">⚠️ 加减法中的陷阱</div>
+        <div class="card-body" style="font-size:19px; line-height:2.2;">
+          替换只能在<span class="em-blue">乘除因子</span>中使用！<br>
+          在<span class="em-red">加减</span>中替换可能改变高阶项！
+        </div>
+      </div>
+
+      <div class="comparison">
+        <div class="card" style="border-left:4px solid var(--accent-red); padding:18px;">
+          <div style="color:var(--accent-red); font-weight:700; margin-bottom:10px;">❌ 错误</div>
+          <div style="font-size:18px; line-height:2; color:var(--text-secondary);">
+            $\lim\frac{\sin x - \tan x}{x^3}$<br>
+            $\sin x \sim x$，$\tan x \sim x$<br>
+            $\frac{x - x}{x^3} = 0$ ← <span class="em-red">错！</span>
+          </div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="card" style="border-left:4px solid var(--accent-green); padding:18px;">
+          <div style="color:var(--accent-green); font-weight:700; margin-bottom:10px;">✅ 正确</div>
+          <div style="font-size:18px; line-height:2; color:var(--text-secondary);">
+            $\sin x - \tan x$<br>
+            $= \sin x(1-\frac{1}{\cos x})$<br>
+            $\sim -\frac{x^3}{2}$，答案 $= \boxed{-\frac{1}{2}}$
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-box pink" style="font-size:20px; margin-top:16px;">
+        <strong>铁律</strong>：加减中不替换，先化简为乘除再替换！
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">23 / 25</div>
+</div>
+
+<!-- =================== SLIDE 24: LIMIT TOOLKIT =================== -->
+<div class="slide" id="slide-24">
+  <div class="section-tag cyan">总结</div>
+  <div class="slide-title">极限计算<span class="highlight-cyan">工具箱</span></div>
+  <div class="slide-subtitle">一张路线图：遇到极限，按什么顺序思考？</div>
+
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="card" style="padding:30px 36px; background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+      <div style="font-size:20px; line-height:2.6; color:var(--text-secondary);">
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-1); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">1</span>
+          <div><strong style="color:var(--text-primary);">直接代入</strong> —— 连续函数的特权（初等函数在定义域内连续）</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-1); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">2</span>
+          <div><strong style="color:var(--text-primary);">化简后代入</strong> —— 约分、有理化、通分等代数技巧</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-2); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">3</span>
+          <div><strong style="color:var(--text-primary);">四则运算法则</strong> —— 拆分为已知极限的加减乘除（要求极限存在有限）</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-5); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">4</span>
+          <div><strong style="color:var(--text-primary);">两个重要极限</strong> —— $\frac{\sin x}{x}\to 1$（三角/x 型）、$(1+\frac{1}{n})^n\to e$（$1^\infty$ 型）</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-3); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">5</span>
+          <div><strong style="color:var(--text-primary);">等价无穷小替换</strong> —— <span class="em-green">最强工具</span>，在乘除因子中把复杂函数替换为简单多项式</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:8px;">
+          <span style="background:var(--gradient-4); color:#fff; padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">6</span>
+          <div><strong style="color:var(--text-primary);">洛必达法则</strong> —— 需要导数知识（下一章）</div>
+        </div>
+
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:14px; margin-top:8px;">
+          <div style="display:flex; align-items:flex-start; gap:16px;">
+            <span style="background:rgba(255,255,255,0.1); color:var(--text-secondary); padding:4px 14px; border-radius:8px; font-weight:700; font-size:15px; flex-shrink:0;">?</span>
+            <div><strong style="color:var(--accent-orange);">不确定存在性？</strong> → 夹逼准则（找上下界） / 单调有界定理（找单调性+界）</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">24 / 25</div>
+</div>
+
+<!-- =================== SLIDE 25: GRAND FINALE =================== -->
+<div class="slide" id="slide-25" style="text-align:center;">
+  <div class="section-tag orange">终章</div>
+  <div class="slide-title large" style="background:linear-gradient(135deg,#4facfe,#a78bfa,#f472b6,#fb923c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+    通往微分的大门
+  </div>
+
+  <div class="slide-subtitle" style="max-width:800px; margin:0 auto 30px; text-align:center;">
+    学完这一切，你能回答"导数是什么"了吗？
+  </div>
+
+  <div class="formula-box large highlight" style="max-width:800px; margin:0 auto; font-size:34px;">
+    $f'(x_0) = \displaystyle\lim_{\Delta x \to 0}\frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}$
+  </div>
+
+  <div style="max-width:750px; margin:30px auto 0; text-align:left;">
+    <div class="note-box" style="font-size:20px;">
+      <span class="icon" style="font-size:28px;">👀</span>
+      <div>
+        分子 $f(x_0+\Delta x) - f(x_0)$ 是<span class="em-green">无穷小</span><br>
+        分母 $\Delta x$ 也是<span class="em-green">无穷小</span><br><br>
+        导数 = 两个无穷小的<strong>比值的极限</strong><br>
+        —— 正是我们这一章所有工具的<span class="em-blue">汇聚点</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-row" style="margin-top:30px;">
+    <div class="flow-item blue" style="padding:16px 28px;">
+      <div style="font-size:14px; color:var(--text-dim);">描述关系</div>
+      <div style="font-size:22px; font-weight:700;">函数</div>
+      <div style="font-size:13px; color:var(--accent-blue);">— 舞台</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item purple" style="padding:16px 28px;">
+      <div style="font-size:14px; color:var(--text-dim);">分析工具</div>
+      <div style="font-size:22px; font-weight:700;">极限</div>
+      <div style="font-size:13px; color:var(--accent-purple);">— 方法</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item green" style="padding:16px 28px;">
+      <div style="font-size:14px; color:var(--text-dim);">精细刻画</div>
+      <div style="font-size:22px; font-weight:700;">无穷小</div>
+      <div style="font-size:13px; color:var(--accent-green);">— 语言</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item orange" style="padding:16px 28px; border-width:2px;">
+      <div style="font-size:14px; color:var(--text-dim);">伟大成果</div>
+      <div style="font-size:22px; font-weight:700;">导数</div>
+      <div style="font-size:13px; color:var(--accent-orange);">— 第一步</div>
+    </div>
+  </div>
+
+  <div style="margin-top:40px; font-size:20px; color:var(--text-dim); font-style:italic;">
+    "函数是舞台，极限是方法，无穷小是语言，导数是第一个伟大的成果。"
+  </div>
+  <div class="slide-number">25 / 25</div>
+</div>
+
+
+<!-- =================== NAVIGATION SCRIPT =================== -->
+<script>
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+let currentSlide = 1;
+
+function updateIndicator() {
+  document.getElementById('slideIndicator').textContent = currentSlide + ' / ' + totalSlides;
+}
+
+function goToSlide(n) {
+  if (n < 1) n = 1;
+  if (n > totalSlides) n = totalSlides;
+  currentSlide = n;
+  slides[n-1].scrollIntoView({ behavior: 'smooth' });
+  updateIndicator();
+}
+
+function nextSlide() { goToSlide(currentSlide + 1); }
+function prevSlide() { goToSlide(currentSlide - 1); }
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    nextSlide();
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    prevSlide();
+  }
+});
+
+// Track current slide on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const index = Array.from(slides).indexOf(entry.target) + 1;
+      currentSlide = index;
+      updateIndicator();
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(slide => observer.observe(slide));
+</script>
+
+</body>
+</html>

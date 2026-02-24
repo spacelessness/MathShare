@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一元微积分 20 题通关 - PPT讲稿</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f1419;
+            --bg-gradient: linear-gradient(135deg, #0b1016 0%, #16202a 100%);
+            --text-main: #e0e0e0;
+            --accent-gold: #f4d03f;
+            --accent-cyan: #5dade2;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --box-bg: rgba(255, 255, 255, 0.05);
+            --box-border: 1px solid rgba(255, 255, 255, 0.15);
+            --font-family: 'Noto Serif SC', serif;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: #000; color: var(--text-main);
+            font-family: var(--font-family);
+            display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px;
+        }
+
+        .slide {
+            width: 1280px; 
+            min-height: 720px; 
+            height: auto;
+            background: var(--bg-gradient);
+            position: relative; 
+            overflow: visible;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); border: 1px solid #333;
+            padding: 50px 70px; box-sizing: border-box;
+            display: flex; flex-direction: column;
+        }
+
+        .slide::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px; pointer-events: none; z-index: 0;
+        }
+
+        .content { z-index: 1; display: flex; flex-direction: column; min-height: 0; flex: 1; }
+
+        h1 {
+            font-size: 42px; color: #fff; margin-bottom: 25px; font-weight: 700;
+            border-bottom: 2px solid var(--accent-cyan); display: inline-block; padding-bottom: 10px; width: 100%;
+            flex-shrink: 0;
+        }
+        h1 .topic-num { color: var(--accent-gold); margin-right: 15px; }
+
+        h2 { font-size: 24px; color: var(--accent-cyan); margin-bottom: 10px; margin-top: 0; flex-shrink: 0; }
+        h3 { font-size: 20px; color: var(--accent-gold); margin: 8px 0; }
+        
+        .box {
+            background: var(--box-bg); border: var(--box-border);
+            padding: 15px 22px; border-radius: 8px; margin-bottom: 12px;
+            font-size: 19px; line-height: 1.65;
+        }
+
+        .question-box {
+            background: rgba(93, 173, 226, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-left: 4px solid var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .answer-box {
+            background: rgba(244, 208, 63, 0.05);
+            border: 1px solid rgba(244, 208, 63, 0.3);
+        }
+
+        .tip-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--accent-green);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--accent-gold);
+            text-align: center;
+            padding: 18px;
+        }
+
+        .highlight-gold { color: var(--accent-gold); font-weight: bold; }
+        .highlight-cyan { color: var(--accent-cyan); font-weight: bold; }
+        .highlight-green { color: var(--accent-green); }
+        .highlight-red { color: var(--accent-red); }
+
+        .row { display: flex; gap: 22px; flex: 1; min-height: 0; }
+        .col { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+        .tag {
+            display: inline-block; padding: 4px 12px; border-radius: 15px;
+            font-size: 14px; margin-right: 10px;
+        }
+        .tag-point { background: var(--accent-cyan); color: #000; }
+        .tag-method { background: var(--accent-gold); color: #000; }
+
+        .step { margin: 6px 0; padding-left: 18px; border-left: 2px solid #444; }
+        .step-num { 
+            display: inline-block; width: 24px; height: 24px; 
+            background: var(--accent-cyan); color: #000; 
+            border-radius: 50%; text-align: center; line-height: 24px;
+            font-size: 14px; font-weight: bold; margin-right: 10px;
+        }
+
+        .result-box {
+            background: linear-gradient(90deg, rgba(244,208,63,0.2), transparent);
+            border-left: 4px solid var(--accent-gold);
+            padding: 12px 20px; margin-top: 12px;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .separator-bar { width: 100%; text-align: center; color: #666; margin: 30px 0; font-size: 14px; }
+
+        /* 封面特殊样式 */
+        .cover-slide .content {
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .cover-title { font-size: 60px; color: #fff; margin-bottom: 20px; }
+        .cover-subtitle { font-size: 28px; color: var(--accent-cyan); margin-bottom: 40px; }
+        .cover-meta { font-size: 20px; color: #888; }
+
+        /* 目录样式 */
+        .toc-item {
+            display: flex; align-items: center; padding: 12px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 22px;
+        }
+        .toc-num { 
+            width: 40px; height: 40px; background: var(--accent-gold); 
+            color: #000; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; 
+            font-weight: bold; margin-right: 20px; flex-shrink: 0;
+        }
+        .toc-count { margin-left: auto; color: #666; }
+
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; font-size: 17px; }
+        th { background: rgba(93, 173, 226, 0.2); color: var(--accent-cyan); padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #333; }
+
+        .arrow { font-size: 22px; color: var(--accent-gold); margin: 0 8px; }
+
+        /* 页码 */
+        .page-num {
+            position: relative; text-align: right;
+            color: #555; font-size: 14px;
+            margin-top: 15px; flex-shrink: 0;
+        }
+
+        /* 三题并排卡片 */
+        .triple-card {
+            display: flex; flex-direction: column; height: 100%;
+        }
+        .triple-card .result-box {
+            margin-top: auto;
+        }
+
+        /* 确保 MathJax 不会撑破容器 */
+        mjx-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 封面 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 30px;">📐</div>
+            <div class="cover-title">一元微积分 <span style="color: var(--accent-gold);">20</span> 题通关</div>
+            <div class="cover-subtitle">Core Knowledge Points · Comprehensive Coverage</div>
+            <div style="width: 400px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); margin: 30px 0;"></div>
+            <div class="cover-meta">
+                <p>设计原则：每题都是"母题"，一题带一类</p>
+                <p style="color: var(--accent-gold);">理解 × 记忆 × 举一反三</p>
+            </div>
+        </div>
+        <div class="page-num">1 / 28</div>
+    </div>
+
+    <!-- ==================== 目录 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>目录 · Table of Contents</h1>
+            
+            <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
+                <div style="flex: 1;">
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅰ</div>
+                        <div>极限与连续</div>
+                        <div class="toc-count">4 题</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅱ</div>
+                        <div>导数与微分</div>
+                        <div class="toc-count">4 题</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅲ</div>
+                        <div>中值定理与应用</div>
+                        <div class="toc-count">5 题</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅳ</div>
+                        <div>不定积分</div>
+                        <div class="toc-count">4 题</div>
+                    </div>
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅴ</div>
+                        <div>定积分与应用</div>
+                        <div class="toc-count">3 题</div>
+                    </div>
+                </div>
+                
+                <div style="flex: 0.8; text-align: center;">
+                    <div class="box" style="border: 2px solid var(--accent-gold);">
+                        <h3>🎯 学习路径</h3>
+                        <p style="font-size: 18px; text-align: left;">
+                            <strong>第一遍：</strong>逐题细读，理解每一步<br>
+                            <strong>第二遍：</strong>遮住答案，独立完成<br>
+                            <strong>第三遍：</strong>编写变式题，检验掌握
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">2 / 28</div>
+    </div>
+
+    <!-- ==================== PART I 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART I: 极限与连续 ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅰ</div>
+            <h1 style="border: none; text-align: center; font-size: 52px;">极限与连续</h1>
+            <p style="font-size: 24px; color: var(--accent-cyan);">Limits &amp; Continuity</p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <div class="tag tag-point">泰勒展开</div>
+                <div class="tag tag-point">洛必达法则</div>
+                <div class="tag tag-point">等价无穷小</div>
+                <div class="tag tag-point">间断点分类</div>
+            </div>
+        </div>
+        <div class="page-num">3 / 28</div>
+    </div>
+
+    <!-- ==================== 题1 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">01</span>基本未定式极限</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 泰勒展开 / 洛必达法则
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\lim_{x\to 0}\frac{\sin x - x}{x^3} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>方法一：泰勒展开 ⭐推荐</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>展开 \(\sin x\)：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \sin x = x - \dfrac{x^3}{6} + \dfrac{x^5}{120} - \cdots \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>代入分子：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \sin x - x = -\dfrac{x^3}{6} + O(x^5) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>约分得结果
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>方法二：洛必达三次</h2>
+                    <div class="box answer-box">
+                        <div style="font-size: 17px; line-height: 2;">
+                            \( \dfrac{\sin x - x}{x^3} \)
+                            <span class="arrow">→</span>
+                            \( \dfrac{\cos x - 1}{3x^2} \)
+                            <br>
+                            <span class="arrow" style="margin-left: 60px;">→</span>
+                            \( \dfrac{-\sin x}{6x} \)
+                            <span class="arrow">→</span>
+                            \( \dfrac{-\cos x}{6} \)
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆口诀</h3>
+                        \( \sin x - x \sim -\dfrac{x^3}{6} \)
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\lim_{x\to 0}\frac{\sin x - x}{x^3} = \boxed{-\frac{1}{6}} \)
+            </div>
+        </div>
+        <div class="page-num">4 / 28</div>
+    </div>
+
+    <!-- ==================== 题2 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">02</span>\(1^\infty\) 型极限</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> \(1^\infty\) 型极限处理
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\lim_{x\to 0}(1+x)^{\frac{1}{x}} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.2;">
+                    <h2>核心公式</h2>
+                    <div class="box formula-box">
+                        <p style="margin-bottom: 12px; font-size: 17px;">当 \(\lim f(x) = 1\)，\(\lim g(x) = \infty\) 时：</p>
+                        <div style="font-size: 24px; color: var(--accent-gold);">
+                            \( \lim f(x)^{g(x)} = e^{\lim (f(x)-1) \cdot g(x)} \)
+                        </div>
+                    </div>
+                    
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <p>设 \( f(x) = 1+x \)，\( g(x) = \dfrac{1}{x} \)</p>
+                        <p>计算指数：\( (f(x)-1) \cdot g(x) = x \cdot \dfrac{1}{x} = 1 \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>三种 \(1^\infty\) 形式</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr><th>形式</th><th>结果</th></tr>
+                            <tr>
+                                <td>\( \lim\limits_{x\to 0}(1+x)^{1/x} \)</td>
+                                <td class="highlight-gold">\( e \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \lim\limits_{x\to \infty}(1+\frac{1}{x})^{x} \)</td>
+                                <td class="highlight-gold">\( e \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \lim\limits_{x\to 0}(1+ax)^{1/x} \)</td>
+                                <td class="highlight-gold">\( e^a \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 处理流程</h3>
+                        <p style="font-size: 16px;">\(1^\infty\) → 取对数变 \(\infty \cdot 0\) → 转化为 \(\dfrac{0}{0}\)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\lim_{x\to 0}(1+x)^{\frac{1}{x}} = \boxed{e} \)
+            </div>
+        </div>
+        <div class="page-num">5 / 28</div>
+    </div>
+
+    <!-- ==================== 题3 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">03</span>等价无穷小</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 等价无穷小替换 + 因式分解
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\lim_{x\to 0}\frac{\tan x - \sin x}{x^3} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题：先提取公因式</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>变形分子：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( \tan x - \sin x = \sin x\!\left(\dfrac{1}{\cos x} - 1\right) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>化简：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( = \sin x \cdot \dfrac{1-\cos x}{\cos x} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>等价替换（\(x\to 0\)）：
+                            <div style="margin: 6px 0 6px 35px; font-size: 17px;">
+                                \( \sin x \sim x \)，\( 1-\cos x \sim \dfrac{x^2}{2} \)，\( \cos x \to 1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>代入：\( \dfrac{x \cdot \frac{x^2}{2}}{x^3} = \dfrac{1}{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>常用等价无穷小表 (\(x\to 0\))</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr>
+                                <td>\( \sin x \sim x \)</td>
+                                <td>\( \tan x \sim x \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \arcsin x \sim x \)</td>
+                                <td>\( \arctan x \sim x \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( 1-\cos x \sim \dfrac{x^2}{2} \)</td>
+                                <td>\( e^x - 1 \sim x \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \ln(1+x) \sim x \)</td>
+                                <td>\( (1+x)^a - 1 \sim ax \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\lim_{x\to 0}\frac{\tan x - \sin x}{x^3} = \boxed{\frac{1}{2}} \)
+            </div>
+        </div>
+        <div class="page-num">6 / 28</div>
+    </div>
+
+    <!-- ==================== 题4 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">04</span>间断点判断</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 间断点分类
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    判断函数 \( f(x) = \dfrac{\sin x}{x} \) 在 \( x=0 \) 处的间断点类型
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>分析过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>检查 \(f(0)\) 是否有定义：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( f(0) = \dfrac{0}{0} \) 
+                                <span class="highlight-red">无定义 ✗</span>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>检查极限是否存在：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( \displaystyle\lim_{x\to 0}\frac{\sin x}{x} = 1 \)
+                                <span class="highlight-green">存在且有限 ✓</span>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>结论：左右极限相等且有限，但函数值无定义
+                        </div>
+                    </div>
+                    
+                    <div class="result-box">
+                        答案：<span class="highlight-gold">可去间断点</span>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>间断点分类速查</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <table>
+                            <tr><th>类型</th><th>条件</th></tr>
+                            <tr>
+                                <td class="highlight-cyan">可去间断点</td>
+                                <td>左右极限相等，但 ≠ 函数值（或无定义）</td>
+                            </tr>
+                            <tr>
+                                <td class="highlight-cyan">跳跃间断点</td>
+                                <td>左右极限都存在，但不相等</td>
+                            </tr>
+                            <tr>
+                                <td class="highlight-red">无穷间断点</td>
+                                <td>至少一侧极限为 \(\infty\)</td>
+                            </tr>
+                            <tr>
+                                <td class="highlight-red">振荡间断点</td>
+                                <td>极限不存在（振荡）</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 第一类 vs 第二类</h3>
+                        <p style="font-size: 16px;"><strong>第一类：</strong>可去、跳跃（左右极限都存在）</p>
+                        <p style="font-size: 16px;"><strong>第二类：</strong>无穷、振荡（极限不存在或为∞）</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">7 / 28</div>
+    </div>
+
+    <!-- ==================== PART II 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART II: 导数与微分 ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅱ</div>
+            <h1 style="border: none; text-align: center; font-size: 52px;">导数与微分</h1>
+            <p style="font-size: 24px; color: var(--accent-cyan);">Derivatives &amp; Differentials</p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <div class="tag tag-point">链式法则</div>
+                <div class="tag tag-point">隐函数求导</div>
+                <div class="tag tag-point">参数方程</div>
+                <div class="tag tag-point">对数求导</div>
+            </div>
+        </div>
+        <div class="page-num">8 / 28</div>
+    </div>
+
+    <!-- ==================== 题5 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">05</span>复合函数求导</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 链式法则（剥洋葱）
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    设 \( y = e^{\sin x^2} \)，求 \( y' \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>链式法则：从外向内逐层求导</h2>
+                    <div class="box answer-box">
+                        <p>函数三层嵌套：</p>
+                        <div style="text-align: center; font-size: 22px; margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            <span style="color: var(--accent-red);">外层</span> \( e^{(\cdot)} \)
+                            <span class="arrow">→</span>
+                            <span style="color: var(--accent-gold);">中层</span> \( \sin(\cdot) \)
+                            <span class="arrow">→</span>
+                            <span style="color: var(--accent-cyan);">内层</span> \( x^2 \)
+                        </div>
+                        
+                        <div class="step">
+                            <span class="step-num">1</span>外层：\( (e^u)' = e^u \) → \( e^{\sin x^2} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>中层：\( (\sin v)' = \cos v \) → \( \cos x^2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>内层：\( (x^2)' = 2x \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>图示理解</h2>
+                    <div class="box" style="text-align: center; font-size: 18px; padding: 25px;">
+                        <pre style="font-family: monospace; color: var(--accent-cyan); font-size: 16px;">
+y = e^[sin(x²)]
+    ↓     ↓   ↓
+   e^u · cos u · 2x
+                        </pre>
+                        <p style="margin-top: 15px;">三个导数<span class="highlight-gold">相乘</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 口诀</h3>
+                        <p>外对中导 × 中对内导 × 内对x导</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( y' = \boxed{2x \cos x^2 \cdot e^{\sin x^2}} \)
+            </div>
+        </div>
+        <div class="page-num">9 / 28</div>
+    </div>
+
+    <!-- ==================== 题6 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">06</span>隐函数求导</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 隐函数求导
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    设 \( x^2 + y^2 = 1 \)，求 \( \dfrac{dy}{dx} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题方法</h2>
+                    <div class="box answer-box">
+                        <p><strong>核心：</strong>\( y \) 是 \( x \) 的函数，对 \( y \) 求导时用链式法则！</p>
+                        
+                        <div class="step" style="margin-top: 15px;">
+                            <span class="step-num">1</span>等式两边对 \( x \) 求导：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( \dfrac{d}{dx}(x^2) + \dfrac{d}{dx}(y^2) = \dfrac{d}{dx}(1) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>计算各项：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( 2x + 2y \cdot \dfrac{dy}{dx} = 0 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>解出 \( \dfrac{dy}{dx} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>几何验证</h2>
+                    <div class="box" style="text-align: center;">
+                        <div style="width: 180px; height: 180px; border: 2px solid var(--accent-cyan); border-radius: 50%; margin: 15px auto; position: relative;">
+                            <div style="position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: var(--accent-gold); border-radius: 50%; transform: translate(-50%, -50%);"></div>
+                            <div style="position: absolute; top: 28%; right: 18%; color: var(--accent-gold); font-size: 14px;">P(x,y)</div>
+                        </div>
+                        <p style="font-size: 16px;">圆心在原点，任一点的切线斜率：</p>
+                        <p style="font-size: 16px;">斜率 = \( -\dfrac{x}{y} \)（法线过圆心）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \dfrac{dy}{dx} = \boxed{-\dfrac{x}{y}} \)
+            </div>
+        </div>
+        <div class="page-num">10 / 28</div>
+    </div>
+
+    <!-- ==================== 题7 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">07</span>参数方程求导</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 参数方程求导公式
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    设 \( \begin{cases} x = t^2 \\ y = t^3 \end{cases} \)，求 \( \dfrac{dy}{dx} \) 和 \( \dfrac{d^2y}{dx^2} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>一阶导数</h2>
+                    <div class="box answer-box">
+                        <div class="formula-box" style="margin-bottom: 12px; padding: 12px;">
+                            \( \dfrac{dy}{dx} = \dfrac{dy/dt}{dx/dt} = \dfrac{y'_t}{x'_t} \)
+                        </div>
+                        <p>\( x'_t = 2t \)，\( y'_t = 3t^2 \)</p>
+                        <p>\( \dfrac{dy}{dx} = \dfrac{3t^2}{2t} = \dfrac{3t}{2} \)</p>
+                    </div>
+                    
+                    <h2>二阶导数</h2>
+                    <div class="box answer-box">
+                        <div class="formula-box" style="margin-bottom: 12px; padding: 12px;">
+                            \( \dfrac{d^2y}{dx^2} = \dfrac{\left(\dfrac{dy}{dx}\right)'_t}{x'_t} \)
+                        </div>
+                        <p>\( \left(\dfrac{3t}{2}\right)'_t = \dfrac{3}{2} \)，故 \( \dfrac{d^2y}{dx^2} = \dfrac{3/2}{2t} = \dfrac{3}{4t} \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>公式记忆</h2>
+                    <div class="box" style="font-size: 20px;">
+                        <p><strong>一阶：</strong>分子分母分别对 \( t \) 求导</p>
+                        <div style="text-align: center; margin: 12px 0; color: var(--accent-gold);">
+                            \( \dfrac{dy}{dx} = \dfrac{y'_t}{x'_t} \)
+                        </div>
+                        
+                        <p><strong>二阶：</strong>一阶结果对 \( t \) 求导，再除以 \( x'_t \)</p>
+                        <div style="text-align: center; margin: 12px 0; color: var(--accent-gold);">
+                            \( \dfrac{d^2y}{dx^2} = \dfrac{(y'_t/x'_t)'_t}{x'_t} \)
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>⚠️ 易错点</h3>
+                        <p>二阶导数<span class="highlight-red">不是</span> \(\dfrac{y''_t}{x''_t}\)！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \dfrac{dy}{dx} = \boxed{\dfrac{3t}{2}} \)，\( \dfrac{d^2y}{dx^2} = \boxed{\dfrac{3}{4t}} \)
+            </div>
+        </div>
+        <div class="page-num">11 / 28</div>
+    </div>
+
+    <!-- ==================== 题8 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">08</span>对数求导法</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 幂指函数求导
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    设 \( y = x^x \)（\( x > 0 \)），求 \( y' \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>两边取对数：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( \ln y = x \ln x \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>两边对 \( x \) 求导：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( \dfrac{y'}{y} = \ln x + 1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>解出 \( y' \)：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( y' = x^x(\ln x + 1) \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>适用场景</h2>
+                    <div class="box">
+                        <p>当<span class="highlight-gold">底数和指数都含 \( x \)</span> 时：</p>
+                        <ul style="font-size: 17px;">
+                            <li>\( x^x \)，\( x^{\sin x} \)</li>
+                            <li>\( (\sin x)^{\cos x} \)</li>
+                            <li>\( x^{x^x} \)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 为什么有效？</h3>
+                        <p style="font-size: 16px;">对数把"幂"变"乘法"：\( \ln(a^b) = b \ln a \)</p>
+                        <p style="font-size: 16px;">乘法求导比幂求导简单！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( y' = \boxed{x^x(\ln x + 1)} \)
+            </div>
+        </div>
+        <div class="page-num">12 / 28</div>
+    </div>
+
+    <!-- ==================== PART III 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART III: 中值定理与应用 ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅲ</div>
+            <h1 style="border: none; text-align: center; font-size: 52px;">中值定理与应用</h1>
+            <p style="font-size: 24px; color: var(--accent-cyan);">Mean Value Theorems &amp; Applications</p>
+            <div style="margin-top: 40px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-point">罗尔定理</div>
+                <div class="tag tag-point">拉格朗日中值定理</div>
+                <div class="tag tag-point">单调性与极值</div>
+                <div class="tag tag-point">凹凸性与拐点</div>
+            </div>
+        </div>
+        <div class="page-num">13 / 28</div>
+    </div>
+
+    <!-- ==================== 题9 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">09</span>罗尔定理应用</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 罗尔定理的直接应用
+                <div style="font-size: 24px; margin-top: 12px; text-align: center;">
+                    设 \( f(x) \) 在 \([0,1]\) 上连续，在 \((0,1)\) 内可导，且 \( f(0) = f(1) = 0 \)。<br>
+                    证明：存在 \( \xi \in (0,1) \)，使 \( f'(\xi) = 0 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>罗尔定理三要素</h2>
+                    <div class="box formula-box">
+                        <div style="text-align: left; padding: 8px; font-size: 18px;">
+                            <p><span class="highlight-green">①</span> \([a,b]\) 上<strong>连续</strong></p>
+                            <p><span class="highlight-green">②</span> \((a,b)\) 内<strong>可导</strong></p>
+                            <p><span class="highlight-green">③</span> \( f(a) = f(b) \)（两端等高）</p>
+                            <hr style="border: 0; border-top: 1px dashed #555; margin: 12px 0;">
+                            <p style="color: var(--accent-gold);">⇒ \(\exists\, \xi \in (a,b)\)，使 \( f'(\xi) = 0 \)</p>
+                        </div>
+                    </div>
+                    
+                    <h2>验证本题</h2>
+                    <div class="box answer-box" style="font-size: 18px;">
+                        <p><span class="highlight-green">✓</span> \([0,1]\) 上连续</p>
+                        <p><span class="highlight-green">✓</span> \((0,1)\) 内可导</p>
+                        <p><span class="highlight-green">✓</span> \( f(0) = f(1) = 0 \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>几何直观</h2>
+                    <div class="box" style="text-align: center; padding: 20px;">
+                        <svg viewBox="0 0 300 140" style="width: 280px; height: 130px;">
+                            <line x1="20" y1="110" x2="280" y2="110" stroke="#666" stroke-width="1"/>
+                            <line x1="20" y1="10" x2="20" y2="110" stroke="#666" stroke-width="1"/>
+                            <path d="M 30 105 Q 110 20 190 55 Q 230 75 270 105" stroke="#5dade2" fill="none" stroke-width="3"/>
+                            <circle cx="30" cy="105" r="5" fill="#f4d03f"/>
+                            <circle cx="270" cy="105" r="5" fill="#f4d03f"/>
+                            <line x1="90" y1="30" x2="170" y2="30" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5"/>
+                            <circle cx="130" cy="30" r="4" fill="#e74c3c"/>
+                            <text x="135" y="25" fill="#e74c3c" font-size="12">ξ</text>
+                        </svg>
+                        <p style="margin-top: 10px; font-size: 16px;">两端等高的曲线，中间必有<span class="highlight-gold">水平切线</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 与拉格朗日的关系</h3>
+                        <p style="font-size: 16px;">罗尔定理是拉格朗日中值定理的特例（\(f(a)=f(b)\)）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                由罗尔定理，\( \boxed{\exists\, \xi \in (0,1), \text{ 使 } f'(\xi) = 0} \)
+            </div>
+        </div>
+        <div class="page-num">14 / 28</div>
+    </div>
+
+    <!-- ==================== 题10 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">10</span>拉格朗日中值定理证不等式</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 拉格朗日中值定理
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    证明：当 \( x > 0 \) 时，\( \ln(1+x) < x \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>证明过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>构造函数：设 \( f(t) = \ln(1+t) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>在 \([0, x]\) 上用拉格朗日中值定理：
+                            <div style="margin: 6px 0 6px 35px; font-size: 20px;">
+                                \( f(x) - f(0) = f'(\xi)(x - 0) \)，\( \xi \in (0, x) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：
+                            <div style="margin: 6px 0 6px 35px; font-size: 20px;">
+                                \( \ln(1+x) = \dfrac{x}{1+\xi} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>关键：\( \xi > 0 \) ⇒ \( 1+\xi > 1 \) ⇒ \( \dfrac{1}{1+\xi} < 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">5</span>结论：\( \ln(1+x) = \dfrac{x}{1+\xi} < x \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>拉格朗日中值定理</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 22px;">\( f(b) - f(a) = f'(\xi)(b-a) \)</p>
+                        <p style="color: #888; font-size: 15px; margin-top: 8px;">\( \xi \in (a, b) \)</p>
+                    </div>
+                    
+                    <h2>几何意义</h2>
+                    <div class="box" style="font-size: 18px;">
+                        <p><span class="highlight-cyan">割线斜率</span> = <span class="highlight-gold">某点切线斜率</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 应用技巧</h3>
+                        <p style="font-size: 16px;">证不等式时，关键是对 \( f'(\xi) \) 做<strong>放大或缩小</strong>估计</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \boxed{\ln(1+x) < x \quad (x > 0)} \) 证毕
+            </div>
+        </div>
+        <div class="page-num">15 / 28</div>
+    </div>
+
+    <!-- ==================== 题11 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">11</span>单调性与极值</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 一阶导数判断单调性
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求函数 \( f(x) = x^3 - 3x + 2 \) 的单调区间和极值
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求导：\( f'(x) = 3x^2 - 3 = 3(x+1)(x-1) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>令 \( f'(x) = 0 \)：\( x = -1 \) 或 \( x = 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>列表分析符号（见右）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>计算极值：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( f(-1) = -1 + 3 + 2 = 4 \)<br>
+                                \( f(1) = 1 - 3 + 2 = 0 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>符号分析表</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr>
+                                <th>区间</th>
+                                <th>\( (-\infty, -1) \)</th>
+                                <th>\( (-1, 1) \)</th>
+                                <th>\( (1, +\infty) \)</th>
+                            </tr>
+                            <tr>
+                                <td>\( f'(x) \)</td>
+                                <td class="highlight-green">+</td>
+                                <td class="highlight-red">−</td>
+                                <td class="highlight-green">+</td>
+                            </tr>
+                            <tr>
+                                <td>单调性</td>
+                                <td>↗ 增</td>
+                                <td>↘ 减</td>
+                                <td>↗ 增</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 判断法则</h3>
+                        <p style="font-size: 16px;">\( f' > 0 \) → 增 ↗ ，\( f' < 0 \) → 减 ↘</p>
+                        <p style="font-size: 16px;">由 + 变 − → 极大；由 − 变 + → 极小</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                极大值：\( \boxed{f(-1) = 4} \)，极小值：\( \boxed{f(1) = 0} \)
+            </div>
+        </div>
+        <div class="page-num">16 / 28</div>
+    </div>
+
+    <!-- ==================== 题12 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">12</span>零点存在与唯一性</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 零点定理 + 单调性
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    证明方程 \( x^3 + x - 1 = 0 \) 在 \( (0, 1) \) 内有且仅有一个实根
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>存在性（零点定理）</h2>
+                    <div class="box answer-box">
+                        <p>设 \( f(x) = x^3 + x - 1 \)</p>
+                        <div class="step">
+                            <p>\( f(0) = -1 < 0 \)</p>
+                        </div>
+                        <div class="step">
+                            <p>\( f(1) = 1 > 0 \)</p>
+                        </div>
+                        <div class="step">
+                            <p>\( f(x) \) 在 \([0,1]\) 上连续</p>
+                        </div>
+                        <p style="margin-top: 12px;">由<span class="highlight-gold">零点定理</span>：\( \exists\, c \in (0,1) \)，使 \( f(c) = 0 \) <span class="highlight-green">✓</span></p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>唯一性（单调性）</h2>
+                    <div class="box answer-box">
+                        <p>求导：</p>
+                        <div style="text-align: center; font-size: 22px; margin: 12px 0; color: var(--accent-gold);">
+                            \( f'(x) = 3x^2 + 1 > 0 \) 恒成立
+                        </div>
+                        <p>\( f(x) \) <span class="highlight-cyan">严格递增</span> → 最多一个零点 <span class="highlight-green">✓</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 通用模式</h3>
+                        <p style="font-size: 16px;"><strong>存在性：</strong>零点定理（异号）</p>
+                        <p style="font-size: 16px;"><strong>唯一性：</strong>单调性（导数恒正/负）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \boxed{\text{方程在 }(0,1)\text{ 内有唯一实根}} \) 证毕
+            </div>
+        </div>
+        <div class="page-num">17 / 28</div>
+    </div>
+
+    <!-- ==================== 题13 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">13</span>凹凸性与拐点</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 二阶导数判断凹凸性
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( f(x) = x^4 - 6x^2 \) 的拐点
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求二阶导：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( f'(x) = 4x^3 - 12x \)<br>
+                                \( f''(x) = 12x^2 - 12 = 12(x+1)(x-1) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>令 \( f''(x) = 0 \)：\( x = \pm 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>函数值：\( f(\pm 1) = 1 - 6 = -5 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>凹凸性分析表</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr>
+                                <th>区间</th>
+                                <th>\( (-\infty, -1) \)</th>
+                                <th>\( (-1, 1) \)</th>
+                                <th>\( (1, +\infty) \)</th>
+                            </tr>
+                            <tr>
+                                <td>\( f'' \)</td>
+                                <td class="highlight-green">+</td>
+                                <td class="highlight-red">−</td>
+                                <td class="highlight-green">+</td>
+                            </tr>
+                            <tr>
+                                <td>凹凸</td>
+                                <td>凹 ∪</td>
+                                <td>凸 ∩</td>
+                                <td>凹 ∪</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 判断法则</h3>
+                        <p style="font-size: 16px;">\( f'' > 0 \) → 凹 ∪；\( f'' < 0 \) → 凸 ∩</p>
+                        <p style="font-size: 16px;"><strong>拐点</strong> = 凹凸性改变的点</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                拐点：\( \boxed{(-1, -5)} \) 和 \( \boxed{(1, -5)} \)
+            </div>
+        </div>
+        <div class="page-num">18 / 28</div>
+    </div>
+
+    <!-- ==================== PART IV 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART IV: 不定积分 ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅳ</div>
+            <h1 style="border: none; text-align: center; font-size: 52px;">不定积分</h1>
+            <p style="font-size: 24px; color: var(--accent-cyan);">Indefinite Integrals</p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <div class="tag tag-point">换元法</div>
+                <div class="tag tag-point">分部积分</div>
+                <div class="tag tag-point">三角换元</div>
+                <div class="tag tag-point">有理函数</div>
+            </div>
+        </div>
+        <div class="page-num">19 / 28</div>
+    </div>
+
+    <!-- ==================== 题14 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">14</span>基本换元积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 凑微分 / 换元
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\int \frac{1}{1+e^x} dx \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>解题：分子凑出分母</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>分子加减 \( e^x \)：
+                            <div style="margin: 6px 0 6px 35px; font-size: 18px;">
+                                \( \dfrac{1}{1+e^x} = \dfrac{1+e^x - e^x}{1+e^x} = 1 - \dfrac{e^x}{1+e^x} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>拆成两个积分：
+                            <div style="margin: 6px 0 6px 35px; font-size: 18px;">
+                                \( \int 1\, dx - \int \dfrac{e^x}{1+e^x} dx \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>第二个积分：令 \( u = 1 + e^x \)，\( du = e^x dx \)
+                            <div style="margin: 6px 0 6px 35px; font-size: 18px;">
+                                \( \int \dfrac{1}{u} du = \ln(1+e^x) \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>核心技巧</h2>
+                    <div class="box" style="text-align: center;">
+                        <p style="font-size: 18px; color: var(--accent-gold);">分子凑出分母的"导数"</p>
+                        <div style="margin: 15px 0; font-size: 20px;">
+                            \( \int \dfrac{f'(x)}{f(x)} dx = \ln|f(x)| + C \)
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 类似题型</h3>
+                        <p style="font-size: 16px;">\( \int \dfrac{1}{1+e^{-x}} dx \)</p>
+                        <p style="font-size: 16px;">\( \int \dfrac{e^x}{e^x + e^{-x}} dx \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int \frac{1}{1+e^x} dx = \boxed{x - \ln(1+e^x) + C} \)
+            </div>
+        </div>
+        <div class="page-num">20 / 28</div>
+    </div>
+
+    <!-- ==================== 题15 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">15</span>分部积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 分部积分公式
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\int x e^x dx \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>分部积分公式</h2>
+                    <div class="box formula-box">
+                        \( \int u\, dv = uv - \int v\, du \)
+                    </div>
+                    
+                    <h2>选择 u 和 dv</h2>
+                    <div class="box answer-box">
+                        <p><strong>口诀：</strong>对、指、三（多项式→指数→三角）</p>
+                        <p>谁在前谁做 \( u \)！</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 12px 0;">
+                        <p>\( x \)（多项式）在前：</p>
+                        <ul style="font-size: 17px;">
+                            <li>\( u = x \)，\( du = dx \)</li>
+                            <li>\( dv = e^x dx \)，\( v = e^x \)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>计算过程</h2>
+                    <div class="box answer-box" style="font-size: 20px;">
+                        <p>\( \int x e^x dx \)</p>
+                        <p>\( = x \cdot e^x - \int e^x dx \)</p>
+                        <p>\( = xe^x - e^x + C \)</p>
+                        <p>\( = e^x(x-1) + C \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 LIATE 法则</h3>
+                        <p style="font-size: 16px;">选 \( u \) 的优先级：</p>
+                        <p style="font-size: 15px;"><strong>L</strong>og > <strong>I</strong>nverse trig > <strong>A</strong>lgebraic > <strong>T</strong>rig > <strong>E</strong>xponential</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int x e^x dx = \boxed{e^x(x-1) + C} \)
+            </div>
+        </div>
+        <div class="page-num">21 / 28</div>
+    </div>
+
+    <!-- ==================== 题16 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">16</span>三角换元</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 三角换元
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\int \frac{1}{\sqrt{1-x^2}} dx \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>换元过程</h2>
+                    <div class="box answer-box">
+                        <p>看到 \( \sqrt{1-x^2} \)，联想 \( \sin^2\theta + \cos^2\theta = 1 \)</p>
+                        
+                        <div class="step" style="margin-top: 12px;">
+                            <span class="step-num">1</span>换元：\( x = \sin\theta \)，\( dx = \cos\theta\, d\theta \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>根式化简：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( \sqrt{1-x^2} = \sqrt{1-\sin^2\theta} = \cos\theta \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：\( \int \dfrac{\cos\theta}{\cos\theta} d\theta = \theta \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>换回：\( \theta = \arcsin x \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>三角换元速查表</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr><th>根式形式</th><th>换元</th></tr>
+                            <tr>
+                                <td>\( \sqrt{a^2 - x^2} \)</td>
+                                <td class="highlight-gold">\( x = a\sin\theta \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \sqrt{a^2 + x^2} \)</td>
+                                <td class="highlight-gold">\( x = a\tan\theta \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \sqrt{x^2 - a^2} \)</td>
+                                <td class="highlight-gold">\( x = a\sec\theta \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆</h3>
+                        <p style="font-size: 16px;">\( 1 - \sin^2 = \cos^2 \) → 用 \(\sin\)</p>
+                        <p style="font-size: 16px;">\( 1 + \tan^2 = \sec^2 \) → 用 \(\tan\)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int \frac{1}{\sqrt{1-x^2}} dx = \boxed{\arcsin x + C} \)
+            </div>
+        </div>
+        <div class="page-num">22 / 28</div>
+    </div>
+
+    <!-- ==================== 题17 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">17</span>有理函数积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 部分分式分解
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\int \frac{1}{x^2-1} dx \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>因式分解：\( x^2 - 1 = (x+1)(x-1) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>设部分分式：
+                            <div style="margin: 6px 0 6px 35px;">
+                                \( \dfrac{1}{x^2-1} = \dfrac{A}{x-1} + \dfrac{B}{x+1} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>求系数：\( A = \dfrac{1}{2} \)，\( B = -\dfrac{1}{2} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>分别积分
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>快速求系数（掩盖法）</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <p>求 \( A \)：令 \( x = 1 \)（掩盖 \( x-1 \)）</p>
+                        <p>\( A = \dfrac{1}{1+1} = \dfrac{1}{2} \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 12px 0;">
+                        <p>求 \( B \)：令 \( x = -1 \)（掩盖 \( x+1 \)）</p>
+                        <p>\( B = \dfrac{1}{-1-1} = -\dfrac{1}{2} \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 积分公式</h3>
+                        <p style="font-size: 16px;">\( \int \dfrac{1}{x-a} dx = \ln|x-a| + C \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int \frac{1}{x^2-1} dx = \boxed{\frac{1}{2}\ln\left|\frac{x-1}{x+1}\right| + C} \)
+            </div>
+        </div>
+        <div class="page-num">23 / 28</div>
+    </div>
+
+    <!-- ==================== PART V 标题页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ PART V: 定积分与应用 ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅴ</div>
+            <h1 style="border: none; text-align: center; font-size: 52px;">定积分与应用</h1>
+            <p style="font-size: 24px; color: var(--accent-cyan);">Definite Integrals &amp; Applications</p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <div class="tag tag-point">变上限积分</div>
+                <div class="tag tag-point">对称性</div>
+                <div class="tag tag-point">几何应用</div>
+            </div>
+        </div>
+        <div class="page-num">24 / 28</div>
+    </div>
+
+    <!-- ==================== 题18 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">18</span>变上限积分求导</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 变上限积分求导（微积分基本定理）
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    设 \( F(x) = \displaystyle\int_0^{x^2} e^{-t^2} dt \)，求 \( F'(x) \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>核心公式</h2>
+                    <div class="box formula-box">
+                        <div style="font-size: 22px; color: var(--accent-gold);">
+                            \( \left(\displaystyle\int_a^{g(x)} f(t)\, dt\right)' = f\!\big(g(x)\big) \cdot g'(x) \)
+                        </div>
+                    </div>
+                    
+                    <h2>解题过程</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>识别：\( f(t) = e^{-t^2} \)，\( g(x) = x^2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>代入公式：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( F'(x) = e^{-(x^2)^2} \cdot (x^2)' = e^{-x^4} \cdot 2x \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>公式推导理解</h2>
+                    <div class="box" style="font-size: 18px;">
+                        <p>基础版（上限就是 \(x\)）：</p>
+                        <div style="text-align: center; color: var(--accent-cyan); margin: 12px 0;">
+                            \( \left(\int_a^{x} f(t)\, dt\right)' = f(x) \)
+                        </div>
+                        <p>上限是 \(g(x)\) 时，多乘一个<span class="highlight-gold">链式法则</span>！</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 变式：两端都含 x</h3>
+                        <p style="font-size: 16px;">\( \left(\int_{h(x)}^{g(x)} f(t)\, dt\right)' = f(g) \cdot g' - f(h) \cdot h' \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( F'(x) = \boxed{2x\, e^{-x^4}} \)
+            </div>
+        </div>
+        <div class="page-num">25 / 28</div>
+    </div>
+
+    <!-- ==================== 题19 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">19</span>利用对称性计算定积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 奇偶函数在对称区间上的积分
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( \displaystyle\int_{-1}^{1} x^3 \cos x\, dx \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>检验奇偶性</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>设 \( f(x) = x^3 \cos x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>计算 \( f(-x) \)：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( f(-x) = (-x)^3 \cos(-x) = -x^3 \cos x \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>比较：\( f(-x) = -f(x) \) → <span class="highlight-cyan">奇函数</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>积分区间 \([-1, 1]\) 关于原点对称
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>核心性质</h2>
+                    <div class="box formula-box" style="font-size: 20px;">
+                        <p><span class="highlight-cyan">奇函数</span>：\( \displaystyle\int_{-a}^{a} f(x)\, dx = 0 \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 12px 0;">
+                        <p><span class="highlight-gold">偶函数</span>：\( \displaystyle\int_{-a}^{a} f(x)\, dx = 2\int_{0}^{a} f(x)\, dx \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 快速判断</h3>
+                        <p style="font-size: 16px;">奇 × 偶 = 奇，偶 × 偶 = 偶，奇 × 奇 = 偶</p>
+                        <p style="font-size: 16px;">本题：\( x^3 \)（奇）× \( \cos x \)（偶）= 奇</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int_{-1}^{1} x^3 \cos x\, dx = \boxed{0} \)
+            </div>
+        </div>
+        <div class="page-num">26 / 28</div>
+    </div>
+
+    <!-- ==================== 题20 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">20</span>旋转体体积</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 定积分几何应用
+                <div style="font-size: 28px; margin-top: 12px; text-align: center;">
+                    求 \( y = x^2 \) 与 \( y = x \) 围成区域绕 \( x \) 轴旋转的体积
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.3;">
+                    <h2>解题步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求交点：\( x^2 = x \) → \( x = 0, 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>确定上下关系：在 \([0,1]\) 上，\( x \geq x^2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>垫圈法（大圆减小圆）：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( V = \pi \int_0^1 \left[x^2 - (x^2)^2\right] dx = \pi \int_0^1 (x^2 - x^4)\, dx \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>计算：
+                            <div style="margin: 8px 0 8px 35px; font-size: 20px;">
+                                \( = \pi \left[\dfrac{x^3}{3} - \dfrac{x^5}{5}\right]_0^1 = \pi\left(\dfrac{1}{3} - \dfrac{1}{5}\right) = \dfrac{2\pi}{15} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>旋转体体积公式</h2>
+                    <div class="box formula-box" style="font-size: 18px;">
+                        <p><strong>绕 x 轴（垫圈法）：</strong></p>
+                        <p>\( V = \pi \int_a^b \left[f(x)^2 - g(x)^2\right] dx \)</p>
+                        <hr style="border: 0; border-top: 1px dashed #555; margin: 12px 0;">
+                        <p><strong>绕 y 轴（柱壳法）：</strong></p>
+                        <p>\( V = 2\pi \int_a^b x \cdot f(x)\, dx \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆</h3>
+                        <p style="font-size: 16px;">绕谁转，就对谁积分</p>
+                        <p style="font-size: 16px;">垫圈 = \(\pi r^2\)，柱壳 = \(2\pi r \cdot h\)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( V = \boxed{\dfrac{2\pi}{15}} \)
+            </div>
+        </div>
+        <div class="page-num">27 / 28</div>
+    </div>
+
+    <!-- ==================== 总结页 ==================== -->
+    <div class="separator-bar">━━━━━━━━━━ SUMMARY ━━━━━━━━━━</div>
+    <div class="slide">
+        <div class="content">
+            <h1>🎯 20 题核心公式速查</h1>
+            
+            <div class="row">
+                <div class="col">
+                    <h2>极限（#01—#04）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>\( \sin x \sim x \)，\( 1-\cos x \sim \dfrac{x^2}{2} \)，\( e^x - 1 \sim x \)，\( \ln(1+x) \sim x \)</p>
+                        <p>\( \lim (1+x)^{1/x} = e \)</p>
+                        <p>间断点：第一类（可去/跳跃）vs 第二类（无穷/振荡）</p>
+                    </div>
+                    
+                    <h2>导数（#05—#08）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>链式法则：\( (f(g(x)))' = f'(g(x)) \cdot g'(x) \)</p>
+                        <p>隐函数：两边同时对 \( x \) 求导</p>
+                        <p>参数：\( \frac{dy}{dx} = \frac{y'_t}{x'_t} \)，二阶 \( \neq \frac{y''_t}{x''_t} \)</p>
+                        <p>对数求导：幂指函数先取 ln</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>中值定理（#09—#13）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p><strong>罗尔：</strong>连续 + 可导 + \(f(a)=f(b)\) → \( f'(\xi) = 0 \)</p>
+                        <p><strong>拉格朗日：</strong>\( f(b)-f(a) = f'(\xi)(b-a) \)</p>
+                        <p>\( f' > 0 \) → 增，\( f'' > 0 \) → 凹</p>
+                        <p>零点：存在性（零点定理）+ 唯一性（单调性）</p>
+                    </div>
+                    
+                    <h2>积分（#14—#20）</h2>
+                    <div class="box" style="font-size: 15px; line-height: 1.8;">
+                        <p>分部：\( \int u\, dv = uv - \int v\, du \)（LIATE）</p>
+                        <p>三角换元：\(\sqrt{a^2-x^2}\) → \(x=a\sin\theta\)</p>
+                        <p>变上限：\( (\int_a^{g(x)} f\, dt)' = f(g) \cdot g' \)</p>
+                        <p>对称性：奇函数 \(\int_{-a}^a = 0\)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="box" style="text-align: center; margin-top: 15px; border: 2px solid var(--accent-gold);">
+                <p style="font-size: 22px; color: var(--accent-gold); margin-bottom: 5px;">
+                    掌握这 20 题，你就拥有了一元微积分的完整骨架！
+                </p>
+                <p style="font-size: 17px; color: #888; margin-top: 5px;">
+                    下一步：针对薄弱环节，扩展 3-5 道变式题巩固
+                </p>
+            </div>
+        </div>
+        <div class="page-num">28 / 28</div>
+    </div>
+
+</body>
+</html>

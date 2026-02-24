@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>级数与微分方程 22 题通关 - PPT讲稿</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0a0f14 0%, #1a252f 100%);
+            --text-main: #e0e0e0;
+            --accent-gold: #f4d03f;
+            --accent-cyan: #5dade2;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-purple: #9b59b6;
+            --accent-orange: #e67e22;
+            --accent-blue: #3498db;
+            --accent-teal: #1abc9c;
+            --box-bg: rgba(255, 255, 255, 0.05);
+            --box-border: 1px solid rgba(255, 255, 255, 0.15);
+            --font-family: 'Noto Serif SC', serif;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: #000; color: var(--text-main);
+            font-family: var(--font-family);
+            display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px;
+        }
+
+        .slide {
+            width: 1280px; height: 720px; background: var(--bg-gradient);
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6); border: 1px solid #333;
+            padding: 50px 70px; box-sizing: border-box;
+            display: flex; flex-direction: column;
+        }
+
+        .slide::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px; pointer-events: none; z-index: 0;
+        }
+
+        .content { z-index: 1; height: 100%; display: flex; flex-direction: column; }
+
+        h1 {
+            font-size: 38px; color: #fff; margin-bottom: 18px; font-weight: 700;
+            border-bottom: 2px solid var(--accent-teal); display: inline-block; padding-bottom: 10px; width: 100%;
+        }
+        h1 .topic-num { color: var(--accent-gold); margin-right: 15px; font-size: 34px; }
+
+        h2 { font-size: 22px; color: var(--accent-cyan); margin-bottom: 10px; margin-top: 0; }
+        h3 { font-size: 18px; color: var(--accent-gold); margin: 8px 0; }
+        
+        .box {
+            background: var(--box-bg); border: var(--box-border);
+            padding: 14px 20px; border-radius: 8px; margin-bottom: 10px;
+            font-size: 17px; line-height: 1.65;
+        }
+
+        .question-box {
+            background: rgba(26, 188, 156, 0.1);
+            border: 1px solid var(--accent-teal);
+            border-left: 4px solid var(--accent-teal);
+        }
+
+        .answer-box {
+            background: rgba(244, 208, 63, 0.05);
+            border: 1px solid rgba(244, 208, 63, 0.3);
+        }
+
+        .tip-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--accent-green);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .warning-box {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--accent-red);
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--accent-gold);
+            text-align: center;
+            padding: 16px;
+        }
+
+        .highlight-gold { color: var(--accent-gold); font-weight: bold; }
+        .highlight-cyan { color: var(--accent-cyan); font-weight: bold; }
+        .highlight-green { color: var(--accent-green); }
+        .highlight-red { color: var(--accent-red); }
+        .highlight-teal { color: var(--accent-teal); font-weight: bold; }
+
+        .row { display: flex; gap: 20px; flex: 1; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+
+        .tag {
+            display: inline-block; padding: 4px 12px; border-radius: 15px;
+            font-size: 13px; margin-right: 8px;
+        }
+        .tag-point { background: var(--accent-teal); color: #fff; }
+        .tag-method { background: var(--accent-gold); color: #000; }
+        .tag-series { background: var(--accent-blue); color: #fff; }
+        .tag-ode { background: var(--accent-orange); color: #fff; }
+
+        .step { margin: 5px 0; padding-left: 16px; border-left: 2px solid #444; }
+        .step-num { 
+            display: inline-block; width: 20px; height: 20px; 
+            background: var(--accent-teal); color: #fff; 
+            border-radius: 50%; text-align: center; line-height: 20px;
+            font-size: 12px; font-weight: bold; margin-right: 8px;
+        }
+
+        .result-box {
+            background: linear-gradient(90deg, rgba(26,188,156,0.2), transparent);
+            border-left: 4px solid var(--accent-teal);
+            padding: 12px 18px; margin-top: 10px;
+            font-size: 20px;
+        }
+
+        .separator-bar { width: 100%; text-align: center; color: #555; margin: 30px 0; font-size: 14px; }
+
+        .cover-slide .content {
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .cover-title { font-size: 52px; color: #fff; margin-bottom: 20px; }
+        .cover-subtitle { font-size: 24px; color: var(--accent-teal); margin-bottom: 40px; }
+
+        .toc-item {
+            display: flex; align-items: center; padding: 10px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 20px;
+        }
+        .toc-num { 
+            width: 36px; height: 36px; background: var(--accent-teal); 
+            color: #fff; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; 
+            font-weight: bold; margin-right: 18px; font-size: 16px;
+        }
+        .toc-count { margin-left: auto; color: #666; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th { background: rgba(26, 188, 156, 0.2); color: var(--accent-teal); padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #333; }
+
+        .arrow { font-size: 18px; color: var(--accent-gold); margin: 0 8px; }
+
+        .page-num {
+            position: absolute; bottom: 15px; right: 25px;
+            color: #555; font-size: 13px;
+        }
+
+        .mini-tag {
+            font-size: 11px; padding: 2px 8px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); margin-left: 8px;
+        }
+
+        .convergence-yes { color: var(--accent-green); }
+        .convergence-no { color: var(--accent-red); }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 封面 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 30px;">∞</div>
+            <div class="cover-title">级数与微分方程 <span style="color: var(--accent-gold);">22</span> 题通关</div>
+            <div class="cover-subtitle">Infinite Series & Ordinary Differential Equations</div>
+            <div style="width: 400px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-teal), transparent); margin: 30px 0;"></div>
+            <div style="font-size: 18px; color: #888;">
+                <p>从有限到无限，从静态到动态</p>
+                <p style="color: var(--accent-gold);">收敛性 × 幂级数 × 傅里叶 × 微分方程</p>
+            </div>
+            <div style="margin-top: 40px; display: flex; gap: 15px;">
+                <div class="tag" style="background: var(--accent-blue); color: #fff;">级数 12题</div>
+                <div class="tag" style="background: var(--accent-orange); color: #fff;">微分方程 10题</div>
+            </div>
+        </div>
+        <div class="page-num">1 / 32</div>
+    </div>
+
+    <!-- ==================== 目录 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>目录 · Table of Contents</h1>
+            
+            <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
+                <div style="flex: 1;">
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅰ</div>
+                        <div>数项级数</div>
+                        <div class="toc-count">5 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        收敛判别法 · 绝对/条件收敛
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅱ</div>
+                        <div>幂级数</div>
+                        <div class="toc-count">4 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        收敛半径 · 求和 · 展开
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅲ</div>
+                        <div>傅里叶级数</div>
+                        <div class="toc-count">3 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        傅里叶系数 · 展开 · 收敛
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅳ</div>
+                        <div>常微分方程</div>
+                        <div class="toc-count">10 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        一阶方程 · 高阶方程 · 常系数线性
+                    </div>
+                </div>
+                
+                <div style="flex: 0.7;">
+                    <div class="box" style="border: 2px solid var(--accent-teal);">
+                        <h3>🎯 学习脉络</h3>
+                        <div style="font-size: 15px; padding: 10px 0;">
+                            <p><strong>级数：</strong>无穷求和何时有意义？</p>
+                            <p>数项 → 函数项 → 幂级数 → 傅里叶</p>
+                            <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                            <p><strong>ODE：</strong>含导数的方程如何求解？</p>
+                            <p>分类 → 套公式 → 求通解</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">2 / 32</div>
+    </div>
+
+    <!-- ==================== PART I 标题页：数项级数 ==================== -->
+    <div class="separator-bar">== PART I: 数项级数 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅰ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">数项级数</h1>
+            <p style="font-size: 24px; color: var(--accent-blue);">Numerical Series</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-series">比较判别法</div>
+                <div class="tag tag-series">比值判别法</div>
+                <div class="tag tag-series">根值判别法</div>
+                <div class="tag tag-series">交错级数</div>
+                <div class="tag tag-series">绝对收敛</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                核心问题：\( \displaystyle\sum_{n=1}^{\infty} a_n \) 是否收敛？
+            </div>
+        </div>
+        <div class="page-num">3 / 32</div>
+    </div>
+
+    <!-- ==================== 题1 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">01</span>比较判别法</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 正项级数 · 比较判别法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    判断级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{1}{n^2 + n} \) 的敛散性
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>比较判别法</h2>
+                    <div class="box formula-box">
+                        <p>设 \( 0 \leq a_n \leq b_n \)：</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            \( \sum b_n \) 收敛 ⇒ \( \sum a_n \) 收敛
+                        </p>
+                        <p style="color: var(--accent-red); margin-top: 5px;">
+                            \( \sum a_n \) 发散 ⇒ \( \sum b_n \) 发散
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>分解：\( \dfrac{1}{n^2+n} = \dfrac{1}{n(n+1)} = \dfrac{1}{n} - \dfrac{1}{n+1} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>这是<span class="highlight-gold">裂项级数</span>！
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>部分和：\( S_n = 1 - \dfrac{1}{n+1} \to 1 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>极限比较法（更常用）</h2>
+                    <div class="box formula-box">
+                        <p>若 \( \lim\limits_{n\to\infty} \dfrac{a_n}{b_n} = L \)（\( 0 < L < \infty \)）</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            则 \( \sum a_n \) 与 \( \sum b_n \) 同敛散
+                        </p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>另一种做法：</strong></p>
+                        <p>\( \dfrac{1}{n^2+n} \sim \dfrac{1}{n^2} \)（\( n \to \infty \)）</p>
+                        <p>而 \( \sum \dfrac{1}{n^2} \) 收敛（p级数，p=2>1）</p>
+                        <p>⇒ 原级数收敛</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 p-级数</h3>
+                        <p>\( \sum \dfrac{1}{n^p} \) 当 \( p > 1 \) 收敛，\( p \leq 1 \) 发散</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\sum_{n=1}^{\infty} \frac{1}{n^2 + n} = \boxed{1} \) <span class="convergence-yes">（收敛）</span>
+            </div>
+        </div>
+        <div class="page-num">4 / 32</div>
+    </div>
+
+    <!-- ==================== 题2 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">02</span>比值判别法</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 达朗贝尔判别法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    判断级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{n!}{n^n} \) 的敛散性
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>比值判别法</h2>
+                    <div class="box formula-box">
+                        <p>设 \( \rho = \lim\limits_{n\to\infty} \dfrac{a_{n+1}}{a_n} \)</p>
+                        <p style="margin-top: 10px;">
+                            <span class="convergence-yes">\( \rho < 1 \) ⇒ 收敛</span><br>
+                            <span class="convergence-no">\( \rho > 1 \) ⇒ 发散</span><br>
+                            \( \rho = 1 \) ⇒ 不确定
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_n = \dfrac{n!}{n^n} \)，\( a_{n+1} = \dfrac{(n+1)!}{(n+1)^{n+1}} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \dfrac{a_{n+1}}{a_n} = \dfrac{(n+1)! \cdot n^n}{n! \cdot (n+1)^{n+1}} = \dfrac{n^n}{(n+1)^n} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( = \left(\dfrac{n}{n+1}\right)^n = \dfrac{1}{(1+\frac{1}{n})^n} \to \dfrac{1}{e} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>适用场景</h2>
+                    <div class="box">
+                        <p><strong>含有以下因子时优先考虑：</strong></p>
+                        <ul style="font-size: 15px;">
+                            <li>\( n! \)（阶乘）</li>
+                            <li>\( a^n \)（指数）</li>
+                            <li>\( n^n \)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆技巧</h3>
+                        <p style="font-size: 15px;">比值法看"相邻项之比"</p>
+                        <p style="font-size: 15px;">根值法看"通项的n次方根"</p>
+                        <p style="font-size: 15px;">两者常给出相同结果</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>结论：</strong></p>
+                        <p>\( \rho = \dfrac{1}{e} < 1 \)</p>
+                        <p>⇒ 级数<span class="convergence-yes">收敛</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \rho = \dfrac{1}{e} < 1 \)，级数 <span class="convergence-yes">\(\boxed{\text{收敛}}\)</span>
+            </div>
+        </div>
+        <div class="page-num">5 / 32</div>
+    </div>
+
+    <!-- ==================== 题3 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">03</span>根值判别法</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 柯西判别法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    判断级数 \( \displaystyle\sum_{n=1}^{\infty} \left(\frac{n}{2n+1}\right)^n \) 的敛散性
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>根值判别法</h2>
+                    <div class="box formula-box">
+                        <p>设 \( \rho = \lim\limits_{n\to\infty} \sqrt[n]{a_n} \)</p>
+                        <p style="margin-top: 10px;">
+                            <span class="convergence-yes">\( \rho < 1 \) ⇒ 收敛</span><br>
+                            <span class="convergence-no">\( \rho > 1 \) ⇒ 发散</span><br>
+                            \( \rho = 1 \) ⇒ 不确定
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_n = \left(\dfrac{n}{2n+1}\right)^n \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \sqrt[n]{a_n} = \dfrac{n}{2n+1} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( \lim\limits_{n\to\infty} \dfrac{n}{2n+1} = \dfrac{1}{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>适用场景</h2>
+                    <div class="box">
+                        <p><strong>通项是"某式的n次方"时优先：</strong></p>
+                        <p style="font-size: 16px; margin-top: 10px;">
+                            \( a_n = [f(n)]^n \)
+                        </p>
+                        <p style="font-size: 16px; margin-top: 10px;">
+                            则 \( \sqrt[n]{a_n} = f(n) \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 比值 vs 根值</h3>
+                        <p style="font-size: 14px;">• 有阶乘 → 比值法</p>
+                        <p style="font-size: 14px;">• 有n次幂 → 根值法</p>
+                        <p style="font-size: 14px;">• 两者都能用时，根值法更强</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>结论：</strong></p>
+                        <p>\( \rho = \dfrac{1}{2} < 1 \)</p>
+                        <p>⇒ 级数<span class="convergence-yes">收敛</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \rho = \dfrac{1}{2} < 1 \)，级数 <span class="convergence-yes">\(\boxed{\text{收敛}}\)</span>
+            </div>
+        </div>
+        <div class="page-num">6 / 32</div>
+    </div>
+
+    <!-- ==================== 题4 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">04</span>交错级数（莱布尼茨判别法）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 交错级数
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    判断级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} = 1 - \frac{1}{2} + \frac{1}{3} - \frac{1}{4} + \cdots \) 的敛散性
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>莱布尼茨判别法</h2>
+                    <div class="box formula-box">
+                        <p>对于交错级数 \( \sum (-1)^{n-1} a_n \)（\( a_n > 0 \)）</p>
+                        <p style="margin-top: 10px;">若满足：</p>
+                        <p style="color: var(--accent-gold);">① \( a_n \) 单调递减</p>
+                        <p style="color: var(--accent-gold);">② \( \lim\limits_{n\to\infty} a_n = 0 \)</p>
+                        <p style="margin-top: 10px;">则级数<span class="convergence-yes">收敛</span></p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p>设 \( a_n = \dfrac{1}{n} \)</p>
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_n > a_{n+1} \)：\( \dfrac{1}{n} > \dfrac{1}{n+1} \) ✓
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \lim a_n = 0 \) ✓
+                        </div>
+                        <p style="margin-top: 10px;">两条件满足 ⇒ 收敛</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>这个级数的和</h2>
+                    <div class="box" style="text-align: center;">
+                        <p style="font-size: 20px; color: var(--accent-gold);">
+                            \( 1 - \dfrac{1}{2} + \dfrac{1}{3} - \dfrac{1}{4} + \cdots = \ln 2 \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            （由 \( \ln(1+x) \) 的幂级数在 \( x=1 \) 处取得）
+                        </p>
+                    </div>
+                    
+                    <div class="warning-box box">
+                        <h3>⚠️ 注意</h3>
+                        <p style="font-size: 14px;">调和级数 \( \sum \dfrac{1}{n} \) <span class="convergence-no">发散</span></p>
+                        <p style="font-size: 14px;">但交错调和级数 \( \sum \dfrac{(-1)^{n-1}}{n} \) <span class="convergence-yes">收敛</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 交错级数的特点</h3>
+                        <p style="font-size: 14px;">正负交替，可能"抵消"使原本发散的级数变为收敛</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                级数 <span class="convergence-yes">\(\boxed{\text{收敛}}\)</span>，和为 \( \ln 2 \)
+            </div>
+        </div>
+        <div class="page-num">7 / 32</div>
+    </div>
+
+    <!-- ==================== 题5 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">05</span>绝对收敛与条件收敛</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 绝对收敛 · 条件收敛
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    判断级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{n} \) 和 \( \displaystyle\sum_{n=1}^{\infty} \frac{(-1)^n}{n^2} \) 的收敛类型
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>定义</h2>
+                    <div class="box formula-box">
+                        <p><strong>绝对收敛：</strong>\( \sum |a_n| \) 收敛</p>
+                        <p><strong>条件收敛：</strong>\( \sum a_n \) 收敛，但 \( \sum |a_n| \) 发散</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                        <p style="color: var(--accent-gold);">绝对收敛 ⇒ 收敛（反之不然）</p>
+                    </div>
+                    
+                    <h2>分析第一个级数</h2>
+                    <div class="box answer-box">
+                        <p>\( \sum \dfrac{(-1)^n}{n} \)：由题4知<span class="convergence-yes">收敛</span></p>
+                        <p>\( \sum \left|\dfrac{(-1)^n}{n}\right| = \sum \dfrac{1}{n} \)：<span class="convergence-no">发散</span></p>
+                        <p style="margin-top: 10px;">⇒ <span class="highlight-gold">条件收敛</span></p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>分析第二个级数</h2>
+                    <div class="box answer-box">
+                        <p>\( \sum \dfrac{(-1)^n}{n^2} \)：交错级数，<span class="convergence-yes">收敛</span></p>
+                        <p>\( \sum \left|\dfrac{(-1)^n}{n^2}\right| = \sum \dfrac{1}{n^2} \)：</p>
+                        <p>p-级数（p=2>1），<span class="convergence-yes">收敛</span></p>
+                        <p style="margin-top: 10px;">⇒ <span class="highlight-cyan">绝对收敛</span></p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 判断流程</h3>
+                        <p style="font-size: 14px;">1. 先判断 \( \sum |a_n| \) 是否收敛</p>
+                        <p style="font-size: 14px;">2. 若收敛 → 绝对收敛</p>
+                        <p style="font-size: 14px;">3. 若发散 → 再判断 \( \sum a_n \)</p>
+                        <p style="font-size: 14px;">4. 若 \( \sum a_n \) 收敛 → 条件收敛</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \sum \dfrac{(-1)^n}{n} \)：<span class="highlight-gold">条件收敛</span>；
+                \( \sum \dfrac{(-1)^n}{n^2} \)：<span class="highlight-cyan">绝对收敛</span>
+            </div>
+        </div>
+        <div class="page-num">8 / 32</div>
+    </div>
+
+    <!-- ==================== PART II 标题页：幂级数 ==================== -->
+    <div class="separator-bar">== PART II: 幂级数 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅱ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">幂级数</h1>
+            <p style="font-size: 24px; color: var(--accent-blue);">Power Series</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-series">收敛半径</div>
+                <div class="tag tag-series">收敛域</div>
+                <div class="tag tag-series">求和函数</div>
+                <div class="tag tag-series">泰勒展开</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                \( \displaystyle\sum_{n=0}^{\infty} a_n x^n \) — 函数的"无穷多项式"表示
+            </div>
+        </div>
+        <div class="page-num">9 / 32</div>
+    </div>
+
+    <!-- ==================== 题6 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">06</span>幂级数收敛半径</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 收敛半径公式
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    求幂级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{x^n}{n \cdot 2^n} \) 的收敛半径和收敛域
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>收敛半径公式</h2>
+                    <div class="box formula-box">
+                        <p>对于 \( \sum a_n x^n \)：</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            \( R = \lim\limits_{n\to\infty} \left|\dfrac{a_n}{a_{n+1}}\right| \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            或 \( R = \dfrac{1}{\lim \sqrt[n]{|a_n|}} \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_n = \dfrac{1}{n \cdot 2^n} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \dfrac{a_n}{a_{n+1}} = \dfrac{(n+1) \cdot 2^{n+1}}{n \cdot 2^n} = 2 \cdot \dfrac{n+1}{n} \to 2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>收敛半径 \( R = 2 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>确定收敛域</h2>
+                    <div class="box answer-box">
+                        <p><strong>检验端点：</strong></p>
+                        <div class="step">
+                            <span class="step-num">4</span>\( x = 2 \)：\( \sum \dfrac{1}{n} \) <span class="convergence-no">发散</span>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">5</span>\( x = -2 \)：\( \sum \dfrac{(-1)^n}{n} \) <span class="convergence-yes">收敛</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 确定收敛域步骤</h3>
+                        <p style="font-size: 14px;">1. 用公式求收敛半径 R</p>
+                        <p style="font-size: 14px;">2. 得到开区间 \( (-R, R) \)</p>
+                        <p style="font-size: 14px;">3. 逐一检验端点 \( x = \pm R \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                收敛半径：\( R = \boxed{2} \)，收敛域：\( \boxed{[-2, 2)} \)
+            </div>
+        </div>
+        <div class="page-num">10 / 32</div>
+    </div>
+
+    <!-- ==================== 题7 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">07</span>幂级数求和函数</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 逐项积分/求导
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    求幂级数 \( \displaystyle\sum_{n=1}^{\infty} n x^{n-1} \) 的和函数（\( |x| < 1 \)）
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>核心技巧：逐项求导/积分</h2>
+                    <div class="box formula-box">
+                        <p>在收敛域内，幂级数可逐项求导/积分：</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            \( \left(\sum a_n x^n\right)' = \sum n a_n x^{n-1} \)
+                        </p>
+                        <p style="color: var(--accent-cyan); margin-top: 5px;">
+                            \( \int \sum a_n x^n dx = \sum \dfrac{a_n x^{n+1}}{n+1} \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p><strong>从基本级数出发：</strong></p>
+                        <p>\( \sum\limits_{n=0}^{\infty} x^n = \dfrac{1}{1-x} \)（\( |x| < 1 \)）</p>
+                        <div class="step" style="margin-top: 10px;">
+                            <span class="step-num">1</span>两边对 x 求导：
+                        </div>
+                        <p style="margin-left: 35px;">\( \sum\limits_{n=1}^{\infty} n x^{n-1} = \dfrac{1}{(1-x)^2} \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>常用基本展开</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <table>
+                            <tr><th>函数</th><th>幂级数</th><th>收敛域</th></tr>
+                            <tr>
+                                <td>\( \dfrac{1}{1-x} \)</td>
+                                <td>\( \sum x^n \)</td>
+                                <td>\( |x| < 1 \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( e^x \)</td>
+                                <td>\( \sum \dfrac{x^n}{n!} \)</td>
+                                <td>\( \mathbb{R} \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \ln(1+x) \)</td>
+                                <td>\( \sum \dfrac{(-1)^{n-1} x^n}{n} \)</td>
+                                <td>\( (-1, 1] \)</td>
+                            </tr>
+                            <tr>
+                                <td>\( \sin x \)</td>
+                                <td>\( \sum \dfrac{(-1)^n x^{2n+1}}{(2n+1)!} \)</td>
+                                <td>\( \mathbb{R} \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 求和策略</h3>
+                        <p style="font-size: 14px;">看通项结构，联想基本展开式</p>
+                        <p style="font-size: 14px;">• 有 n → 可能是求导得到</p>
+                        <p style="font-size: 14px;">• 有 1/n → 可能是积分得到</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\sum_{n=1}^{\infty} n x^{n-1} = \boxed{\dfrac{1}{(1-x)^2}} \)（\( |x| < 1 \)）
+            </div>
+        </div>
+        <div class="page-num">11 / 32</div>
+    </div>
+
+    <!-- ==================== 题8 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">08</span>函数展开成幂级数</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 泰勒/麦克劳林展开
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    将 \( f(x) = \ln(1+x) \) 展开成 \( x \) 的幂级数
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>方法一：直接展开</h2>
+                    <div class="box formula-box">
+                        <p>麦克劳林公式：</p>
+                        <p style="color: var(--accent-gold); font-size: 16px;">
+                            \( f(x) = \sum\limits_{n=0}^{\infty} \dfrac{f^{(n)}(0)}{n!} x^n \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <p>\( f(x) = \ln(1+x) \)</p>
+                        <p>\( f'(x) = \dfrac{1}{1+x} \)，\( f''(x) = -\dfrac{1}{(1+x)^2} \)，...</p>
+                        <p>\( f^{(n)}(x) = \dfrac{(-1)^{n-1}(n-1)!}{(1+x)^n} \)</p>
+                        <p>\( f^{(n)}(0) = (-1)^{n-1}(n-1)! \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>方法二：利用已知展开（更快）</h2>
+                    <div class="box answer-box">
+                        <p>已知 \( \dfrac{1}{1+x} = \sum\limits_{n=0}^{\infty} (-1)^n x^n \)</p>
+                        <div class="step" style="margin-top: 10px;">
+                            <span class="step-num">1</span>两边积分（\( \ln(1+x) = \int \dfrac{1}{1+x} dx \)）
+                        </div>
+                        <p style="margin-left: 35px;">\( \ln(1+x) = \sum\limits_{n=0}^{\infty} (-1)^n \dfrac{x^{n+1}}{n+1} \)</p>
+                        <div class="step">
+                            <span class="step-num">2</span>改写下标：
+                        </div>
+                        <p style="margin-left: 35px;">\( = \sum\limits_{n=1}^{\infty} \dfrac{(-1)^{n-1} x^n}{n} \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 收敛域</h3>
+                        <p>\( |x| < 1 \)，但 \( x = 1 \) 时也收敛（条件收敛）</p>
+                        <p>最终收敛域：\( (-1, 1] \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \ln(1+x) = \boxed{x - \dfrac{x^2}{2} + \dfrac{x^3}{3} - \dfrac{x^4}{4} + \cdots = \sum\limits_{n=1}^{\infty} \dfrac{(-1)^{n-1} x^n}{n}} \)
+            </div>
+        </div>
+        <div class="page-num">12 / 32</div>
+    </div>
+
+    <!-- ==================== 题9 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">09</span>利用幂级数求数项级数的和</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 幂级数应用
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    求级数 \( \displaystyle\sum_{n=1}^{\infty} \frac{1}{n \cdot 2^n} \) 的和
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>思路：把数项级数看作幂级数在特定点的值</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>构造幂级数：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( S(x) = \sum\limits_{n=1}^{\infty} \dfrac{x^n}{n} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>识别：这正是 \( -\ln(1-x) \) 的展开！
+                            <div style="margin: 8px 0 8px 35px; font-size: 15px;">
+                                （因为 \( \ln(1-x) = -\sum\limits_{n=1}^{\infty} \dfrac{x^n}{n} \)）
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>所以 \( S(x) = -\ln(1-x) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>原级数 = \( S\left(\dfrac{1}{2}\right) = -\ln\left(1-\dfrac{1}{2}\right) = \ln 2 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>关键技巧</h2>
+                    <div class="box" style="text-align: center;">
+                        <p style="font-size: 18px; color: var(--accent-gold);">
+                            数项级数 = 幂级数在某点的取值
+                        </p>
+                        <p style="margin-top: 15px;">
+                            \( \sum\limits_{n=1}^{\infty} \dfrac{1}{n \cdot 2^n} = S\left(\dfrac{1}{2}\right) \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 常见套路</h3>
+                        <p style="font-size: 14px;">• \( \sum \dfrac{1}{n!} = e \)（令 \( x=1 \) 于 \( e^x \)）</p>
+                        <p style="font-size: 14px;">• \( \sum \dfrac{(-1)^n}{2n+1} = \dfrac{\pi}{4} \)（由 \( \arctan x \)）</p>
+                        <p style="font-size: 14px;">• \( \sum \dfrac{1}{n^2} = \dfrac{\pi^2}{6} \)（傅里叶级数）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\sum_{n=1}^{\infty} \frac{1}{n \cdot 2^n} = \boxed{\ln 2} \)
+            </div>
+        </div>
+        <div class="page-num">13 / 32</div>
+    </div>
+
+    <!-- ==================== PART III 标题页：傅里叶级数 ==================== -->
+    <div class="separator-bar">== PART III: 傅里叶级数 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅲ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">傅里叶级数</h1>
+            <p style="font-size: 24px; color: var(--accent-blue);">Fourier Series</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-series">傅里叶系数</div>
+                <div class="tag tag-series">周期延拓</div>
+                <div class="tag tag-series">奇偶展开</div>
+                <div class="tag tag-series">收敛定理</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                用三角函数"拼凑"任意周期函数
+            </div>
+        </div>
+        <div class="page-num">14 / 32</div>
+    </div>
+
+    <!-- ==================== 题10 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">10</span>傅里叶系数计算</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 傅里叶系数公式
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    设 \( f(x) = x \)，\( x \in [-\pi, \pi) \)，以 \( 2\pi \) 为周期，求其傅里叶系数
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>傅里叶系数公式</h2>
+                    <div class="box formula-box" style="font-size: 15px;">
+                        <p>\( f(x) = \dfrac{a_0}{2} + \sum\limits_{n=1}^{\infty} (a_n \cos nx + b_n \sin nx) \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                        <p style="color: var(--accent-gold);">\( a_n = \dfrac{1}{\pi} \int_{-\pi}^{\pi} f(x) \cos nx\, dx \)</p>
+                        <p style="color: var(--accent-cyan);">\( b_n = \dfrac{1}{\pi} \int_{-\pi}^{\pi} f(x) \sin nx\, dx \)</p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <p>\( f(x) = x \) 是<span class="highlight-gold">奇函数</span></p>
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_n = 0 \)（奇×偶=奇，对称区间积分为0）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( b_n = \dfrac{1}{\pi} \int_{-\pi}^{\pi} x \sin nx\, dx = \dfrac{2}{\pi} \int_0^{\pi} x \sin nx\, dx \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>计算 \( b_n \)</h2>
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <p>分部积分：\( \int x \sin nx\, dx \)</p>
+                        <p>\( = -\dfrac{x \cos nx}{n} + \dfrac{\sin nx}{n^2} \)</p>
+                        <p style="margin-top: 10px;">\( b_n = \dfrac{2}{\pi} \left[-\dfrac{x \cos nx}{n}\right]_0^{\pi} \)</p>
+                        <p>\( = \dfrac{2}{\pi} \cdot \left(-\dfrac{\pi \cos n\pi}{n}\right) = \dfrac{2(-1)^{n+1}}{n} \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 奇偶性简化</h3>
+                        <p style="font-size: 14px;">• 奇函数：只有 \( b_n \)（正弦项）</p>
+                        <p style="font-size: 14px;">• 偶函数：只有 \( a_n \)（余弦项）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( a_n = 0 \)，\( b_n = \dfrac{2(-1)^{n+1}}{n} \)；
+                \( x = \boxed{2\left(\sin x - \dfrac{\sin 2x}{2} + \dfrac{\sin 3x}{3} - \cdots\right)} \)
+            </div>
+        </div>
+        <div class="page-num">15 / 32</div>
+    </div>
+
+    <!-- ==================== 题11 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">11</span>傅里叶级数展开（偶延拓）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 余弦展开
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    将 \( f(x) = x \)（\( 0 \leq x \leq \pi \)）展开成<span class="highlight-cyan">余弦级数</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>偶延拓</h2>
+                    <div class="box" style="text-align: center;">
+                        <p>把 \( f(x) \) 延拓成偶函数</p>
+                        <svg viewBox="0 0 300 120" style="width: 280px; height: 100px; margin: 10px 0;">
+                            <line x1="20" y1="100" x2="280" y2="100" stroke="#666" stroke-width="1"/>
+                            <line x1="150" y1="10" x2="150" y2="100" stroke="#666" stroke-width="1"/>
+                            <polyline points="150,100 230,30" stroke="#5dade2" stroke-width="2" fill="none"/>
+                            <polyline points="150,100 70,30" stroke="#f4d03f" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+                            <text x="240" y="35" fill="#5dade2" font-size="12">原函数</text>
+                            <text x="30" y="35" fill="#f4d03f" font-size="12">偶延拓</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="box formula-box" style="font-size: 15px;">
+                        <p>余弦级数系数：</p>
+                        <p style="color: var(--accent-gold);">\( a_n = \dfrac{2}{\pi} \int_0^{\pi} f(x) \cos nx\, dx \)</p>
+                        <p>\( b_n = 0 \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>计算</h2>
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <div class="step">
+                            <span class="step-num">1</span>\( a_0 = \dfrac{2}{\pi} \int_0^{\pi} x\, dx = \dfrac{2}{\pi} \cdot \dfrac{\pi^2}{2} = \pi \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( a_n = \dfrac{2}{\pi} \int_0^{\pi} x \cos nx\, dx \)（分部积分）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( = \dfrac{2}{\pi} \cdot \dfrac{\cos n\pi - 1}{n^2} = \dfrac{2((-1)^n - 1)}{\pi n^2} \)
+                        </div>
+                        <p style="margin-top: 10px;">
+                            n 为偶数时 \( a_n = 0 \)；<br>
+                            n 为奇数时 \( a_n = -\dfrac{4}{\pi n^2} \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 正弦展开（奇延拓）</h3>
+                        <p style="font-size: 14px;">\( b_n = \dfrac{2}{\pi} \int_0^{\pi} f(x) \sin nx\, dx \)，\( a_n = 0 \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( x = \boxed{\dfrac{\pi}{2} - \dfrac{4}{\pi}\left(\cos x + \dfrac{\cos 3x}{9} + \dfrac{\cos 5x}{25} + \cdots\right)} \)（\( 0 \leq x \leq \pi \)）
+            </div>
+        </div>
+        <div class="page-num">16 / 32</div>
+    </div>
+
+    <!-- ==================== 题12 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">12</span>傅里叶级数的收敛性</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-series">考点</span> 狄利克雷收敛定理
+                <div style="font-size: 20px; margin-top: 15px; text-align: center;">
+                    设 \( f(x) = \begin{cases} -1, & -\pi \leq x < 0 \\ 1, & 0 \leq x < \pi \end{cases} \)，周期 \( 2\pi \)，求傅里叶级数在 \( x = 0 \) 和 \( x = \pi \) 处的值
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>狄利克雷收敛定理</h2>
+                    <div class="box formula-box">
+                        <p>傅里叶级数在 \( x = x_0 \) 处收敛于：</p>
+                        <p style="color: var(--accent-gold); font-size: 20px; margin-top: 10px;">
+                            \( \dfrac{f(x_0^-) + f(x_0^+)}{2} \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            即左右极限的平均值
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p><strong>在 \( x = 0 \)（间断点）：</strong></p>
+                        <p>\( f(0^-) = -1 \)，\( f(0^+) = 1 \)</p>
+                        <p>级数收敛于 \( \dfrac{-1 + 1}{2} = 0 \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>在 \( x = \pi \)（也是间断点）</h2>
+                    <div class="box answer-box">
+                        <p>由周期性：</p>
+                        <p>\( f(\pi^-) = 1 \)</p>
+                        <p>\( f(\pi^+) = f(-\pi^+) = -1 \)</p>
+                        <p>级数收敛于 \( \dfrac{1 + (-1)}{2} = 0 \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 收敛情况总结</h3>
+                        <p style="font-size: 14px;">• 连续点：收敛于函数值</p>
+                        <p style="font-size: 14px;">• 间断点：收敛于左右极限的平均</p>
+                        <p style="font-size: 14px;">• 端点：收敛于周期延拓后的左右极限平均</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>这个函数的傅里叶级数：</strong></p>
+                        <p>\( f(x) = \dfrac{4}{\pi}\left(\sin x + \dfrac{\sin 3x}{3} + \dfrac{\sin 5x}{5} + \cdots\right) \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                在 \( x = 0 \) 处：\( \boxed{0} \)；在 \( x = \pi \) 处：\( \boxed{0} \)
+            </div>
+        </div>
+        <div class="page-num">17 / 32</div>
+    </div>
+
+    <!-- ==================== PART IV 标题页：常微分方程 ==================== -->
+    <div class="separator-bar">== PART IV: 常微分方程 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅳ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">常微分方程</h1>
+            <p style="font-size: 24px; color: var(--accent-orange);">Ordinary Differential Equations</p>
+            <div style="margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-ode">可分离变量</div>
+                <div class="tag tag-ode">齐次方程</div>
+                <div class="tag tag-ode">一阶线性</div>
+                <div class="tag tag-ode">伯努利</div>
+                <div class="tag tag-ode">全微分</div>
+                <div class="tag tag-ode">二阶常系数</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                含有未知函数导数的方程 —— 描述变化规律
+            </div>
+        </div>
+        <div class="page-num">18 / 32</div>
+    </div>
+
+    <!-- ==================== 题13 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">13</span>可分离变量方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 分离变量法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( \dfrac{dy}{dx} = xy \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>方法：分离变量</h2>
+                    <div class="box formula-box">
+                        <p>形如 \( \dfrac{dy}{dx} = f(x) g(y) \) 的方程</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            \( \dfrac{dy}{g(y)} = f(x)\, dx \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 5px;">
+                            两边分别积分
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>分离变量：\( \dfrac{dy}{y} = x\, dx \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>两边积分：\( \int \dfrac{dy}{y} = \int x\, dx \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( \ln|y| = \dfrac{x^2}{2} + C_1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( y = Ce^{x^2/2} \)（\( C = \pm e^{C_1} \) 或 0）
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>注意事项</h2>
+                    <div class="warning-box box">
+                        <h3>⚠️ 别丢解！</h3>
+                        <p style="font-size: 14px;">分离变量时除以 \( g(y) \)，可能丢失 \( g(y) = 0 \) 对应的解</p>
+                        <p style="font-size: 14px;">本题：\( y = 0 \) 也是解（已包含在 \( C = 0 \) 中）</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 识别技巧</h3>
+                        <p style="font-size: 14px;">右边能写成 \( f(x) \cdot g(y) \) 的乘积形式</p>
+                    </div>
+                    
+                    <div class="box">
+                        <p><strong>物理例子：</strong></p>
+                        <p style="font-size: 15px;">放射性衰变：\( \dfrac{dN}{dt} = -\lambda N \)</p>
+                        <p style="font-size: 15px;">解为 \( N = N_0 e^{-\lambda t} \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{Ce^{x^2/2}} \)（C 为任意常数）
+            </div>
+        </div>
+        <div class="page-num">19 / 32</div>
+    </div>
+
+    <!-- ==================== 题14 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">14</span>齐次方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 齐次方程换元
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( \dfrac{dy}{dx} = \dfrac{x + y}{x} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>齐次方程的特征</h2>
+                    <div class="box formula-box">
+                        <p>形如 \( \dfrac{dy}{dx} = \varphi\left(\dfrac{y}{x}\right) \) 的方程</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            令 \( u = \dfrac{y}{x} \)，则 \( y = ux \)，\( \dfrac{dy}{dx} = u + x\dfrac{du}{dx} \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>改写：\( \dfrac{dy}{dx} = 1 + \dfrac{y}{x} = \varphi\left(\dfrac{y}{x}\right) \) ✓
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>换元：令 \( u = \dfrac{y}{x} \)
+                            <div style="margin-left: 35px; font-size: 15px;">
+                                \( u + x\dfrac{du}{dx} = 1 + u \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>化简：\( x\dfrac{du}{dx} = 1 \) ⇒ \( du = \dfrac{dx}{x} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>积分：\( u = \ln|x| + C \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>换回原变量</h2>
+                    <div class="box answer-box">
+                        <p>\( \dfrac{y}{x} = \ln|x| + C \)</p>
+                        <p style="margin-top: 10px;">\( y = x(\ln|x| + C) \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 识别齐次方程</h3>
+                        <p style="font-size: 14px;">把 \( x, y \) 都换成 \( tx, ty \)</p>
+                        <p style="font-size: 14px;">如果 \( t \) 能全部约掉 → 齐次</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>验证：</strong></p>
+                        <p>\( \dfrac{tx + ty}{tx} = \dfrac{x + y}{x} \) ✓（t 约掉了）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{x(\ln|x| + C)} \)
+            </div>
+        </div>
+        <div class="page-num">20 / 32</div>
+    </div>
+
+    <!-- ==================== 题15 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">15</span>一阶线性方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 一阶线性方程公式
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( \dfrac{dy}{dx} + y = e^x \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>一阶线性方程标准形式</h2>
+                    <div class="box formula-box">
+                        <p>\( \dfrac{dy}{dx} + P(x)y = Q(x) \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                        <p style="color: var(--accent-gold); font-size: 16px;">
+                            通解公式：
+                        </p>
+                        <p style="font-size: 15px;">
+                            \( y = e^{-\int P dx}\left[\int Q e^{\int P dx} dx + C\right] \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p>本题：\( P(x) = 1 \)，\( Q(x) = e^x \)</p>
+                        <div class="step">
+                            <span class="step-num">1</span>\( \int P\, dx = x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \int Q e^{\int P dx} dx = \int e^x \cdot e^x dx = \int e^{2x} dx = \dfrac{e^{2x}}{2} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( y = e^{-x}\left(\dfrac{e^{2x}}{2} + C\right) = \dfrac{e^x}{2} + Ce^{-x} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>公式记忆技巧</h2>
+                    <div class="box" style="text-align: center;">
+                        <p style="font-size: 18px; color: var(--accent-gold);">
+                            "先乘后积再除"
+                        </p>
+                        <p style="font-size: 15px; margin-top: 10px;">
+                            积分因子：\( \mu = e^{\int P dx} \)
+                        </p>
+                        <p style="font-size: 15px;">
+                            两边乘 \( \mu \) 后，左边变成 \( (\mu y)' \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 解的结构</h3>
+                        <p style="font-size: 14px;">通解 = 齐次方程通解 + 非齐次特解</p>
+                        <p style="font-size: 14px;">\( y = Ce^{-x} + \dfrac{e^x}{2} \)</p>
+                        <p style="font-size: 14px;">　　 <span class="highlight-cyan">齐次通解</span> + <span class="highlight-gold">特解</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{\dfrac{e^x}{2} + Ce^{-x}} \)
+            </div>
+        </div>
+        <div class="page-num">21 / 32</div>
+    </div>
+
+    <!-- ==================== 题16 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">16</span>伯努利方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 伯努利方程换元
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( \dfrac{dy}{dx} + y = y^2 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>伯努利方程</h2>
+                    <div class="box formula-box">
+                        <p>形如 \( \dfrac{dy}{dx} + P(x)y = Q(x)y^n \)（\( n \neq 0, 1 \)）</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                        <p style="color: var(--accent-gold);">
+                            令 \( z = y^{1-n} \)，化为一阶线性方程
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p>本题：\( n = 2 \)，令 \( z = y^{-1} \)</p>
+                        <div class="step">
+                            <span class="step-num">1</span>\( \dfrac{dz}{dx} = -y^{-2}\dfrac{dy}{dx} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>原方程除以 \( y^2 \)：\( y^{-2}\dfrac{dy}{dx} + y^{-1} = 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：\( -\dfrac{dz}{dx} + z = 1 \)，即 \( \dfrac{dz}{dx} - z = -1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>这是一阶线性方程！用公式解得 \( z = 1 + Ce^x \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>换回原变量</h2>
+                    <div class="box answer-box">
+                        <p>\( z = y^{-1} = 1 + Ce^x \)</p>
+                        <p style="margin-top: 10px;">\( y = \dfrac{1}{1 + Ce^x} \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 变换公式</h3>
+                        <p style="font-size: 14px;">令 \( z = y^{1-n} \)，得到：</p>
+                        <p style="font-size: 14px;">\( \dfrac{dz}{dx} + (1-n)P(x)z = (1-n)Q(x) \)</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>特例：</strong></p>
+                        <p>• \( n = 0 \)：普通一阶线性</p>
+                        <p>• \( n = 1 \)：可分离变量</p>
+                        <p>• \( n = 2 \)：Logistic 方程（人口模型）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{\dfrac{1}{1 + Ce^x}} \)
+            </div>
+        </div>
+        <div class="page-num">22 / 32</div>
+    </div>
+
+    <!-- ==================== 题17 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">17</span>全微分方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 恰当方程
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( (2x + y)\, dx + (x + 2y)\, dy = 0 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>全微分方程</h2>
+                    <div class="box formula-box">
+                        <p>形如 \( M\, dx + N\, dy = 0 \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            若 \( \dfrac{\partial M}{\partial y} = \dfrac{\partial N}{\partial x} \)，则为全微分方程
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 5px;">
+                            存在 \( u(x, y) \) 使 \( du = M\, dx + N\, dy \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p>验证：\( M = 2x + y \)，\( N = x + 2y \)</p>
+                        <div class="step">
+                            <span class="step-num">1</span>\( \dfrac{\partial M}{\partial y} = 1 \)，\( \dfrac{\partial N}{\partial x} = 1 \) ✓
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>求 \( u \)：\( \dfrac{\partial u}{\partial x} = 2x + y \)
+                            <div style="margin-left: 35px; font-size: 15px;">
+                                积分：\( u = x^2 + xy + \varphi(y) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>由 \( \dfrac{\partial u}{\partial y} = x + 2y \)：\( x + \varphi'(y) = x + 2y \)
+                            <div style="margin-left: 35px; font-size: 15px;">
+                                得 \( \varphi(y) = y^2 \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>通解</h2>
+                    <div class="box answer-box">
+                        <p>\( u(x, y) = x^2 + xy + y^2 \)</p>
+                        <p style="margin-top: 10px;">通解：\( x^2 + xy + y^2 = C \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 求 u 的技巧</h3>
+                        <p style="font-size: 14px;">1. 对 M 关于 x 积分，得 \( u = \int M\, dx + \varphi(y) \)</p>
+                        <p style="font-size: 14px;">2. 对 u 关于 y 求偏导，与 N 比较定 \( \varphi(y) \)</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>积分因子：</strong></p>
+                        <p>若不满足条件，可尝试找积分因子 \( \mu \) 使 \( \mu M\, dx + \mu N\, dy = 0 \) 成为全微分方程</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( \boxed{x^2 + xy + y^2 = C} \)
+            </div>
+        </div>
+        <div class="page-num">23 / 32</div>
+    </div>
+
+    <!-- ==================== 题18 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">18</span>可降阶的高阶方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 降阶法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( y'' = y' \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>类型一：不显含 y</h2>
+                    <div class="box formula-box">
+                        <p>方程 \( F(x, y', y'') = 0 \) 不含 \( y \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            令 \( p = y' \)，则 \( y'' = p' \)
+                        </p>
+                        <p style="font-size: 14px; color: #888;">
+                            化为一阶方程 \( F(x, p, p') = 0 \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>令 \( p = y' \)，则 \( y'' = p' \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>方程变为 \( p' = p \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>这是可分离变量：\( p = C_1 e^x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>由 \( y' = C_1 e^x \)：\( y = C_1 e^x + C_2 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>类型二：不显含 x</h2>
+                    <div class="box formula-box">
+                        <p>方程 \( F(y, y', y'') = 0 \) 不含 \( x \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            令 \( p = y' \)，\( y'' = p\dfrac{dp}{dy} \)
+                        </p>
+                        <p style="font-size: 14px; color: #888;">
+                            化为关于 \( y, p \) 的一阶方程
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 两种降阶对比</h3>
+                        <table style="font-size: 13px;">
+                            <tr><th>类型</th><th>换元</th></tr>
+                            <tr><td>不含 y</td><td>\( p = y', y'' = p' \)</td></tr>
+                            <tr><td>不含 x</td><td>\( p = y', y'' = p\frac{dp}{dy} \)</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{C_1 e^x + C_2} \)
+            </div>
+        </div>
+        <div class="page-num">24 / 32</div>
+    </div>
+
+    <!-- ==================== 题19 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">19</span>二阶常系数齐次方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 特征方程法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( y'' - 5y' + 6y = 0 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>特征方程法</h2>
+                    <div class="box formula-box">
+                        <p>对于 \( y'' + py' + qy = 0 \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">
+                            特征方程：\( r^2 + pr + q = 0 \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>写特征方程：\( r^2 - 5r + 6 = 0 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>解方程：\( (r-2)(r-3) = 0 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>得特征根：\( r_1 = 2, r_2 = 3 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>通解：\( y = C_1 e^{2x} + C_2 e^{3x} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>三种情况的通解</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <table>
+                            <tr><th>特征根</th><th>通解形式</th></tr>
+                            <tr>
+                                <td>两不等实根 \( r_1, r_2 \)</td>
+                                <td>\( C_1 e^{r_1 x} + C_2 e^{r_2 x} \)</td>
+                            </tr>
+                            <tr>
+                                <td>重根 \( r_1 = r_2 = r \)</td>
+                                <td>\( (C_1 + C_2 x) e^{rx} \)</td>
+                            </tr>
+                            <tr>
+                                <td>共轭复根 \( \alpha \pm \beta i \)</td>
+                                <td>\( e^{\alpha x}(C_1 \cos\beta x + C_2 \sin\beta x) \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 为什么有效？</h3>
+                        <p style="font-size: 14px;">猜测 \( y = e^{rx} \) 代入，发现满足方程的条件正是特征方程</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{C_1 e^{2x} + C_2 e^{3x}} \)
+            </div>
+        </div>
+        <div class="page-num">25 / 32</div>
+    </div>
+
+    <!-- ==================== 题20 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">20</span>二阶常系数非齐次方程（多项式型）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 待定系数法
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( y'' - 3y' + 2y = x \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解的结构</h2>
+                    <div class="box formula-box">
+                        <p style="color: var(--accent-gold);">
+                            通解 = 齐次通解 + 非齐次特解
+                        </p>
+                    </div>
+                    
+                    <h2>步骤一：齐次通解</h2>
+                    <div class="box answer-box">
+                        <p>特征方程 \( r^2 - 3r + 2 = 0 \) ⇒ \( r = 1, 2 \)</p>
+                        <p>齐次通解：\( Y = C_1 e^x + C_2 e^{2x} \)</p>
+                    </div>
+                    
+                    <h2>步骤二：特解</h2>
+                    <div class="box answer-box">
+                        <p>右端 \( f(x) = x \)（一次多项式）</p>
+                        <p>设特解 \( y^* = ax + b \)</p>
+                        <p>代入：\( 0 - 3a + 2(ax + b) = x \)</p>
+                        <p>\( 2ax + (2b - 3a) = x \)</p>
+                        <p>⇒ \( a = \dfrac{1}{2}, b = \dfrac{3}{4} \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>特解形式速查</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <table>
+                            <tr><th>\( f(x) \) 类型</th><th>特解设法</th></tr>
+                            <tr>
+                                <td>\( P_n(x) \)（n次多项式）</td>
+                                <td>\( x^k Q_n(x) \)，k为0是根的重数</td>
+                            </tr>
+                            <tr>
+                                <td>\( e^{\lambda x} \)</td>
+                                <td>\( x^k a e^{\lambda x} \)，k为λ是根的重数</td>
+                            </tr>
+                            <tr>
+                                <td>\( e^{\lambda x} P_n(x) \)</td>
+                                <td>\( x^k Q_n(x) e^{\lambda x} \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 本题中</h3>
+                        <p style="font-size: 14px;">右端是 \( x \)（一次），0 不是特征根</p>
+                        <p style="font-size: 14px;">所以设 \( y^* = ax + b \)（一次多项式）</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>特解：</strong>\( y^* = \dfrac{x}{2} + \dfrac{3}{4} \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{C_1 e^x + C_2 e^{2x} + \dfrac{x}{2} + \dfrac{3}{4}} \)
+            </div>
+        </div>
+        <div class="page-num">26 / 32</div>
+    </div>
+
+    <!-- ==================== 题21 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">21</span>二阶常系数非齐次方程（指数型）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 指数型右端
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( y'' - 2y' + y = e^x \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>步骤一：齐次通解</h2>
+                    <div class="box answer-box">
+                        <p>特征方程 \( r^2 - 2r + 1 = 0 \) ⇒ \( r = 1 \)（二重根）</p>
+                        <p>齐次通解：\( Y = (C_1 + C_2 x) e^x \)</p>
+                    </div>
+                    
+                    <h2>步骤二：特解</h2>
+                    <div class="box answer-box">
+                        <p>右端 \( f(x) = e^x \)，\( \lambda = 1 \) 是<span class="highlight-red">二重根</span></p>
+                        <div class="step">
+                            <span class="step-num">1</span>设 \( y^* = ax^2 e^x \)（乘 \( x^2 \) 因为是二重根）
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>计算 \( y'^* = a(2x + x^2)e^x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>计算 \( y''^* = a(2 + 4x + x^2)e^x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>代入原方程：\( 2a e^x = e^x \) ⇒ \( a = \dfrac{1}{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>k 的确定规则</h2>
+                    <div class="box" style="text-align: center;">
+                        <p>设 \( y^* = x^k \cdot (\text{待定形式}) \)</p>
+                        <p style="margin-top: 15px; font-size: 16px;">
+                            k = <span class="highlight-gold">\( \lambda \) 是特征根的重数</span>
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 本题关键</h3>
+                        <p style="font-size: 14px;">\( \lambda = 1 \) 是特征方程的二重根</p>
+                        <p style="font-size: 14px;">所以特解要乘 \( x^2 \)：\( y^* = ax^2 e^x \)</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <table>
+                            <tr><th>情况</th><th>特解形式</th></tr>
+                            <tr><td>λ 不是根</td><td>\( ae^{\lambda x} \)</td></tr>
+                            <tr><td>λ 是单根</td><td>\( axe^{\lambda x} \)</td></tr>
+                            <tr><td>λ 是重根</td><td>\( ax^2 e^{\lambda x} \)</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{(C_1 + C_2 x) e^x + \dfrac{x^2}{2} e^x} \)
+            </div>
+        </div>
+        <div class="page-num">27 / 32</div>
+    </div>
+
+    <!-- ==================== 题22 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">22</span>欧拉方程</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-ode">考点</span> 欧拉方程变换
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    解方程 \( x^2 y'' - 2xy' + 2y = 0 \)（\( x > 0 \)）
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>欧拉方程</h2>
+                    <div class="box formula-box">
+                        <p>形如 \( x^2 y'' + axy' + by = f(x) \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+                        <p style="color: var(--accent-gold);">
+                            令 \( x = e^t \)（即 \( t = \ln x \)）
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 5px;">
+                            化为常系数方程
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <p><strong>变换公式：</strong></p>
+                        <p>\( xy' = \dfrac{dy}{dt} \)，\( x^2 y'' = \dfrac{d^2y}{dt^2} - \dfrac{dy}{dt} \)</p>
+                        <div class="step" style="margin-top: 10px;">
+                            <span class="step-num">1</span>代入：\( \dfrac{d^2y}{dt^2} - \dfrac{dy}{dt} - 2\dfrac{dy}{dt} + 2y = 0 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>化简：\( \dfrac{d^2y}{dt^2} - 3\dfrac{dy}{dt} + 2y = 0 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>解常系数方程</h2>
+                    <div class="box answer-box">
+                        <p>特征方程：\( r^2 - 3r + 2 = 0 \)</p>
+                        <p>特征根：\( r = 1, 2 \)</p>
+                        <p>关于 t 的解：\( y = C_1 e^t + C_2 e^{2t} \)</p>
+                    </div>
+                    
+                    <h2>换回 x</h2>
+                    <div class="box answer-box">
+                        <p>\( e^t = x \)，\( e^{2t} = x^2 \)</p>
+                        <p>原方程的解：\( y = C_1 x + C_2 x^2 \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 快捷方法</h3>
+                        <p style="font-size: 14px;">直接猜 \( y = x^r \) 代入，得到关于 r 的代数方程</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                通解：\( y = \boxed{C_1 x + C_2 x^2} \)（\( x > 0 \)）
+            </div>
+        </div>
+        <div class="page-num">28 / 32</div>
+    </div>
+
+    <!-- ==================== 公式总结：级数 ==================== -->
+    <div class="separator-bar">== FORMULA SUMMARY ==</div>
+    <div class="slide">
+        <div class="content">
+            <h1>📋 级数公式速查表</h1>
+            
+            <div class="row">
+                <div class="col">
+                    <h2>收敛判别法</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>比较判别法：</strong>\( 0 \leq a_n \leq b_n \)，大收则小收</p>
+                        <p><strong>极限比较：</strong>\( \lim \frac{a_n}{b_n} = L \in (0, \infty) \) ⇒ 同敛散</p>
+                        <p><strong>比值法：</strong>\( \rho = \lim \frac{a_{n+1}}{a_n} \)，\( \rho < 1 \) 收敛</p>
+                        <p><strong>根值法：</strong>\( \rho = \lim \sqrt[n]{a_n} \)，\( \rho < 1 \) 收敛</p>
+                        <p><strong>莱布尼茨：</strong>交错级数，\( a_n \downarrow 0 \) ⇒ 收敛</p>
+                    </div>
+                    
+                    <h2>常用级数</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p>\( \sum \frac{1}{n^p} \)：\( p > 1 \) 收敛，\( p \leq 1 \) 发散</p>
+                        <p>\( \sum q^n \)：\( |q| < 1 \) 收敛，= \( \frac{1}{1-q} \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>幂级数</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>收敛半径：</strong>\( R = \lim \left|\frac{a_n}{a_{n+1}}\right| \)</p>
+                        <p><strong>逐项求导/积分：</strong>收敛域内成立</p>
+                    </div>
+                    
+                    <h2>常用展开</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <p>\( e^x = \sum \frac{x^n}{n!} \)，\( \mathbb{R} \)</p>
+                        <p>\( \frac{1}{1-x} = \sum x^n \)，\( |x| < 1 \)</p>
+                        <p>\( \ln(1+x) = \sum \frac{(-1)^{n-1} x^n}{n} \)，\( (-1, 1] \)</p>
+                        <p>\( \sin x = \sum \frac{(-1)^n x^{2n+1}}{(2n+1)!} \)，\( \mathbb{R} \)</p>
+                        <p>\( \cos x = \sum \frac{(-1)^n x^{2n}}{(2n)!} \)，\( \mathbb{R} \)</p>
+                    </div>
+                    
+                    <h2>傅里叶</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p>\( a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f \cos nx\, dx \)</p>
+                        <p>\( b_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f \sin nx\, dx \)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">29 / 32</div>
+    </div>
+
+    <!-- ==================== 公式总结：微分方程 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>📋 微分方程公式速查表</h1>
+            
+            <div class="row">
+                <div class="col">
+                    <h2>一阶方程</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <table>
+                            <tr><th>类型</th><th>方法</th></tr>
+                            <tr>
+                                <td>可分离变量 \( \frac{dy}{dx} = f(x)g(y) \)</td>
+                                <td>\( \frac{dy}{g(y)} = f(x)dx \)</td>
+                            </tr>
+                            <tr>
+                                <td>齐次 \( \frac{dy}{dx} = \varphi(\frac{y}{x}) \)</td>
+                                <td>令 \( u = \frac{y}{x} \)</td>
+                            </tr>
+                            <tr>
+                                <td>一阶线性 \( y' + Py = Q \)</td>
+                                <td>公式法</td>
+                            </tr>
+                            <tr>
+                                <td>伯努利 \( y' + Py = Qy^n \)</td>
+                                <td>令 \( z = y^{1-n} \)</td>
+                            </tr>
+                            <tr>
+                                <td>全微分 \( Mdx + Ndy = 0 \)</td>
+                                <td>求原函数 \( u(x,y) = C \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <h2>一阶线性公式</h2>
+                    <div class="box formula-box" style="font-size: 14px;">
+                        <p>\( y = e^{-\int P dx}\left[\int Q e^{\int P dx} dx + C\right] \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>二阶常系数</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <p><strong>齐次方程</strong> \( y'' + py' + qy = 0 \)：</p>
+                        <table>
+                            <tr><th>特征根</th><th>通解</th></tr>
+                            <tr><td>\( r_1 \neq r_2 \) 实根</td><td>\( C_1 e^{r_1 x} + C_2 e^{r_2 x} \)</td></tr>
+                            <tr><td>\( r_1 = r_2 = r \)</td><td>\( (C_1 + C_2 x)e^{rx} \)</td></tr>
+                            <tr><td>\( \alpha \pm \beta i \)</td><td>\( e^{\alpha x}(C_1 \cos\beta x + C_2 \sin\beta x) \)</td></tr>
+                        </table>
+                    </div>
+                    
+                    <h2>非齐次特解</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <p>右端 \( e^{\lambda x} P_m(x) \)：</p>
+                        <p>设 \( y^* = x^k Q_m(x) e^{\lambda x} \)</p>
+                        <p>k = λ 是特征根的重数（0/1/2）</p>
+                    </div>
+                    
+                    <h2>欧拉方程</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p>\( x^2 y'' + axy' + by = 0 \)</p>
+                        <p>令 \( x = e^t \) 或直接设 \( y = x^r \)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">30 / 32</div>
+    </div>
+
+    <!-- ==================== 解题流程图 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>🎯 微分方程解题流程图</h1>
+            
+            <div class="box" style="text-align: center; padding: 30px;">
+                <div style="font-size: 18px;">
+                    <p style="margin-bottom: 20px;">
+                        <span style="background: var(--accent-orange); color: #fff; padding: 8px 20px; border-radius: 20px;">识别类型</span>
+                    </p>
+                    <p>↓</p>
+                    <div style="display: flex; justify-content: center; gap: 30px; margin: 20px 0;">
+                        <div style="background: rgba(52,152,219,0.2); padding: 15px; border-radius: 10px; width: 200px;">
+                            <p style="color: var(--accent-cyan); font-weight: bold;">一阶方程</p>
+                            <p style="font-size: 14px;">可分离？齐次？<br>线性？伯努利？全微分？</p>
+                        </div>
+                        <div style="background: rgba(46,204,113,0.2); padding: 15px; border-radius: 10px; width: 200px;">
+                            <p style="color: var(--accent-green); font-weight: bold;">高阶可降阶</p>
+                            <p style="font-size: 14px;">不含y？不含x？<br>令 p = y'</p>
+                        </div>
+                        <div style="background: rgba(155,89,182,0.2); padding: 15px; border-radius: 10px; width: 200px;">
+                            <p style="color: var(--accent-purple); font-weight: bold;">二阶常系数</p>
+                            <p style="font-size: 14px;">特征方程法<br>+ 待定系数求特解</p>
+                        </div>
+                    </div>
+                    <p>↓</p>
+                    <p style="margin-top: 20px;">
+                        <span style="background: var(--accent-gold); color: #000; padding: 8px 20px; border-radius: 20px;">套用公式/方法</span>
+                    </p>
+                    <p>↓</p>
+                    <p style="margin-top: 20px;">
+                        <span style="background: var(--accent-teal); color: #fff; padding: 8px 20px; border-radius: 20px;">验证解是否满足原方程</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="tip-box box" style="margin-top: 20px;">
+                <h3>💡 记忆口诀</h3>
+                <p>一阶看分离齐次线性伯努利，二阶靠特征方程定乾坤！</p>
+            </div>
+        </div>
+        <div class="page-num">31 / 32</div>
+    </div>
+
+    <!-- ==================== 结束页 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 30px;">🏆</div>
+            <div class="cover-title" style="font-size: 48px;">级数与微分方程 · 完</div>
+            <div style="width: 400px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-teal), transparent); margin: 30px 0;"></div>
+            
+            <div style="font-size: 18px; color: #888; margin-top: 20px;">
+                <p>至此，高等数学核心内容全部覆盖：</p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+                <div class="tag" style="background: var(--accent-cyan); color: #000; font-size: 15px; padding: 8px 15px;">一元微积分 20题</div>
+                <div class="tag" style="background: var(--accent-purple); color: #fff; font-size: 15px; padding: 8px 15px;">多元微积分 20题</div>
+                <div class="tag" style="background: var(--accent-teal); color: #fff; font-size: 15px; padding: 8px 15px;">级数+ODE 22题</div>
+            </div>
+            
+            <div style="margin-top: 40px; font-size: 20px; color: var(--accent-gold);">
+                共计 62 道精选母题，覆盖高等数学全部核心考点
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 16px; color: #555;">
+                "理解原理 × 熟记公式 × 勤加练习 = 高数通关"
+            </div>
+        </div>
+        <div class="page-num">32 / 32</div>
+    </div>
+
+</body>
+</html>

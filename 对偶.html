@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学中的对偶性 · 直观全解</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Noto+Serif+SC:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #080b14;
+            --bg-gradient: linear-gradient(135deg, #070a12 0%, #0f1628 50%, #0c1020 100%);
+            --text-main: #d8dce6;
+            --primal-blue: #2980b9;
+            --primal-deep: #1a3a5c;
+            --dual-purple: #9b59b6;
+            --dual-rose: #c0392b;
+            --accent-gold: #e8b84b;
+            --accent-cyan: #4fc3f7;
+            --accent-green: #66bb6a;
+            --accent-red: #ef5350;
+            --accent-orange: #ffa726;
+            --glass-bg: rgba(255,255,255,0.04);
+            --glass-border: 1px solid rgba(255,255,255,0.1);
+            --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+            --font-body: 'Lato', 'Noto Serif SC', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #050810; color: var(--text-main);
+            font-family: var(--font-body); font-size: 16px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 50px; padding: 50px 20px;
+        }
+
+        /* ===== 幻灯片容器 ===== */
+        .slide {
+            width: 1280px; min-height: 720px; height: auto;
+            background: var(--bg-gradient);
+            position: relative; overflow: visible;
+            box-shadow: 0 4px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;
+            padding: 48px 65px 35px; display: flex; flex-direction: column;
+        }
+
+        .slide::before {
+            content: ""; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 30px 30px; pointer-events: none; z-index: 0;
+        }
+
+        .slide.accent-top-blue::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--primal-blue), var(--dual-purple), var(--accent-gold)); z-index: 2;
+        }
+        .slide.accent-top-gold::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-orange), var(--accent-gold)); z-index: 2;
+        }
+
+        .content { z-index: 1; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+        /* ===== 排版 ===== */
+        h1 {
+            font-family: var(--font-display); font-size: 36px; color: #fff;
+            margin-bottom: 20px; font-weight: 700; flex-shrink: 0;
+            border-bottom: 2px solid var(--dual-purple); padding-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        h1 .sec-num { color: var(--accent-gold); margin-right: 12px; font-size: 32px; }
+
+        h2 {
+            font-size: 21px; color: var(--accent-cyan); margin-bottom: 10px;
+            font-weight: 700; flex-shrink: 0;
+        }
+        h3 { font-size: 18px; color: var(--accent-gold); margin: 6px 0; }
+
+        p, li { line-height: 1.7; }
+
+        /* ===== 盒子系统 ===== */
+        .box {
+            background: var(--glass-bg); border: var(--glass-border);
+            padding: 14px 20px; border-radius: 10px; margin-bottom: 12px;
+            font-size: 17px; line-height: 1.7;
+        }
+        .q-box {
+            background: rgba(79,195,247,0.07); border-left: 4px solid var(--accent-cyan);
+            border-color: rgba(79,195,247,0.3);
+        }
+        .a-box {
+            background: rgba(232,184,75,0.04); border: 1px solid rgba(232,184,75,0.2);
+        }
+        .tip-box {
+            background: rgba(102,187,106,0.07); border-left: 4px solid var(--accent-green);
+            border-color: rgba(102,187,106,0.3);
+        }
+        .warn-box {
+            background: rgba(239,83,80,0.07); border-left: 4px solid var(--accent-red);
+            border-color: rgba(239,83,80,0.3);
+        }
+        .formula-box {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--accent-gold);
+            text-align: center; padding: 16px; border-radius: 10px;
+        }
+        .insight-box {
+            background: linear-gradient(90deg, rgba(155,89,182,0.15), rgba(232,184,75,0.1), transparent);
+            border-left: 4px solid var(--dual-purple);
+            padding: 14px 22px; margin-top: 12px; font-size: 19px;
+            flex-shrink: 0; border-radius: 0 8px 8px 0;
+        }
+
+        /* ===== 布局 ===== */
+        .row { display: flex; gap: 22px; flex: 1; min-height: 0; }
+        .col { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+        .split-mirror {
+            display: flex; gap: 0; flex: 1; min-height: 0;
+        }
+        .mirror-left, .mirror-right {
+            flex: 1; padding: 22px; display: flex; flex-direction: column;
+        }
+        .mirror-left {
+            background: rgba(41,128,185,0.08); border-right: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 10px 0 0 10px;
+        }
+        .mirror-right {
+            background: rgba(155,89,182,0.08);
+            border-radius: 0 10px 10px 0;
+        }
+        .mirror-center {
+            width: 50px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.3); font-size: 14px;
+        }
+
+        /* ===== 标签 ===== */
+        .tag {
+            display: inline-block; padding: 3px 12px; border-radius: 15px;
+            font-size: 13px; margin-right: 6px; font-weight: 700;
+        }
+        .tag-primal { background: var(--primal-blue); color: #fff; }
+        .tag-dual { background: var(--dual-purple); color: #fff; }
+        .tag-key { background: var(--accent-gold); color: #000; }
+        .tag-ex { background: var(--accent-green); color: #000; }
+
+        /* ===== 步骤 ===== */
+        .step { margin: 5px 0; padding-left: 16px; border-left: 2px solid rgba(255,255,255,0.12); }
+        .step-num {
+            display: inline-flex; width: 22px; height: 22px;
+            background: var(--dual-purple); color: #fff;
+            border-radius: 50%; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0;
+        }
+
+        /* ===== 表格 ===== */
+        table { width: 100%; border-collapse: collapse; font-size: 16px; }
+        th {
+            background: rgba(155,89,182,0.2); color: var(--dual-purple);
+            padding: 9px 12px; text-align: left; font-size: 14px;
+        }
+        td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+        /* ===== 着色 ===== */
+        .hl-gold { color: var(--accent-gold); font-weight: 700; }
+        .hl-cyan { color: var(--accent-cyan); font-weight: 700; }
+        .hl-green { color: var(--accent-green); font-weight: 700; }
+        .hl-red { color: var(--accent-red); font-weight: 700; }
+        .hl-purple { color: var(--dual-purple); font-weight: 700; }
+        .hl-blue { color: var(--primal-blue); font-weight: 700; }
+
+        .page-num {
+            position: relative; text-align: right; color: #333;
+            font-size: 13px; margin-top: 12px; flex-shrink: 0;
+        }
+
+        .separator { width: 100%; text-align: center; color: #333; margin: 10px 0; font-size: 12px; letter-spacing: 4px; }
+
+        /* ===== SVG 动画 ===== */
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+        @keyframes pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .anim-float { animation: float-y 3.5s ease-in-out infinite; }
+        .anim-pulse { animation: pulse 2s ease-in-out infinite; }
+
+        ul, ol { padding-left: 20px; }
+        li { margin: 2px 0; }
+
+        mjx-container { overflow-x: auto; overflow-y: hidden; }
+
+        .cover-slide .content { justify-content: center; align-items: center; text-align: center; }
+    </style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║                    封 面                              ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="slide cover-slide" style="background: linear-gradient(135deg, #0a0f1e 0%, #1a1040 40%, #0d1a30 100%);">
+    <div class="content">
+        <!-- 动态SVG背景图案：对偶的镜像 -->
+        <svg width="260" height="130" viewBox="0 0 260 130" style="margin-bottom: 25px;" class="anim-float">
+            <!-- 原空间三角 -->
+            <polygon points="50,100 10,30 90,30" fill="none" stroke="#2980b9" stroke-width="2.5" opacity="0.8"/>
+            <circle cx="50" cy="100" r="4" fill="#2980b9"/>
+            <circle cx="10" cy="30" r="4" fill="#2980b9"/>
+            <circle cx="90" cy="30" r="4" fill="#2980b9"/>
+            <text x="42" y="120" fill="#4fc3f7" font-size="11" font-family="Lato">原</text>
+            <!-- 镜像线 -->
+            <line x1="130" y1="10" x2="130" y2="120" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="122" y="128" fill="rgba(255,255,255,0.3)" font-size="9">对偶</text>
+            <!-- 对偶空间三角（反射） -->
+            <polygon points="210,30 170,100 250,100" fill="none" stroke="#9b59b6" stroke-width="2.5" opacity="0.8"/>
+            <circle cx="210" cy="30" r="4" fill="#9b59b6"/>
+            <circle cx="170" cy="100" r="4" fill="#9b59b6"/>
+            <circle cx="250" cy="100" r="4" fill="#9b59b6"/>
+            <text x="202" y="24" fill="#ce93d8" font-size="11" font-family="Lato">偶</text>
+            <!-- 对应连线 -->
+            <line x1="50" y1="100" x2="210" y2="30" stroke="rgba(232,184,75,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="30" x2="250" y2="100" stroke="rgba(232,184,75,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="90" y1="30" x2="170" y2="100" stroke="rgba(232,184,75,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
+        </svg>
+
+        <div style="font-family: var(--font-display); font-size: 52px; color: #fff; margin-bottom: 12px; letter-spacing: 2px;">
+            数学中的<span style="color: var(--accent-gold);">对偶性</span>
+        </div>
+        <div style="font-size: 22px; color: var(--dual-purple); margin-bottom: 30px; font-weight: 300;">
+            Decoding Duality — An Intuitive & Comprehensive Guide
+        </div>
+        <div style="width: 450px; height: 2px; background: linear-gradient(90deg, transparent, var(--primal-blue), var(--dual-purple), var(--accent-gold), transparent); margin: 15px 0;"></div>
+        <div style="font-size: 17px; color: #777; line-height: 2;">
+            <p>从照镜子到范畴论 · 每个概念都有通俗解释与实例</p>
+            <p style="color: var(--accent-gold);">直观化 × 零门槛 × 跨领域</p>
+        </div>
+    </div>
+    <div class="page-num" style="color: #444;">1 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║                    目 录                              ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1>📋 目录 · 全景地图</h1>
+        <div style="display: flex; gap: 35px; flex: 1; align-items: flex-start; margin-top: 10px;">
+            <div style="flex: 1.3;">
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--primal-blue); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">0</div>
+                    <div>对偶的本质：照镜子的数学</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.3–4</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--accent-cyan); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">Ⅰ</div>
+                    <div>几何中的对偶：点与线的角色互换</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.5–8</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--accent-gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">Ⅱ</div>
+                    <div>线性代数中的对偶：物体与测量</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.9–14</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--dual-purple); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">Ⅲ</div>
+                    <div>分析中的对偶：乐谱与均衡器</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.15–22</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--accent-green); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">Ⅳ</div>
+                    <div>抽象之巅：逻辑、拓扑与代数</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.23–28</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: var(--accent-red); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">Ⅴ</div>
+                    <div>范畴论：箭头反转的统一视角</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.29–34</div>
+                </div>
+                <div style="display: flex; align-items: center; padding: 13px 18px; font-size: 19px;">
+                    <div style="width: 38px; height: 38px; background: #555; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 18px; flex-shrink: 0;">∞</div>
+                    <div>终极启示：对偶的五大共性</div>
+                    <div style="margin-left: auto; color: #555; font-size: 14px;">p.35–38</div>
+                </div>
+            </div>
+            <div style="flex: 0.7;">
+                <div class="box" style="border: 2px solid var(--dual-purple); font-size: 16px;">
+                    <h3>🧭 阅读指引</h3>
+                    <p style="margin-top: 8px;">
+                        <span class="hl-blue">■ 蓝色</span> = 原空间/原对象<br>
+                        <span class="hl-purple">■ 紫色</span> = 对偶空间/对偶对象<br>
+                        <span class="hl-gold">■ 金色</span> = 核心联系/映射<br>
+                        <span class="hl-green">■ 绿色</span> = 提示/实例
+                    </p>
+                </div>
+                <div class="box tip-box" style="font-size: 15px;">
+                    <p>💡 每个抽象概念都有：</p>
+                    <p><strong>通俗类比</strong> → <strong>精确定义</strong> → <strong>计算实例</strong></p>
+                    <p>即使零基础也能看懂！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">2 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第0章：对偶的本质 — 照镜子的数学              ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ CHAPTER 0: 对偶的本质 ━━━━━━━━━━</div>
+
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§0</span>对偶是什么？—— 数学世界的照镜子</h1>
+
+        <div class="box q-box" style="font-size: 20px; text-align: center;">
+            核心问题：当我们说两个数学对象"对偶"，到底在说什么？
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="flex: 1.2;">
+                <h2>生活中的对偶</h2>
+                <div class="box a-box">
+                    <p>想象你站在镜子前：</p>
+                    <svg width="100%" height="160" viewBox="0 0 500 160">
+                        <!-- 人 -->
+                        <circle cx="120" cy="40" r="18" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <line x1="120" y1="58" x2="120" y2="110" stroke="#2980b9" stroke-width="2"/>
+                        <line x1="120" y1="75" x2="95" y2="95" stroke="#2980b9" stroke-width="2"/>
+                        <line x1="120" y1="75" x2="145" y2="95" stroke="#2980b9" stroke-width="2"/>
+                        <line x1="120" y1="110" x2="100" y2="140" stroke="#2980b9" stroke-width="2"/>
+                        <line x1="120" y1="110" x2="140" y2="140" stroke="#2980b9" stroke-width="2"/>
+                        <text x="105" y="155" fill="#4fc3f7" font-size="12">原对象</text>
+                        <!-- 镜子 -->
+                        <rect x="240" y="10" width="6" height="145" rx="3" fill="rgba(232,184,75,0.4)" stroke="#e8b84b" stroke-width="1"/>
+                        <text x="225" y="8" fill="#e8b84b" font-size="10">镜面(对偶映射)</text>
+                        <!-- 镜像 -->
+                        <circle cx="370" cy="40" r="18" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <line x1="370" y1="58" x2="370" y2="110" stroke="#9b59b6" stroke-width="2"/>
+                        <line x1="370" y1="75" x2="395" y2="95" stroke="#9b59b6" stroke-width="2"/>
+                        <line x1="370" y1="75" x2="345" y2="95" stroke="#9b59b6" stroke-width="2"/>
+                        <line x1="370" y1="110" x2="390" y2="140" stroke="#9b59b6" stroke-width="2"/>
+                        <line x1="370" y1="110" x2="350" y2="140" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="350" y="155" fill="#ce93d8" font-size="12">对偶对象</text>
+                        <!-- 对应线 -->
+                        <line x1="138" y1="40" x2="352" y2="40" stroke="rgba(232,184,75,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <line x1="145" y1="95" x2="345" y2="95" stroke="rgba(232,184,75,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+                    </svg>
+                    <p style="font-size: 15px; color: #999; margin-top: 5px;">镜像中：左右互换，但结构（身高、比例）完全保留。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>数学中的三层含义</h2>
+                <div class="box" style="font-size: 16px;">
+                    <div class="step">
+                        <span class="step-num">1</span><span class="hl-gold">一一对应</span>：原对象的每个部分，在对偶世界都有唯一的"倒影"
+                    </div>
+                    <div class="step" style="margin-top: 8px;">
+                        <span class="step-num">2</span><span class="hl-gold">角色互换</span>：某些角色发生系统性的交换（如"点↔线"、"加↔乘"）
+                    </div>
+                    <div class="step" style="margin-top: 8px;">
+                        <span class="step-num">3</span><span class="hl-gold">真理保持</span>：在原世界成立的定理，翻译到对偶世界后仍然成立
+                    </div>
+                </div>
+
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 通俗一句话</h3>
+                    <p>对偶就是<strong>"换一种视角看同一件事"</strong>：<br>
+                    原来看"点"的地方改看"线"，<br>
+                    原来做"加法"的地方改做"乘法"，<br>
+                    结果所有的结论都还是对的！</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 核心定义：</span>
+            对偶是一种<strong>系统性的翻译机制</strong>——它将一个数学结构完整地映射到另一个结构，使两者互为"镜像"，信息完全等价。
+        </div>
+    </div>
+    <div class="page-num">3 / 38</div>
+</div>
+
+<!-- 对偶本质续 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§0</span>最简单的对偶实例：你已经会了！</h1>
+
+        <div class="row">
+            <div class="col">
+                <h2>实例1：加法与乘法的对偶</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <p>对数函数 \(\ln\) 就是一个对偶翻译器：</p>
+                    <table style="margin-top: 10px;">
+                        <tr><th>原世界（乘法）</th><th style="width: 60px; text-align: center;">→</th><th>对偶世界（加法）</th></tr>
+                        <tr><td>\( a \times b \)</td><td style="text-align: center;">\(\xrightarrow{\ln}\)</td><td>\( \ln a + \ln b \)</td></tr>
+                        <tr><td>\( a^n \)</td><td style="text-align: center;">\(\xrightarrow{\ln}\)</td><td>\( n \cdot \ln a \)</td></tr>
+                        <tr><td>\( 1 \)（乘法单位元）</td><td style="text-align: center;">\(\xrightarrow{\ln}\)</td><td>\( 0 \)（加法单位元）</td></tr>
+                    </table>
+                    <p style="margin-top: 10px; font-size: 15px;">✅ 乘法世界的所有规则，翻译到加法世界后依然成立！</p>
+                </div>
+
+                <h2>实例2：德摩根律（你高中就学过）</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <table>
+                        <tr><th>原命题</th><th style="width: 40px; text-align: center;">↔</th><th>对偶命题</th></tr>
+                        <tr>
+                            <td>"非（A<strong>且</strong>B）"</td>
+                            <td style="text-align: center;">=</td>
+                            <td>"非A <strong>或</strong> 非B"</td>
+                        </tr>
+                        <tr>
+                            <td>"非（A<strong>或</strong>B）"</td>
+                            <td style="text-align: center;">=</td>
+                            <td>"非A <strong>且</strong> 非B"</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 8px; font-size: 15px;">生活例子：<span class="hl-green">"不是（既下雨又刮风）"</span> = <span class="hl-green">"不下雨 或 不刮风"</span></p>
+                    <p style="font-size: 15px;">这里的对偶翻译：<span class="hl-gold">"且" ↔ "或"</span>，同时取反。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>实例3：集合的对偶</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <table>
+                        <tr><th>原运算</th><th style="text-align: center;">对偶运算</th></tr>
+                        <tr><td>并集 \( A \cup B \)</td><td>交集 \( A \cap B \)</td></tr>
+                        <tr><td>空集 \( \emptyset \)</td><td>全集 \( U \)</td></tr>
+                        <tr><td>子集 \( A \subseteq B \)</td><td>超集 \( A \supseteq B \)</td></tr>
+                    </table>
+                </div>
+
+                <h2>对偶的"影子"比喻</h2>
+                <div class="box" style="font-size: 16px;">
+                    <svg width="100%" height="100" viewBox="0 0 400 100">
+                        <ellipse cx="100" cy="40" rx="60" ry="25" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="75" y="44" fill="#4fc3f7" font-size="13">原对象</text>
+                        <!-- 光线 -->
+                        <line x1="160" y1="30" x2="250" y2="55" stroke="#e8b84b" stroke-width="1" stroke-dasharray="4,3"/>
+                        <line x1="160" y1="50" x2="250" y2="65" stroke="#e8b84b" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="180" y="35" fill="#e8b84b" font-size="10">对偶映射</text>
+                        <!-- 影子 -->
+                        <ellipse cx="310" cy="60" rx="60" ry="25" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="280" y="64" fill="#ce93d8" font-size="13">对偶"影子"</text>
+                    </svg>
+                    <p style="font-size: 15px;">原对象和它的"影子"（对偶对象）：<br>
+                    • 形状可能变了（角色互换）<br>
+                    • 但<strong>结构关系</strong>完整保留（信息守恒）</p>
+                </div>
+
+                <div class="warn-box box" style="font-size: 15px;">
+                    <h3>⚠️ 对偶 ≠ 相同</h3>
+                    <p>对偶的两个对象通常<strong>不一样</strong>！但它们之间有完美的对应关系。就像中文和英文不同，但表达的含义可以完全一致。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 关键理解：</span>
+            对偶不神秘——对数、德摩根律、集合运算都是对偶。它的威力在于：<strong>解决原问题困难时，翻译成对偶问题可能很简单</strong>。
+        </div>
+    </div>
+    <div class="page-num">4 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第Ⅰ章：几何中的对偶                          ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ PART Ⅰ: 几何中的对偶 ━━━━━━━━━━</div>
+
+<div class="slide" style="background: linear-gradient(135deg, #070a12 0%, #0f1830 100%);">
+    <div class="content" style="justify-content: center; align-items: center;">
+        <div style="font-size: 100px; margin-bottom: 15px; opacity: 0.2;">Ⅰ</div>
+        <h1 style="border: none; text-align: center; font-size: 48px;">几何中的对偶</h1>
+        <p style="font-size: 22px; color: var(--accent-cyan);">Geometric Duality: Points, Lines & Polyhedra</p>
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <span class="tag tag-primal">多面体对偶</span>
+            <span class="tag tag-dual">射影几何</span>
+            <span class="tag tag-key">点-线互换</span>
+        </div>
+    </div>
+    <div class="page-num">5 / 38</div>
+</div>
+
+<!-- 多面体对偶 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§1.1</span>多面体对偶：立方体与八面体</h1>
+
+        <div class="box q-box" style="text-align: center; font-size: 20px;">
+            <span class="tag tag-key">直观入口</span>
+            把每个"面"的中心连起来，你就得到了对偶多面体！
+        </div>
+
+        <div class="split-mirror" style="margin-top: 15px;">
+            <div class="mirror-left">
+                <h2 style="color: var(--primal-blue);">立方体（正六面体）</h2>
+                <svg width="220" height="180" viewBox="0 0 220 180" style="margin: 10px auto; display: block;">
+                    <!-- 立方体线框 -->
+                    <polygon points="50,130 130,130 160,100 80,100" fill="none" stroke="#2980b9" stroke-width="2"/>
+                    <polygon points="50,60 130,60 160,30 80,30" fill="none" stroke="#2980b9" stroke-width="2"/>
+                    <line x1="50" y1="130" x2="50" y2="60" stroke="#2980b9" stroke-width="2"/>
+                    <line x1="130" y1="130" x2="130" y2="60" stroke="#2980b9" stroke-width="2"/>
+                    <line x1="160" y1="100" x2="160" y2="30" stroke="#2980b9" stroke-width="2"/>
+                    <line x1="80" y1="100" x2="80" y2="30" stroke="#2980b9" stroke-width="2" opacity="0.4"/>
+                    <!-- 标注 -->
+                    <text x="10" y="175" fill="#4fc3f7" font-size="12">顶点: 8  边: 12  面: 6</text>
+                </svg>
+                <div class="box" style="font-size: 15px; background: rgba(41,128,185,0.1);">
+                    <p><span class="hl-blue">6</span> 个面 → 对偶后变成 <span class="hl-purple">6</span> 个<strong>顶点</strong></p>
+                    <p><span class="hl-blue">8</span> 个顶点 → 对偶后变成 <span class="hl-purple">8</span> 个<strong>面</strong></p>
+                    <p><span class="hl-blue">12</span> 条边 → 对偶后还是 <span class="hl-blue">12</span> 条<strong>边</strong></p>
+                </div>
+            </div>
+
+            <div class="mirror-center">
+                <svg width="40" height="200" viewBox="0 0 40 200">
+                    <line x1="20" y1="20" x2="20" y2="180" stroke="rgba(232,184,75,0.3)" stroke-width="1" stroke-dasharray="4,4"/>
+                    <polygon points="15,50 25,50 20,40" fill="#e8b84b" opacity="0.6"/>
+                    <polygon points="15,150 25,150 20,160" fill="#e8b84b" opacity="0.6"/>
+                </svg>
+                <div style="font-size: 10px; color: var(--accent-gold);">面↔点</div>
+            </div>
+
+            <div class="mirror-right">
+                <h2 style="color: var(--dual-purple);">正八面体</h2>
+                <svg width="220" height="180" viewBox="0 0 220 180" style="margin: 10px auto; display: block;">
+                    <!-- 八面体线框 -->
+                    <polygon points="110,20 50,90 110,160 170,90" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                    <line x1="50" y1="90" x2="170" y2="90" stroke="#9b59b6" stroke-width="2"/>
+                    <line x1="110" y1="20" x2="110" y2="160" stroke="#9b59b6" stroke-width="1.5" opacity="0.4"/>
+                    <!-- 标注 -->
+                    <text x="10" y="175" fill="#ce93d8" font-size="12">顶点: 6  边: 12  面: 8</text>
+                </svg>
+                <div class="box" style="font-size: 15px; background: rgba(155,89,182,0.1);">
+                    <p><span class="hl-purple">8</span> 个面 ← 原来的 <span class="hl-blue">8</span> 个顶点</p>
+                    <p><span class="hl-purple">6</span> 个顶点 ← 原来的 <span class="hl-blue">6</span> 个面</p>
+                    <p>边数保持不变！</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 欧拉公式保持：</span>
+            \( V - E + F = 2 \) 在对偶变换下不变。立方体：\(8-12+6=2\)；八面体：\(6-12+8=2\)。这就是<strong>信息守恒</strong>。
+        </div>
+    </div>
+    <div class="page-num">6 / 38</div>
+</div>
+
+<!-- 射影几何 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§1.2</span>射影几何：点与线的完美互换</h1>
+
+        <div class="box q-box" style="font-size: 18px;">
+            <span class="tag tag-key">核心原理</span>
+            在射影几何中，把命题中的<span class="hl-gold">"点"换成"线"</span>、<span class="hl-gold">"线"换成"点"</span>，<span class="hl-gold">"经过"换成"在…上"</span>，得到的新命题仍然成立！
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>对偶命题表</h2>
+                <div class="box" style="font-size: 15px;">
+                    <table>
+                        <tr>
+                            <th style="background: rgba(41,128,185,0.2); color: var(--primal-blue);">原命题</th>
+                            <th style="background: rgba(155,89,182,0.2); color: var(--dual-purple);">对偶命题</th>
+                        </tr>
+                        <tr>
+                            <td>两<span class="hl-blue">点</span>确定唯一一条<span class="hl-purple">线</span></td>
+                            <td>两<span class="hl-purple">线</span>确定唯一一个<span class="hl-blue">点</span></td>
+                        </tr>
+                        <tr>
+                            <td>三<span class="hl-blue">点</span>共<span class="hl-purple">线</span></td>
+                            <td>三<span class="hl-purple">线</span>共<span class="hl-blue">点</span></td>
+                        </tr>
+                        <tr>
+                            <td>一个<span class="hl-blue">点</span>在一条<span class="hl-purple">线</span>上</td>
+                            <td>一条<span class="hl-purple">线</span>过一个<span class="hl-blue">点</span></td>
+                        </tr>
+                        <tr>
+                            <td>Desargues 定理（点版）</td>
+                            <td>Desargues 定理（线版）</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="warn-box box" style="font-size: 15px;">
+                    <h3>⚠️ 关键前提</h3>
+                    <p>这在<strong>射影平面</strong>中成立，因为射影几何中<strong>没有"平行线"</strong>——任意两条线都相交于一个点（可能是"无穷远点"）。</p>
+                    <p>在普通欧几里得几何中，平行线不交，会破坏对偶性。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>图解：三点共线 ↔ 三线共点</h2>
+                <svg width="100%" height="180" viewBox="0 0 440 180">
+                    <!-- 左图：三点共线 -->
+                    <line x1="20" y1="90" x2="200" y2="90" stroke="#2980b9" stroke-width="2"/>
+                    <circle cx="60" cy="90" r="5" fill="#2980b9"/>
+                    <circle cx="110" cy="90" r="5" fill="#2980b9"/>
+                    <circle cx="160" cy="90" r="5" fill="#2980b9"/>
+                    <text x="50" y="75" fill="#4fc3f7" font-size="11">A</text>
+                    <text x="100" y="75" fill="#4fc3f7" font-size="11">B</text>
+                    <text x="150" y="75" fill="#4fc3f7" font-size="11">C</text>
+                    <text x="60" y="130" fill="#4fc3f7" font-size="12">三点共线</text>
+                    <!-- 箭头 -->
+                    <text x="210" y="95" fill="#e8b84b" font-size="16">⟷</text>
+                    <!-- 右图：三线共点 -->
+                    <line x1="300" y1="20" x2="380" y2="160" stroke="#9b59b6" stroke-width="2"/>
+                    <line x1="260" y1="140" x2="420" y2="60" stroke="#9b59b6" stroke-width="2"/>
+                    <line x1="270" y1="40" x2="400" y2="150" stroke="#9b59b6" stroke-width="2"/>
+                    <circle cx="340" cy="95" r="5" fill="#e8b84b"/>
+                    <text x="310" y="170" fill="#ce93d8" font-size="12">三线共点</text>
+                </svg>
+
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 对偶的威力</h3>
+                    <p>证明了"三点共线"的定理后，<strong>不需要重新证明</strong>"三线共点"版本——对偶原理自动保证它成立！</p>
+                    <p>这意味着：<strong>一份证明，两个定理</strong>。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 射影对偶的本质：</span>
+            在射影平面中，"点"和"线"在逻辑上完全平等，没有谁更基本。它们的角色可以完美互换。
+        </div>
+    </div>
+    <div class="page-num">7 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第Ⅱ章：线性代数中的对偶                      ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ PART Ⅱ: 线性代数中的对偶 ━━━━━━━━━━</div>
+
+<div class="slide" style="background: linear-gradient(135deg, #070a12 0%, #1a1530 100%);">
+    <div class="content" style="justify-content: center; align-items: center;">
+        <div style="font-size: 100px; margin-bottom: 15px; opacity: 0.2;">Ⅱ</div>
+        <h1 style="border: none; text-align: center; font-size: 48px;">线性代数中的对偶</h1>
+        <p style="font-size: 22px; color: var(--accent-gold);">Linear Algebra: Objects & Measurements</p>
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <span class="tag tag-primal">向量空间 V</span>
+            <span class="tag tag-dual">对偶空间 V*</span>
+            <span class="tag tag-key">线性泛函</span>
+            <span class="tag tag-key">自反性</span>
+        </div>
+    </div>
+    <div class="page-num">8 / 38</div>
+</div>
+
+<!-- 线性泛函 -->
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">§2.1</span>什么是线性泛函？—— 给向量"打分"</h1>
+
+        <div class="box q-box" style="font-size: 18px;">
+            <span class="tag tag-key">零基础解释</span>
+            线性泛函就是一个<strong>"给向量打分的规则"</strong>：输入一个向量，输出一个数字，而且打分方式是"线性的"。
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 1.3;">
+                <h2>具体例子</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <p>设向量空间 \( V = \mathbb{R}^2 \)（二维平面向量），向量 \(\mathbf{v} = (x, y)\)。</p>
+                    <p style="margin-top: 10px;">定义一个线性泛函：</p>
+                    <div class="formula-box" style="margin: 10px 0;">
+                        \( f(x, y) = 3x + 2y \)
+                    </div>
+                    <p>验证线性性：</p>
+                    <div class="step">
+                        <span class="step-num">1</span>\( f(1, 0) = 3 \)，\( f(0, 1) = 2 \)，\( f(1, 1) = 5 = 3 + 2 \) ✓
+                    </div>
+                    <div class="step">
+                        <span class="step-num">2</span>\( f(2, 3) = 6 + 6 = 12 = 2 \cdot f(1, 0) + 3 \cdot f(0, 1) \) ✓
+                    </div>
+                    <p style="margin-top: 8px; font-size: 15px;">所有形如 \( f(x,y) = ax + by \) 的函数都是线性泛函！</p>
+                </div>
+
+                <h2>精确定义</h2>
+                <div class="box formula-box" style="text-align: left; font-size: 16px; padding: 14px 20px;">
+                    <p><strong>线性泛函</strong>是从向量空间 \( V \) 到数域 \( k \)（如实数 \(\mathbb{R}\)）的线性映射：</p>
+                    <p style="text-align: center; font-size: 18px; margin: 8px 0; color: var(--accent-gold);">\( f: V \to k \)，满足 \( f(\alpha \mathbf{u} + \beta \mathbf{v}) = \alpha f(\mathbf{u}) + \beta f(\mathbf{v}) \)</p>
+                    <p>通俗说：<strong>输入向量，输出数字</strong>，且遵守"加法和数乘"规则。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>"物体与秤"的类比</h2>
+                <div class="box" style="text-align: center;">
+                    <svg width="250" height="200" viewBox="0 0 250 200">
+                        <!-- 苹果（向量） -->
+                        <circle cx="60" cy="80" r="30" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="45" y="85" fill="#4fc3f7" font-size="13" font-weight="bold">v</text>
+                        <text x="35" y="130" fill="#4fc3f7" font-size="11">向量(物体)</text>
+                        <!-- 箭头 -->
+                        <line x1="95" y1="80" x2="140" y2="80" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <defs>
+                            <marker id="arrowGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <polygon points="0,0 8,3 0,6" fill="#e8b84b"/>
+                            </marker>
+                        </defs>
+                        <text x="100" y="72" fill="#e8b84b" font-size="10">f作用</text>
+                        <!-- 秤（泛函） -->
+                        <rect x="148" y="60" width="50" height="40" rx="5" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="155" y="84" fill="#ce93d8" font-size="12" font-weight="bold">f(v)</text>
+                        <text x="145" y="130" fill="#ce93d8" font-size="11">数字(读数)</text>
+                        <!-- 分隔 -->
+                        <line x1="0" y1="150" x2="250" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                        <text x="20" y="175" fill="#999" font-size="11">例: f(2,3) = 3×2+2×3 = 12</text>
+                        <text x="20" y="192" fill="#999" font-size="11">向量(2,3) → 数字 12</text>
+                    </svg>
+                </div>
+
+                <h2>对偶空间 \( V^* \)</h2>
+                <div class="box" style="font-size: 16px; border: 1px solid var(--dual-purple);">
+                    <p><strong>\( V^* \)</strong> = 所有线性泛函的集合</p>
+                    <p style="margin-top: 5px;">= <span class="hl-purple">"所有可能的打分规则"</span></p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+                    <p>对于 \(\mathbb{R}^2\)：每个泛函 \(f(x,y) = ax+by\) 由 \((a,b)\) 确定。</p>
+                    <p>所以 \((\mathbb{R}^2)^* \cong \mathbb{R}^2\) —— 对偶空间和原空间"一样大"！</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 符号说明</h3>
+                    <p>\( V^* \) 中的 <strong>*</strong> 就是"对偶"的标记</p>
+                    <p>\( \cong \) 表示"同构"，即"结构完全相同"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 核心思想：</span>
+            研究"物体本身"（向量 \(\mathbf{v}\)）和研究"所有可能的测量方式"（线性泛函 \(f\)），本质上是<strong>等价</strong>的。
+        </div>
+    </div>
+    <div class="page-num">9 / 38</div>
+</div>
+
+<!-- 自反性 -->
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">§2.2</span>自反性：双重对偶能回到自己吗？</h1>
+
+        <div class="box q-box" style="font-size: 18px;">
+            <span class="tag tag-key">核心概念</span>
+            对 \(V\) 做一次对偶得 \(V^*\)，再做一次得 \(V^{**}\)。问：\(V^{**}\) 和 \(V\) 是什么关系？
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>链式对偶图</h2>
+                <div class="box" style="text-align: center; padding: 25px;">
+                    <svg width="100%" height="120" viewBox="0 0 500 120">
+                        <!-- V -->
+                        <rect x="20" y="35" width="100" height="50" rx="10" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="45" y="65" fill="#4fc3f7" font-size="18" font-weight="bold">V</text>
+                        <text x="35" y="105" fill="#4fc3f7" font-size="11">原空间</text>
+                        <!-- 箭头1 -->
+                        <line x1="125" y1="60" x2="190" y2="60" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <text x="140" y="50" fill="#e8b84b" font-size="10">第1次对偶</text>
+                        <!-- V* -->
+                        <rect x="195" y="35" width="100" height="50" rx="10" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="215" y="65" fill="#ce93d8" font-size="18" font-weight="bold">V*</text>
+                        <text x="203" y="105" fill="#ce93d8" font-size="11">对偶空间</text>
+                        <!-- 箭头2 -->
+                        <line x1="300" y1="60" x2="365" y2="60" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <text x="310" y="50" fill="#e8b84b" font-size="10">第2次对偶</text>
+                        <!-- V** -->
+                        <rect x="370" y="35" width="110" height="50" rx="10" fill="none" stroke="#66bb6a" stroke-width="2.5"/>
+                        <text x="390" y="65" fill="#66bb6a" font-size="18" font-weight="bold">V** ≅ V</text>
+                        <text x="378" y="105" fill="#66bb6a" font-size="11">回到原空间！</text>
+                        <!-- 回环 -->
+                        <path d="M 425 35 C 425 -10 45 -10 45 35" fill="none" stroke="#66bb6a" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
+                        <defs>
+                            <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <polygon points="0,0 8,3 0,6" fill="#66bb6a"/>
+                            </marker>
+                        </defs>
+                        <text x="210" y="10" fill="#66bb6a" font-size="11">自然同构（不依赖基的选择）</text>
+                    </svg>
+                </div>
+
+                <h2>什么是"自然同构"？</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <p><strong>同构 \(\cong\)</strong>：两个空间结构完全相同，只是"名字"不同。</p>
+                    <p style="margin-top: 5px;"><strong>"自然"</strong>的含义：这个对应关系<span class="hl-gold">不需要选择坐标系</span>。</p>
+                    <p style="margin-top: 5px; font-size: 15px;">类比：你和你的照片"像"（同构），但需要选角度（选基）。而你和"你自己"是"自然同构"——不需要任何选择。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>自反 vs 非自反</h2>
+                <div class="box" style="font-size: 15px; border-top: 3px solid var(--accent-green);">
+                    <h3 style="color: var(--accent-green);">✅ 自反空间</h3>
+                    <p>\( V^{**} \cong V \)：双重对偶完美回到自己。</p>
+                    <p><strong>类比：</strong>3D物体 → 3D扫描 → 3D打印 = 完美复原</p>
+                    <p style="margin-top: 5px;"><strong>例子：</strong></p>
+                    <ul>
+                        <li>所有有限维向量空间（如 \(\mathbb{R}^n\)）</li>
+                        <li>\( L^p \) 空间（\(1 < p < \infty\)）</li>
+                        <li>希尔伯特空间</li>
+                    </ul>
+                </div>
+
+                <div class="box" style="font-size: 15px; border-top: 3px solid var(--accent-red);">
+                    <h3 style="color: var(--accent-red);">❌ 非自反空间</h3>
+                    <p>\( V^{**} \supsetneq V \)：双重对偶"膨胀"了，回不到自己。</p>
+                    <p><strong>类比：</strong>3D物体 → 拍照(2D) → 打印成纸 ≠ 原物体</p>
+                    <p style="margin-top: 5px;"><strong>例子：</strong></p>
+                    <ul>
+                        <li>\( L^1 \) 空间</li>
+                        <li>\( L^\infty \) 空间</li>
+                        <li>\( C(K) \) 连续函数空间</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box box" style="font-size: 14px;">
+                    <h3>💡 "嵌入"是什么意思？</h3>
+                    <p>\(V\) 可以嵌入 \(V^{**}\)（像整数嵌入实数），但不一定等于 \(V^{**}\)。嵌入 = 单射但可能非满射 = "是子集但不是全部"。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 自反性的意义：</span>
+            如果空间是自反的，说明它"足够好"——在对偶翻译中<strong>没有信息丢失</strong>，可以完美还原。
+        </div>
+    </div>
+    <div class="page-num">10 / 38</div>
+</div>
+
+<!-- 线性代数对偶表 -->
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">§2.3</span>线性代数对偶词典（带解释版）</h1>
+
+        <div class="box" style="font-size: 15px; overflow-x: auto;">
+            <table>
+                <tr>
+                    <th style="background: rgba(41,128,185,0.2); color: var(--primal-blue); width: 22%;">原概念</th>
+                    <th style="background: rgba(155,89,182,0.2); color: var(--dual-purple); width: 22%;">对偶概念</th>
+                    <th style="width: 56%;">通俗解释</th>
+                </tr>
+                <tr>
+                    <td>向量空间 \(V\)</td>
+                    <td>对偶空间 \(V^* = \text{Hom}(V, k)\)</td>
+                    <td>原空间 vs 所有"打分规则"的集合。Hom(V,k) = 从V到数域k的所有线性映射。</td>
+                </tr>
+                <tr>
+                    <td>向量 \(\mathbf{v}\)</td>
+                    <td>线性泛函 \(f\)</td>
+                    <td>一个具体的物体 vs 一种具体的测量方式</td>
+                </tr>
+                <tr>
+                    <td>线性映射 \(T: V \to W\)</td>
+                    <td>对偶映射 \(T^*: W^* \to V^*\)</td>
+                    <td>原映射"正着走"，对偶映射"反着走"（箭头反转！）</td>
+                </tr>
+                <tr>
+                    <td>核空间 \(\ker(T)\)</td>
+                    <td>像空间 \(\text{im}(T^*)\)</td>
+                    <td>ker(T) = 被T映射成0的向量集合；im(T*) = T*能到达的泛函集合</td>
+                </tr>
+                <tr>
+                    <td>行空间</td>
+                    <td>列空间</td>
+                    <td>矩阵的行张成的空间 vs 列张成的空间，转置后互换</td>
+                </tr>
+                <tr>
+                    <td>矩阵 \(A\)</td>
+                    <td>转置 \(A^T\)</td>
+                    <td>行列互换，\(\text{rank}(A) = \text{rank}(A^T)\)（秩不变！）</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row" style="margin-top: 12px;">
+            <div class="col">
+                <h2>关键公式解读</h2>
+                <div class="box a-box" style="font-size: 15px;">
+                    <p><strong>对偶映射公式：</strong>\( (T^* f)(\mathbf{v}) = f(T\mathbf{v}) \)</p>
+                    <p style="margin-top: 5px;">通俗翻译：</p>
+                    <p>"用对偶映射 \(T^*\) 改造测量工具 \(f\)" = "先用原映射 \(T\) 改造物体，再用原工具 \(f\) 测量"</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 10px 0;">
+                    <p><strong>数值例子：</strong>设 \(T(x,y) = (x+y, 2x)\)，\(f(a,b) = a - b\)</p>
+                    <p>\( T^*f \) 作用在 \((x,y)\) 上 = \( f(T(x,y)) = f(x+y, 2x) = (x+y) - 2x = y - x \)</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>秩不变定理</h2>
+                <div class="box formula-box" style="font-size: 18px;">
+                    \( \text{rank}(A) = \text{rank}(A^T) \)
+                </div>
+                <div class="box" style="font-size: 15px;">
+                    <p><strong>数值验证：</strong></p>
+                    <p>\( A = \begin{pmatrix} 1 & 2 \\ 3 & 6 \end{pmatrix} \)，\(\text{rank}(A) = 1\)</p>
+                    <p>\( A^T = \begin{pmatrix} 1 & 3 \\ 2 & 6 \end{pmatrix} \)，\(\text{rank}(A^T) = 1\) ✓</p>
+                    <p style="margin-top: 5px; font-size: 14px;">行空间和列空间维数相等——对偶保持"维数信息"。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">11 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第Ⅲ章：分析中的对偶                          ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ PART Ⅲ: 分析中的对偶 ━━━━━━━━━━</div>
+
+<div class="slide" style="background: linear-gradient(135deg, #0a0512 0%, #1a0f28 100%);">
+    <div class="content" style="justify-content: center; align-items: center;">
+        <div style="font-size: 100px; margin-bottom: 15px; opacity: 0.2;">Ⅲ</div>
+        <h1 style="border: none; text-align: center; font-size: 48px;">分析中的对偶</h1>
+        <p style="font-size: 22px; color: var(--dual-purple);">Duality in Analysis: Functions & Transforms</p>
+        <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <span class="tag tag-primal">Lp 空间</span>
+            <span class="tag tag-dual">Lq 空间</span>
+            <span class="tag tag-key">傅里叶变换</span>
+            <span class="tag tag-key">Legendre变换</span>
+        </div>
+    </div>
+    <div class="page-num">12 / 38</div>
+</div>
+
+<!-- Lp空间 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§3.1</span>Lp 空间：什么是"p次可积"？</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-ex">零基础解释</span>
+            \(L^p\) 空间就是"<strong>\(|f(x)|^p\) 的积分有限</strong>"的函数集合。不同的 \(p\) 衡量函数"大小"的不同方式。
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 1.2;">
+                <h2>通俗理解</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <p>想象衡量一个音频信号 \(f(t)\) 的"能量"：</p>
+                    <table style="margin-top: 8px;">
+                        <tr><th>空间</th><th>衡量标准</th><th>直觉</th></tr>
+                        <tr>
+                            <td>\(L^1\)</td>
+                            <td>\(\int |f| \, dx < \infty\)</td>
+                            <td>总面积有限（"绝对值之和"）</td>
+                        </tr>
+                        <tr>
+                            <td>\(L^2\)</td>
+                            <td>\(\int |f|^2 \, dx < \infty\)</td>
+                            <td>总能量有限（物理学最常用）</td>
+                        </tr>
+                        <tr>
+                            <td>\(L^\infty\)</td>
+                            <td>\(\sup |f| < \infty\)</td>
+                            <td>最大值有限（有界函数）</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h2>\(L^p\) 与 \(L^q\) 的对偶关系</h2>
+                <div class="box formula-box">
+                    <p style="font-size: 20px; color: var(--accent-gold);">\( (L^p)^* = L^q \)，其中 \( \dfrac{1}{p} + \dfrac{1}{q} = 1 \)</p>
+                    <p style="font-size: 14px; color: #888; margin-top: 8px;">对偶配对：\( \langle f, g \rangle = \int f(x) g(x) \, d\mu \)</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>具体 p-q 对照表</h2>
+                <div class="box" style="font-size: 16px;">
+                    <table>
+                        <tr><th>\(p\)</th><th>\(q\)</th><th>验证</th><th>自反?</th></tr>
+                        <tr><td>2</td><td class="hl-gold">2</td><td>\(\frac{1}{2}+\frac{1}{2}=1\) ✓</td><td class="hl-green">自反 ✓</td></tr>
+                        <tr><td>3</td><td class="hl-gold">3/2</td><td>\(\frac{1}{3}+\frac{2}{3}=1\) ✓</td><td class="hl-green">自反 ✓</td></tr>
+                        <tr><td>4</td><td class="hl-gold">4/3</td><td>\(\frac{1}{4}+\frac{3}{4}=1\) ✓</td><td class="hl-green">自反 ✓</td></tr>
+                        <tr><td>1</td><td class="hl-gold">\(\infty\)</td><td>\(\frac{1}{1}+\frac{1}{\infty}=1\) ✓</td><td class="hl-red">非自反 ✗</td></tr>
+                    </table>
+                </div>
+
+                <h2>对偶配对的含义</h2>
+                <div class="box" style="font-size: 15px;">
+                    <p>\( \langle f, g \rangle = \int f \cdot g \, dx \) 表示"用 \(g\) 去测量 \(f\)"。</p>
+                    <p style="margin-top: 5px;"><strong>例：</strong>\( f(x)=x,\, g(x)=x^2 \) 在 \([0,1]\) 上：</p>
+                    <p>\( \langle f, g \rangle = \int_0^1 x \cdot x^2 \, dx = \int_0^1 x^3 \, dx = \frac{1}{4} \)</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 14px;">
+                    <h3>💡 \(L^2\) 特殊在哪？</h3>
+                    <p>\(p=q=2\)：<strong>自己就是自己的对偶</strong>！这就是为什么量子力学用 \(L^2\)（Riesz 表示定理）。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">13 / 38</div>
+</div>
+
+<!-- 对偶层次链 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§3.2</span>对偶的层次：链式结构</h1>
+
+        <div class="box q-box" style="font-size: 17px; text-align: center;">
+            自反空间的对偶链"闭合"，非自反空间的对偶链"一直延伸"。
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>自反空间：闭合回路</h2>
+                <div class="box" style="text-align: center; padding: 20px;">
+                    <svg width="300" height="140" viewBox="0 0 300 140">
+                        <rect x="30" y="50" width="70" height="40" rx="8" fill="none" stroke="#66bb6a" stroke-width="2"/>
+                        <text x="45" y="75" fill="#66bb6a" font-size="16" font-weight="bold">\(L^2\)</text>
+                        <line x1="105" y1="70" x2="155" y2="70" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <rect x="160" y="50" width="70" height="40" rx="8" fill="none" stroke="#66bb6a" stroke-width="2"/>
+                        <text x="170" y="75" fill="#66bb6a" font-size="16" font-weight="bold">\(L^2\)</text>
+                        <path d="M 195 50 C 195 20 65 20 65 50" fill="none" stroke="#66bb6a" stroke-width="1.5" stroke-dasharray="4,3"/>
+                        <text x="110" y="18" fill="#66bb6a" font-size="11">≅ 回到自己</text>
+                        <text x="70" y="120" fill="#999" font-size="12">对偶一次就闭合 ✓</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>非自反空间：无限延伸</h2>
+                <div class="box" style="text-align: center; padding: 20px;">
+                    <svg width="420" height="140" viewBox="0 0 420 140">
+                        <rect x="10" y="50" width="60" height="35" rx="6" fill="none" stroke="#ef5350" stroke-width="2"/>
+                        <text x="22" y="72" fill="#ef5350" font-size="13" font-weight="bold">\(L^1\)</text>
+                        <line x1="75" y1="67" x2="105" y2="67" stroke="#e8b84b" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+                        <rect x="110" y="50" width="65" height="35" rx="6" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="120" y="72" fill="#ce93d8" font-size="13" font-weight="bold">\(L^\infty\)</text>
+                        <line x1="180" y1="67" x2="210" y2="67" stroke="#e8b84b" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+                        <rect x="215" y="50" width="80" height="35" rx="6" fill="none" stroke="#ef5350" stroke-width="2"/>
+                        <text x="222" y="72" fill="#ef5350" font-size="12" font-weight="bold">\((L^\infty)^*\)</text>
+                        <line x1="300" y1="67" x2="330" y2="67" stroke="#e8b84b" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+                        <text x="340" y="72" fill="#999" font-size="16">…</text>
+                        <text x="100" y="120" fill="#999" font-size="12">\(L^1 \hookrightarrow (L^\infty)^*\) 但 \(L^1 \neq (L^\infty)^*\)</text>
+                        <text x="140" y="30" fill="#ef5350" font-size="11">越来越"大"，回不去</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" style="font-size: 15px;">
+            <h2>Riesz 表示定理（希尔伯特空间的对偶）</h2>
+            <div class="formula-box" style="margin: 8px 0;">
+                <p>在希尔伯特空间 \(\mathcal{H}\) 中，每个连续线性泛函 \(f\) 都可以唯一地表示为内积形式：</p>
+                <p style="font-size: 20px; color: var(--accent-gold); margin-top: 8px;">\( f(\mathbf{v}) = \langle \mathbf{v}, \mathbf{u} \rangle \)，其中 \(\mathbf{u} \in \mathcal{H}\) 唯一确定</p>
+            </div>
+            <p><strong>例子：</strong>在 \(\mathbb{R}^3\) 中，泛函 \(f(x,y,z) = 2x + 3y - z\) 对应向量 \(\mathbf{u} = (2, 3, -1)\)，\(f(\mathbf{v}) = \mathbf{v} \cdot \mathbf{u}\)。</p>
+        </div>
+    </div>
+    <div class="page-num">14 / 38</div>
+</div>
+
+<!-- 傅里叶变换 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§3.3</span>傅里叶变换：乐谱与均衡器</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-key">时间域 ↔ 频率域</span>
+            同一段音乐，可以用"随时间的音量变化"描述，也可以用"各频率的成分"描述。
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>时间域（乐谱视角）</h2>
+                <div class="box" style="border-left: 4px solid var(--primal-blue);">
+                    <svg width="100%" height="100" viewBox="0 0 400 100">
+                        <!-- 正弦波 + 尖峰 -->
+                        <polyline points="0,50 30,50 40,50 50,30 60,70 70,50 80,50 100,40 120,60 140,50 160,50 200,50 210,10 215,90 220,50 260,50 300,50 320,45 340,55 360,50 400,50" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="205" y="8" fill="#e8b84b" font-size="10">尖峰(脉冲)</text>
+                        <text x="80" y="95" fill="#4fc3f7" font-size="11">局部信息：某一时刻发生了什么</text>
+                    </svg>
+                    <p style="font-size: 15px;">记录的是：每一个时刻的<span class="hl-blue">振幅</span>。</p>
+                    <p style="font-size: 15px;">像是乐谱上的每个音符在何时出现。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>频率域（均衡器视角）</h2>
+                <div class="box" style="border-left: 4px solid var(--dual-purple);">
+                    <svg width="100%" height="100" viewBox="0 0 400 100">
+                        <!-- 频谱柱状 -->
+                        <rect x="20" y="30" width="15" height="60" fill="#9b59b6" opacity="0.7"/>
+                        <rect x="50" y="20" width="15" height="70" fill="#9b59b6" opacity="0.8"/>
+                        <rect x="80" y="15" width="15" height="75" fill="#9b59b6" opacity="0.9"/>
+                        <rect x="110" y="25" width="15" height="65" fill="#9b59b6" opacity="0.8"/>
+                        <rect x="140" y="35" width="15" height="55" fill="#9b59b6" opacity="0.7"/>
+                        <rect x="170" y="28" width="15" height="62" fill="#9b59b6" opacity="0.75"/>
+                        <rect x="200" y="22" width="15" height="68" fill="#9b59b6" opacity="0.85"/>
+                        <rect x="230" y="30" width="15" height="60" fill="#9b59b6" opacity="0.7"/>
+                        <rect x="260" y="38" width="15" height="52" fill="#9b59b6" opacity="0.65"/>
+                        <rect x="290" y="32" width="15" height="58" fill="#9b59b6" opacity="0.7"/>
+                        <rect x="320" y="25" width="15" height="65" fill="#9b59b6" opacity="0.8"/>
+                        <rect x="350" y="35" width="15" height="55" fill="#9b59b6" opacity="0.65"/>
+                        <text x="80" y="95" fill="#ce93d8" font-size="11">全局信息：每个频率的强度</text>
+                    </svg>
+                    <p style="font-size: 15px;">记录的是：每个频率的<span class="hl-purple">强度</span>。</p>
+                    <p style="font-size: 15px;">像是音响均衡器上每个频段的高度。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="box a-box" style="font-size: 16px;">
+            <h2>复杂度互补原理</h2>
+            <table>
+                <tr><th style="background: rgba(41,128,185,0.2); color: var(--primal-blue);">时间域特征</th><th style="background: rgba(155,89,182,0.2); color: var(--dual-purple);">频率域特征</th><th>例子</th></tr>
+                <tr>
+                    <td><span class="hl-blue">极度局部</span>（瞬间脉冲）</td>
+                    <td><span class="hl-purple">极度全局</span>（所有频率均匀分布）</td>
+                    <td>δ 函数(尖峰) ↔ 常数(平坦)</td>
+                </tr>
+                <tr>
+                    <td><span class="hl-blue">单一频率</span>（纯正弦波）</td>
+                    <td><span class="hl-purple">一个尖峰</span>（只有一个频率有值）</td>
+                    <td>\(\sin(2\pi f_0 t)\) ↔ \(\delta(f-f_0)\)</td>
+                </tr>
+                <tr>
+                    <td><span class="hl-blue">卷积</span>（复杂运算）</td>
+                    <td><span class="hl-purple">乘法</span>（简单运算）</td>
+                    <td>信号处理中的滤波器</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 核心原理：</span>
+            <strong>"时间域中简单的 ↔ 频率域中复杂的"</strong>——这就是不确定性原理的数学本质。一个域中越"集中"，另一个域中就越"弥散"。
+        </div>
+    </div>
+    <div class="page-num">15 / 38</div>
+</div>
+
+<!-- Legendre-Fenchel 变换 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§3.4</span>Legendre-Fenchel 变换：凸分析的对偶</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-key">函数的"另一种描述"</span>
+            一条凸曲线，可以用"每个点的高度"描述，也可以用"每个斜率对应的截距"描述。
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 1.3;">
+                <h2>公式与计算</h2>
+                <div class="box formula-box" style="font-size: 16px; text-align: left; padding: 14px 20px;">
+                    <p><strong>Legendre-Fenchel 变换（共轭函数）：</strong></p>
+                    <p style="text-align: center; font-size: 20px; color: var(--accent-gold); margin: 8px 0;">
+                        \( f^*(y) = \sup_{x} \{ xy - f(x) \} \)
+                    </p>
+                    <p>含义：对于给定的斜率 \(y\)，找到使 \(xy - f(x)\) 最大的截距。</p>
+                </div>
+
+                <h2>具体计算：\(f(x) = x^2\)</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <div class="step">
+                        <span class="step-num">1</span>代入公式：\( f^*(y) = \sup_x \{ xy - x^2 \} \)
+                    </div>
+                    <div class="step">
+                        <span class="step-num">2</span>对 \(x\) 求导令其为零：\( y - 2x = 0 \Rightarrow x = y/2 \)
+                    </div>
+                    <div class="step">
+                        <span class="step-num">3</span>代入：\( f^*(y) = y \cdot \frac{y}{2} - \left(\frac{y}{2}\right)^2 = \frac{y^2}{4} \)
+                    </div>
+                </div>
+                <div class="box formula-box" style="font-size: 18px;">
+                    \( f(x) = x^2 \quad \xleftrightarrow{\text{对偶}} \quad f^*(y) = \frac{y^2}{4} \)
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>图解</h2>
+                <div class="box" style="text-align: center; padding: 15px;">
+                    <svg width="260" height="200" viewBox="0 0 260 200">
+                        <!-- 坐标轴 -->
+                        <line x1="30" y1="170" x2="240" y2="170" stroke="#555" stroke-width="1"/>
+                        <line x1="30" y1="170" x2="30" y2="20" stroke="#555" stroke-width="1"/>
+                        <!-- f(x) = x^2 -->
+                        <path d="M 30,170 Q 80,170 130,70 Q 150,30 170,70 Q 220,170 240,170" fill="none" stroke="#2980b9" stroke-width="2.5"/>
+                        <text x="170" y="60" fill="#4fc3f7" font-size="12">\(f(x)=x^2\)</text>
+                        <!-- f*(y) = y^2/4 -->
+                        <path d="M 30,170 Q 80,170 130,120 Q 150,100 170,120 Q 220,170 240,170" fill="none" stroke="#9b59b6" stroke-width="2.5" stroke-dasharray="6,3"/>
+                        <text x="170" y="115" fill="#ce93d8" font-size="12">\(f^*=y^2/4\)</text>
+                        <!-- 标注 -->
+                        <text x="100" y="195" fill="#999" font-size="11">更"尖" ↔ 更"平"</text>
+                    </svg>
+                </div>
+
+                <h2>性质反转</h2>
+                <div class="box" style="font-size: 15px;">
+                    <table>
+                        <tr><th>原函数 \(f\)</th><th>对偶函数 \(f^*\)</th></tr>
+                        <tr><td>平滑的</td><td class="hl-gold">严格凸的</td></tr>
+                        <tr><td>严格凸的</td><td class="hl-gold">平滑的</td></tr>
+                        <tr><td>线性增长</td><td class="hl-gold">指示函数（跳跃）</td></tr>
+                    </table>
+                </div>
+
+                <div class="tip-box box" style="font-size: 14px;">
+                    <h3>💡 双重变换</h3>
+                    <p>对凸函数：\( f^{**} = f \)（自反！）</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">16 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第Ⅳ章：抽象之巅                              ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ PART Ⅳ: 抽象之巅 ━━━━━━━━━━</div>
+
+<div class="slide" style="background: linear-gradient(135deg, #070a12 0%, #0a1a10 100%);">
+    <div class="content" style="justify-content: center; align-items: center;">
+        <div style="font-size: 100px; margin-bottom: 15px; opacity: 0.2;">Ⅳ</div>
+        <h1 style="border: none; text-align: center; font-size: 48px;">逻辑、拓扑与代数中的对偶</h1>
+        <p style="font-size: 22px; color: var(--accent-green);">Logic, Topology & Algebraic Geometry</p>
+        <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <span class="tag tag-primal">德摩根律</span>
+            <span class="tag tag-dual">庞加莱对偶</span>
+            <span class="tag tag-key">代数几何</span>
+        </div>
+    </div>
+    <div class="page-num">17 / 38</div>
+</div>
+
+<!-- 逻辑与格论 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§4.1</span>逻辑的对偶：德摩根律的深层含义</h1>
+
+        <div class="row">
+            <div class="col">
+                <h2>德摩根律（日常语言版）</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <table>
+                        <tr>
+                            <th>数学公式</th>
+                            <th>日常语言</th>
+                        </tr>
+                        <tr>
+                            <td>\( \neg(A \wedge B) = \neg A \vee \neg B \)</td>
+                            <td>"不是（既下雨又刮风）" = "不下雨 或 不刮风"</td>
+                        </tr>
+                        <tr>
+                            <td>\( \neg(A \vee B) = \neg A \wedge \neg B \)</td>
+                            <td>"不是（下雨或刮风）" = "不下雨 且 不刮风"</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h2>对偶翻译表</h2>
+                <div class="box" style="font-size: 16px;">
+                    <table>
+                        <tr><th style="background: rgba(41,128,185,0.2); color: var(--primal-blue);">原运算</th><th style="background: rgba(155,89,182,0.2); color: var(--dual-purple);">对偶运算</th></tr>
+                        <tr><td>且 \(\wedge\) (AND)</td><td>或 \(\vee\) (OR)</td></tr>
+                        <tr><td>真 (True)</td><td>假 (False)</td></tr>
+                        <tr><td>全称量词 \(\forall\)</td><td>存在量词 \(\exists\)</td></tr>
+                    </table>
+                    <p style="margin-top: 8px; font-size: 15px;">加上<span class="hl-gold">取反</span>，"且"和"或"就完美互换！</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>布尔代数与 Stone 对偶</h2>
+                <div class="box" style="font-size: 15px;">
+                    <p><strong>布尔代数</strong>：只有"真/假"两个值的代数系统。</p>
+                    <p>例子：集合的交∩并∪补∁、逻辑的且∧或∨非¬、电路的与或非门。</p>
+                </div>
+
+                <div class="box" style="font-size: 15px; border: 1px solid var(--dual-purple);">
+                    <h3>Stone 对偶定理（仅做定位）</h3>
+                    <p>每个<span class="hl-purple">布尔代数</span>都对应一个<span class="hl-blue">紧致零维拓扑空间</span>（Stone 空间），反之亦然。</p>
+                    <p style="margin-top: 5px;">意义：将<strong>逻辑问题</strong>转化为<strong>几何/拓扑问题</strong>，实现逻辑与几何的对偶。</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 为什么重要？</h3>
+                    <p>德摩根律看似简单，但它揭示了逻辑的<strong>内在对称性</strong>：</p>
+                    <p>• 在逻辑体系中，"且"和"或"没有谁更基本</p>
+                    <p>• 所有逻辑定理都自动有一个对偶版本</p>
+                    <p>• 这种对称性延伸到集合论、电路设计等领域</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 逻辑对偶的核心：</span>
+            "且"和"或"互为对偶。任何逻辑定理，交换"且"和"或"、同时交换"真"和"假"，得到的新定理自动成立。
+        </div>
+    </div>
+    <div class="page-num">18 / 38</div>
+</div>
+
+<!-- 拓扑学对偶 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§4.2</span>庞加莱对偶：洞的维数互补</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-key">入门级理解</span>
+            在一个 n 维空间（流形）上，<strong>k 维的"洞"</strong>的数量 = <strong>(n-k) 维的"洞"</strong>的数量。
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>"洞"是什么？（同调群的直觉）</h2>
+                <div class="box a-box" style="font-size: 15px;">
+                    <table>
+                        <tr><th>维度</th><th>含义</th><th>例子</th></tr>
+                        <tr>
+                            <td>0维"洞" \(H_0\)</td>
+                            <td>连通分支的个数</td>
+                            <td>一块还是两块？</td>
+                        </tr>
+                        <tr>
+                            <td>1维"洞" \(H_1\)</td>
+                            <td>环/隧道的个数</td>
+                            <td>甜甜圈的中间空心</td>
+                        </tr>
+                        <tr>
+                            <td>2维"洞" \(H_2\)</td>
+                            <td>空腔的个数</td>
+                            <td>球面包裹的内部空间</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h2>实例验证</h2>
+                <div class="box" style="font-size: 15px;">
+                    <p><strong>球面 \(S^2\)</strong>（2维流形，n=2）：</p>
+                    <table>
+                        <tr><td>\(H_0\) (0维洞)</td><td>= 1（一个连通分支）</td></tr>
+                        <tr><td>\(H_1\) (1维洞)</td><td>= 0（没有隧道）</td></tr>
+                        <tr><td>\(H_2\) (2维洞)</td><td>= 1（一个空腔）</td></tr>
+                    </table>
+                    <p style="margin-top: 8px;">庞加莱对偶：\(H_0 = H_{2-0} = H_2 = 1\) ✓</p>
+                    <p>\(H_1 = H_{2-1} = H_1 = 0\) ✓（自己和自己对偶）</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>几何图解</h2>
+                <div class="box" style="text-align: center; padding: 15px;">
+                    <svg width="280" height="180" viewBox="0 0 280 180">
+                        <!-- 环面 -->
+                        <ellipse cx="140" cy="80" rx="100" ry="55" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <ellipse cx="140" cy="80" rx="40" ry="20" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="30" y="170" fill="#999" font-size="12">环面 T²（n=2）</text>
+                        <!-- 标注洞 -->
+                        <text x="120" y="78" fill="#4fc3f7" font-size="10">1维洞(隧道)</text>
+                    </svg>
+                    <p style="font-size: 14px; margin-top: 5px;">
+                        环面：\(H_0=1,\, H_1=2,\, H_2=1\)<br>
+                        对偶：\(H_0=H_2=1\) ✓，\(H_1=H_1=2\) ✓
+                    </p>
+                </div>
+
+                <div class="box formula-box" style="font-size: 17px;">
+                    <p><strong>庞加莱对偶定理：</strong></p>
+                    <p style="color: var(--accent-gold); font-size: 20px; margin-top: 8px;">\( H_k(M) \cong H_{n-k}(M) \)</p>
+                    <p style="font-size: 13px; color: #888; margin-top: 5px;">（紧致可定向 n 维流形 M）</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 14px;">
+                    <h3>💡 直觉理解</h3>
+                    <p>k 维的"洞"和 (n-k) 维的"洞"是"同一枚硬币的两面"：一个从内部看到的空洞，从外部看就是一个边界。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">19 / 38</div>
+</div>
+
+<!-- 代数几何对偶 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§4.3</span>代数几何：点与理想的对偶</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-key">核心思想</span>
+            几何中的<span class="hl-blue">"点"</span>和代数中的<span class="hl-purple">"素理想"</span>之间存在完美对偶。
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>什么是"理想"？（极简版）</h2>
+                <div class="box a-box" style="font-size: 15px;">
+                    <p><strong>理想</strong>是多项式环的一个子集，满足"吸收性"——理想中的元素乘以任何多项式仍在理想中。</p>
+                    <p style="margin-top: 8px;"><strong>素理想</strong>：不可再分解的理想（类比素数不可分解）。</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 10px 0;">
+                    <p><strong>最简单的例子：</strong></p>
+                    <p>考虑数轴上的点 \(x = 3\)。</p>
+                    <p>在多项式环 \(\mathbb{R}[x]\) 中，所有在 \(x=3\) 处为零的多项式构成理想 \((x-3)\)。</p>
+                    <p>这就是点 3 对应的<span class="hl-purple">素理想</span>。</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>对偶词典</h2>
+                <div class="box" style="font-size: 15px;">
+                    <table>
+                        <tr>
+                            <th style="background: rgba(41,128,185,0.2); color: var(--primal-blue);">几何对象</th>
+                            <th style="background: rgba(155,89,182,0.2); color: var(--dual-purple);">代数对象</th>
+                        </tr>
+                        <tr>
+                            <td>点 \((a, b)\)</td>
+                            <td>极大理想 \((x-a, y-b)\)</td>
+                        </tr>
+                        <tr>
+                            <td>曲线 \(y = x^2\)</td>
+                            <td>素理想 \((y - x^2)\)</td>
+                        </tr>
+                        <tr>
+                            <td>曲线的交点</td>
+                            <td>理想的和</td>
+                        </tr>
+                        <tr>
+                            <td>几何体的并</td>
+                            <td>理想的交</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="box" style="font-size: 15px; border: 1px solid var(--dual-purple);">
+                    <h3>Serre 对偶（仅做定位）</h3>
+                    <p>在代数几何中，"层上同调群"也有庞加莱型的对偶关系。这是高维代数几何的核心工具，入门阶段无需深究。</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 14px;">
+                    <h3>💡 意义</h3>
+                    <p>这种对偶让我们可以用<strong>代数计算</strong>（解方程组）来研究<strong>几何问题</strong>（曲线曲面的形状），反之亦然。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 代数几何的灵魂：</span>
+            几何世界的"点"和代数世界的"素理想"是同一枚硬币的两面。研究方程 = 研究几何图形。
+        </div>
+    </div>
+    <div class="page-num">20 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          第Ⅴ章：范畴论                                ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ PART Ⅴ: 范畴论的统一视角 ━━━━━━━━━━</div>
+
+<div class="slide" style="background: linear-gradient(135deg, #100508 0%, #200a18 100%);">
+    <div class="content" style="justify-content: center; align-items: center;">
+        <div style="font-size: 100px; margin-bottom: 15px; opacity: 0.2;">Ⅴ</div>
+        <h1 style="border: none; text-align: center; font-size: 48px;">范畴论：箭头反转的统一视角</h1>
+        <p style="font-size: 22px; color: var(--accent-red);">Category Theory: The Arrow Reversal Principle</p>
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <span class="tag tag-primal">范畴 C</span>
+            <span class="tag tag-dual">对偶范畴 C^op</span>
+            <span class="tag tag-key">箭头反转</span>
+        </div>
+    </div>
+    <div class="page-num">21 / 38</div>
+</div>
+
+<!-- 范畴论基础 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§5.1</span>范畴论入门：对象 + 箭头</h1>
+
+        <div class="box q-box" style="font-size: 17px;">
+            <span class="tag tag-ex">零基础解释</span>
+            范畴就是"<strong>一堆对象</strong>" + "<strong>对象之间的箭头</strong>"。箭头可以复合（连续走），且有恒等箭头（原地不动）。
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>生活中的范畴</h2>
+                <div class="box a-box" style="font-size: 16px;">
+                    <p><strong>城市交通范畴：</strong></p>
+                    <ul>
+                        <li><strong>对象</strong>：各个城市（北京、上海、广州…）</li>
+                        <li><strong>箭头</strong>：城市间的航班/火车</li>
+                        <li><strong>复合</strong>：北京→上海→广州 = 北京→广州</li>
+                        <li><strong>恒等</strong>：待在原城市不动</li>
+                    </ul>
+                </div>
+
+                <h2>数学中的范畴</h2>
+                <div class="box" style="font-size: 15px;">
+                    <table>
+                        <tr><th>范畴名</th><th>对象</th><th>箭头（态射）</th></tr>
+                        <tr><td><strong>Set</strong></td><td>集合</td><td>映射</td></tr>
+                        <tr><td><strong>Vect</strong></td><td>向量空间</td><td>线性映射</td></tr>
+                        <tr><td><strong>Top</strong></td><td>拓扑空间</td><td>连续映射</td></tr>
+                        <tr><td><strong>Grp</strong></td><td>群</td><td>群同态</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>图解：范畴的样子</h2>
+                <div class="box" style="text-align: center; padding: 20px;">
+                    <svg width="280" height="180" viewBox="0 0 280 180">
+                        <!-- 对象 -->
+                        <circle cx="60" cy="50" r="25" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="52" y="55" fill="#4fc3f7" font-size="14" font-weight="bold">A</text>
+                        <circle cx="220" cy="50" r="25" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="212" y="55" fill="#4fc3f7" font-size="14" font-weight="bold">B</text>
+                        <circle cx="140" cy="150" r="25" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="132" y="155" fill="#4fc3f7" font-size="14" font-weight="bold">C</text>
+                        <!-- 箭头 -->
+                        <line x1="85" y1="45" x2="192" y2="45" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <text x="125" y="38" fill="#e8b84b" font-size="11">f</text>
+                        <line x1="210" y1="75" x2="160" y2="130" stroke="#e8b84b" stroke-width="2" marker-end="url(#arrowGold)"/>
+                        <text x="190" y="105" fill="#e8b84b" font-size="11">g</text>
+                        <line x1="75" y1="72" x2="120" y2="130" stroke="#66bb6a" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
+                        <text x="70" y="110" fill="#66bb6a" font-size="11">g∘f</text>
+                    </svg>
+                    <p style="font-size: 13px; color: #999;">对象 = 圆圈，箭头 = 态射，虚线 = 复合</p>
+                </div>
+
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 范畴论 = "关系的数学"</h3>
+                    <p>范畴论不关心对象"内部是什么"，只关心对象之间的<strong>关系（箭头）</strong>。这就是它能统一所有数学领域的原因。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">22 / 38</div>
+</div>
+
+<!-- 箭头反转 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§5.2</span>对偶范畴：把所有箭头反转！</h1>
+
+        <div class="box q-box" style="font-size: 18px; text-align: center;">
+            <span class="tag tag-key">核心操作</span>
+            对偶范畴 \(\mathcal{C}^{op}\) = 原范畴 \(\mathcal{C}\) 的所有箭头<span class="hl-gold">反转方向</span>，其他不变。
+        </div>
+
+        <div class="split-mirror" style="margin-top: 15px;">
+            <div class="mirror-left">
+                <h2 style="color: var(--primal-blue);">原范畴 \(\mathcal{C}\)</h2>
+                <svg width="100%" height="200" viewBox="0 0 300 200" style="margin: 10px auto; display: block;">
+                    <circle cx="70" cy="60" r="22" fill="none" stroke="#2980b9" stroke-width="2"/>
+                    <text x="62" y="65" fill="#4fc3f7" font-size="14" font-weight="bold">A</text>
+                    <circle cx="230" cy="60" r="22" fill="none" stroke="#2980b9" stroke-width="2"/>
+                    <text x="222" y="65" fill="#4fc3f7" font-size="14" font-weight="bold">B</text>
+                    <circle cx="150" cy="160" r="22" fill="none" stroke="#2980b9" stroke-width="2"/>
+                    <text x="142" y="165" fill="#4fc3f7" font-size="14" font-weight="bold">C</text>
+                    <line x1="95" y1="55" x2="205" y2="55" stroke="#e8b84b" stroke-width="2.5" marker-end="url(#arrowGold)"/>
+                    <text x="140" y="48" fill="#e8b84b" font-size="12">f</text>
+                    <line x1="218" y1="80" x2="168" y2="140" stroke="#e8b84b" stroke-width="2.5" marker-end="url(#arrowGold)"/>
+                    <text x="198" y="115" fill="#e8b84b" font-size="12">g</text>
+                </svg>
+                <div class="box" style="font-size: 14px; text-align: center;">
+                    <p>箭头方向：A → B → C</p>
+                    <p>例：集合 A <strong>映射到</strong> 集合 B</p>
+                </div>
+            </div>
+
+            <div class="mirror-center" style="width: 70px;">
+                <div style="writing-mode: vertical-lr; font-size: 12px; color: var(--accent-gold); letter-spacing: 2px;">反 转 箭 头</div>
+                <svg width="40" height="60" viewBox="0 0 40 60" class="anim-pulse">
+                    <line x1="10" y1="30" x2="30" y2="30" stroke="#e8b84b" stroke-width="2"/>
+                    <polygon points="8,25 8,35 2,30" fill="#e8b84b"/>
+                    <polygon points="32,25 32,35 38,30" fill="#e8b84b"/>
+                </svg>
+            </div>
+
+            <div class="mirror-right">
+                <h2 style="color: var(--dual-purple);">对偶范畴 \(\mathcal{C}^{op}\)</h2>
+                <svg width="100%" height="200" viewBox="0 0 300 200" style="margin: 10px auto; display: block;">
+                    <circle cx="70" cy="60" r="22" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                    <text x="62" y="65" fill="#ce93d8" font-size="14" font-weight="bold">A</text>
+                    <circle cx="230" cy="60" r="22" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                    <text x="222" y="65" fill="#ce93d8" font-size="14" font-weight="bold">B</text>
+                    <circle cx="150" cy="160" r="22" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                    <text x="142" y="165" fill="#ce93d8" font-size="14" font-weight="bold">C</text>
+                    <!-- 反转箭头 -->
+                    <defs>
+                        <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+                            <polygon points="8,0 0,3 8,6" fill="#9b59b6"/>
+                        </marker>
+                    </defs>
+                    <line x1="205" y1="55" x2="95" y2="55" stroke="#9b59b6" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+                    <text x="140" y="48" fill="#ce93d8" font-size="12">f<sup>op</sup></text>
+                    <line x1="168" y1="140" x2="218" y2="80" stroke="#9b59b6" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+                    <text x="198" y="115" fill="#ce93d8" font-size="12">g<sup>op</sup></text>
+                </svg>
+                <div class="box" style="font-size: 14px; text-align: center; background: rgba(155,89,182,0.1);">
+                    <p>箭头方向：A ← B ← C</p>
+                    <p>例：集合 A <strong>被映射自</strong> 集合 B</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 范畴论的统一视角：</span>
+            线性代数的 \(T \to T^*\)、射影几何的点↔线、逻辑的且↔或、凸分析的 \(f \to f^*\)——<strong>所有对偶都可以理解为"箭头反转"</strong>。
+        </div>
+    </div>
+    <div class="page-num">23 / 38</div>
+</div>
+
+<!-- 对偶翻译词典 -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1><span class="sec-num">§5.3</span>范畴论对偶词典（带实例）</h1>
+
+        <div class="box" style="font-size: 14px; overflow-x: auto;">
+            <table>
+                <tr>
+                    <th style="background: rgba(41,128,185,0.2); color: var(--primal-blue);">原概念</th>
+                    <th style="background: rgba(155,89,182,0.2); color: var(--dual-purple);">对偶概念</th>
+                    <th>箭头关系</th>
+                    <th>集合论中的实例</th>
+                </tr>
+                <tr>
+                    <td><strong>积 (Product)</strong> \(A \times B\)</td>
+                    <td><strong>余积 (Coproduct)</strong> \(A \sqcup B\)</td>
+                    <td>投射箭头"出去" ↔ 嵌入箭头"进来"</td>
+                    <td>笛卡尔积 \(\{1\}\times\{2\}=\{(1,2)\}\) ↔ 不相交并集 \(\{1\}\sqcup\{2\}=\{1,2\}\)</td>
+                </tr>
+                <tr>
+                    <td><strong>终对象 (Terminal)</strong></td>
+                    <td><strong>始对象 (Initial)</strong></td>
+                    <td>所有箭头指"向它" ↔ 所有箭头"从它出"</td>
+                    <td>单元素集 \(\{*\}\)（唯一映射到它）↔ 空集 \(\emptyset\)（唯一映射从它出发）</td>
+                </tr>
+                <tr>
+                    <td><strong>单态射 (Mono)</strong></td>
+                    <td><strong>满态射 (Epi)</strong></td>
+                    <td>左可消 ↔ 右可消</td>
+                    <td>单射（一一对应）↔ 满射（覆盖）</td>
+                </tr>
+                <tr>
+                    <td><strong>极限 (Limit)</strong></td>
+                    <td><strong>余极限 (Colimit)</strong></td>
+                    <td>万有"汇聚"↔ 万有"分散"</td>
+                    <td>逆极限（投射极限）↔ 正极限（归纳极限）</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row" style="margin-top: 12px;">
+            <div class="col">
+                <h2>图解：积 vs 余积</h2>
+                <div class="box" style="text-align: center; padding: 15px;">
+                    <svg width="400" height="120" viewBox="0 0 400 120">
+                        <!-- 积 -->
+                        <rect x="70" y="30" width="60" height="30" rx="5" fill="none" stroke="#2980b9" stroke-width="2"/>
+                        <text x="80" y="50" fill="#4fc3f7" font-size="12">A×B</text>
+                        <circle cx="30" cy="45" r="15" fill="none" stroke="#555" stroke-width="1"/>
+                        <text x="24" y="49" fill="#999" font-size="11">A</text>
+                        <circle cx="170" cy="45" r="15" fill="none" stroke="#555" stroke-width="1"/>
+                        <text x="164" y="49" fill="#999" font-size="11">B</text>
+                        <line x1="70" y1="42" x2="48" y2="42" stroke="#e8b84b" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+                        <line x1="130" y1="42" x2="152" y2="42" stroke="#e8b84b" stroke-width="1.5" marker-end="url(#arrowGold)"/>
+                        <text x="60" y="20" fill="#4fc3f7" font-size="10">箭头出去(投射)</text>
+                        <text x="60" y="100" fill="#4fc3f7" font-size="11">积 = "同时看两者"</text>
+
+                        <!-- 余积 -->
+                        <rect x="270" y="30" width="60" height="30" rx="5" fill="none" stroke="#9b59b6" stroke-width="2"/>
+                        <text x="278" y="50" fill="#ce93d8" font-size="12">A⊔B</text>
+                        <circle cx="230" cy="45" r="15" fill="none" stroke="#555" stroke-width="1"/>
+                        <text x="224" y="49" fill="#999" font-size="11">A</text>
+                        <circle cx="370" cy="45" r="15" fill="none" stroke="#555" stroke-width="1"/>
+                        <text x="364" y="49" fill="#999" font-size="11">B</text>
+                        <line x1="248" y1="42" x2="268" y2="42" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrowPurple2)"/>
+                        <defs>
+                            <marker id="arrowPurple2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <polygon points="0,0 8,3 0,6" fill="#9b59b6"/>
+                            </marker>
+                        </defs>
+                        <line x1="352" y1="42" x2="332" y2="42" stroke="#9b59b6" stroke-width="1.5" marker-end="url(#arrowPurple2)"/>
+                        <text x="255" y="20" fill="#ce93d8" font-size="10">箭头进来(嵌入)</text>
+                        <text x="255" y="100" fill="#ce93d8" font-size="11">余积 = "任选其一"</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="tip-box box" style="font-size: 15px;">
+                    <h3>💡 为什么叫"co-"（余）</h3>
+                    <p>"co-" = "对偶的"。英文中：<br>
+                    product ↔ <strong>co</strong>product<br>
+                    limit ↔ <strong>co</strong>limit<br>
+                    kernel ↔ <strong>co</strong>kernel</p>
+                    <p>看到 "co-" 前缀，就知道它是原概念的对偶！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">24 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          分析工具箱                                    ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ 分析工具箱 ━━━━━━━━━━</div>
+
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">§6</span>解剖对偶的五个维度</h1>
+
+        <div class="box q-box" style="font-size: 17px; text-align: center;">
+            分析任何对偶理论，可以从五个维度入手：
+        </div>
+
+        <div class="box" style="font-size: 14px; overflow-x: auto;">
+            <table>
+                <tr>
+                    <th style="width: 15%;">维度</th>
+                    <th style="width: 20%;">问题</th>
+                    <th style="width: 25%;">可能的答案</th>
+                    <th style="width: 40%;">实例</th>
+                </tr>
+                <tr>
+                    <td class="hl-cyan">① 完备性</td>
+                    <td>对偶是否"完美"？能回到自己吗？</td>
+                    <td>完美（同构）/ 半完美（嵌入）/ 弱（有间隙）</td>
+                    <td>
+                        <strong>完美：</strong>\(V \cong V^{**}\)（有限维）<br>
+                        <strong>半完美：</strong>\(L^1 \hookrightarrow (L^\infty)^*\)（嵌入但不等）<br>
+                        <strong>弱：</strong>Lagrange 对偶可能有间隙
+                    </td>
+                </tr>
+                <tr>
+                    <td class="hl-gold">② 构造方式</td>
+                    <td>对偶是怎么"生成"的？</td>
+                    <td>Hom / 极值 / 谱 / 几何</td>
+                    <td>
+                        <strong>Hom：</strong>\(V^* = \text{Hom}(V,k)\)（线性映射构造）<br>
+                        <strong>极值：</strong>\(f^*(y) = \sup(xy-f(x))\)（Legendre）<br>
+                        <strong>谱：</strong>傅里叶变换（频谱分解）
+                    </td>
+                </tr>
+                <tr>
+                    <td class="hl-green">③ 性质反转</td>
+                    <td>什么保持？什么反转？</td>
+                    <td>维数保持 / 包含关系反转 / 平滑↔凸</td>
+                    <td>
+                        <strong>保持：</strong>\(\text{rank}(A) = \text{rank}(A^T)\)<br>
+                        <strong>反转：</strong>\(A \subseteq B \Rightarrow B^\perp \subseteq A^\perp\)（子集反转）<br>
+                        <strong>互换：</strong>平滑函数 ↔ 严格凸函数
+                    </td>
+                </tr>
+                <tr>
+                    <td class="hl-purple">④ 深度层次</td>
+                    <td>对偶链有多长？</td>
+                    <td>1层（自反）/ 2层 / 无限层</td>
+                    <td>\(L^2\)：1层（自反）；\(L^1\)：无限延伸</td>
+                </tr>
+                <tr>
+                    <td class="hl-red">⑤ 应用功能</td>
+                    <td>对偶能帮我们做什么？</td>
+                    <td>计算简化 / 存在性证明 / 问题转化</td>
+                    <td>
+                        <strong>简化：</strong>傅里叶把卷积变乘法<br>
+                        <strong>存在性：</strong>Hahn-Banach 定理通过对偶证明泛函延拓<br>
+                        <strong>转化：</strong>几何问题 ↔ 代数问题
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 框架的价值：</span>
+            遇到新的对偶理论时，按这五个维度逐一分析，就能快速把握其核心特征和应用价值。
+        </div>
+    </div>
+    <div class="page-num">25 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          五大共性                                      ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="separator">━━━━━━━━━━ 终极启示 ━━━━━━━━━━</div>
+
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">∞</span>所有对偶理论的五大共性</h1>
+
+        <div class="box" style="font-size: 15px; overflow-x: auto;">
+            <table>
+                <tr>
+                    <th style="width: 12%;">共性</th>
+                    <th style="width: 22%;">含义</th>
+                    <th style="width: 33%;">跨领域实例1</th>
+                    <th style="width: 33%;">跨领域实例2</th>
+                </tr>
+                <tr>
+                    <td class="hl-gold">① 自反趋势</td>
+                    <td>双重对偶倾向于回到原结构</td>
+                    <td>\(V^{**} \cong V\)（有限维向量空间）</td>
+                    <td>\(f^{**} = f\)（凸函数的 Legendre 变换）</td>
+                </tr>
+                <tr>
+                    <td class="hl-cyan">② 信息守恒</td>
+                    <td>对偶变换不丢失信息</td>
+                    <td>傅里叶：时域→频域，信息完全等价，可逆</td>
+                    <td>射影对偶：点↔线的信息完全编码</td>
+                </tr>
+                <tr>
+                    <td class="hl-purple">③ 复杂度互补</td>
+                    <td>一侧简单 ↔ 另一侧复杂</td>
+                    <td>时域尖峰 ↔ 频域弥散（不确定性原理）</td>
+                    <td>Legendre：平滑 ↔ 严格凸</td>
+                </tr>
+                <tr>
+                    <td class="hl-green">④ 极值原理</td>
+                    <td>对偶常通过极值运算构造</td>
+                    <td>\(f^*(y) = \sup_x(xy - f(x))\)</td>
+                    <td>Lagrange 对偶：\(\inf \sup \leftrightarrow \sup \inf\)</td>
+                </tr>
+                <tr>
+                    <td class="hl-red">⑤ 隐藏对称性</td>
+                    <td>对偶揭示不显而易见的对称</td>
+                    <td>点-线对偶：点和线的地位完全平等</td>
+                    <td>\(L^p\) 与 \(L^q\)：互为"量尺"的对称性</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="box" style="font-size: 16px; text-align: center; padding: 20px;">
+            <svg width="500" height="130" viewBox="0 0 500 130">
+                <!-- 中心 -->
+                <circle cx="250" cy="65" r="35" fill="none" stroke="#e8b84b" stroke-width="2"/>
+                <text x="215" y="62" fill="#e8b84b" font-size="11" font-weight="bold">对偶的</text>
+                <text x="222" y="78" fill="#e8b84b" font-size="11" font-weight="bold">本质</text>
+                <!-- 五个节点 -->
+                <circle cx="80" cy="30" r="22" fill="none" stroke="#e8b84b" stroke-width="1.5"/>
+                <text x="60" y="34" fill="#e8b84b" font-size="9">自反趋势</text>
+                <line x1="102" y1="38" x2="218" y2="55" stroke="rgba(232,184,75,0.3)" stroke-width="1"/>
+
+                <circle cx="420" cy="30" r="22" fill="none" stroke="#4fc3f7" stroke-width="1.5"/>
+                <text x="400" y="34" fill="#4fc3f7" font-size="9">信息守恒</text>
+                <line x1="398" y1="38" x2="282" y2="55" stroke="rgba(79,195,247,0.3)" stroke-width="1"/>
+
+                <circle cx="80" cy="105" r="22" fill="none" stroke="#9b59b6" stroke-width="1.5"/>
+                <text x="56" y="109" fill="#ce93d8" font-size="9">复杂度互补</text>
+                <line x1="102" y1="98" x2="218" y2="75" stroke="rgba(155,89,182,0.3)" stroke-width="1"/>
+
+                <circle cx="420" cy="105" r="22" fill="none" stroke="#66bb6a" stroke-width="1.5"/>
+                <text x="400" y="109" fill="#66bb6a" font-size="9">极值原理</text>
+                <line x1="398" y1="98" x2="282" y2="75" stroke="rgba(102,187,106,0.3)" stroke-width="1"/>
+
+                <circle cx="250" cy="130" r="20" fill="none" stroke="#ef5350" stroke-width="1.5"/>
+                <text x="225" y="134" fill="#ef5350" font-size="9">隐藏对称性</text>
+                <line x1="250" y1="110" x2="250" y2="100" stroke="rgba(239,83,80,0.3)" stroke-width="1"/>
+            </svg>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-purple">✦ 总结：</span>
+            五大共性围绕一个核心——<strong>"对偶是对称且无损的结构转换"</strong>。自反是回归趋势，信息守恒是基本属性，复杂度互补是内在规律，极值原理是构造方法，隐藏对称性是核心价值。
+        </div>
+    </div>
+    <div class="page-num">26 / 38</div>
+</div>
+
+<!-- 实用价值 -->
+<div class="slide accent-top-gold">
+    <div class="content">
+        <h1><span class="sec-num">∞</span>对偶性的实用价值：换个战场解题</h1>
+
+        <div class="split-mirror" style="min-height: 280px;">
+            <div class="mirror-left" style="justify-content: center; text-align: center;">
+                <svg width="100" height="100" viewBox="0 0 100 100" style="margin-bottom: 15px;">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ef5350" stroke-width="2"/>
+                    <line x1="30" y1="30" x2="70" y2="70" stroke="#ef5350" stroke-width="3"/>
+                    <line x1="70" y1="30" x2="30" y2="70" stroke="#ef5350" stroke-width="3"/>
+                </svg>
+                <h2 style="color: var(--accent-red);">原世界的难题</h2>
+                <p style="font-size: 16px; color: #999; margin-top: 10px;">
+                    微分方程难以求解<br>
+                    非凸优化问题复杂<br>
+                    几何结构无法直接计算
+                </p>
+            </div>
+
+            <div class="mirror-center" style="width: 80px;">
+                <svg width="60" height="80" viewBox="0 0 60 80" class="anim-float">
+                    <polygon points="10,40 30,10 50,40 30,70" fill="none" stroke="#e8b84b" stroke-width="2"/>
+                    <text x="16" y="44" fill="#e8b84b" font-size="11" font-weight="bold">对偶</text>
+                </svg>
+                <div style="font-size: 11px; color: var(--accent-gold);">翻译</div>
+            </div>
+
+            <div class="mirror-right" style="justify-content: center; text-align: center;">
+                <svg width="100" height="100" viewBox="0 0 100 100" style="margin-bottom: 15px;">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#66bb6a" stroke-width="2"/>
+                    <polyline points="30,55 45,70 75,35" fill="none" stroke="#66bb6a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h2 style="color: var(--accent-green);">对偶世界的答案</h2>
+                <p style="font-size: 16px; color: #999; margin-top: 10px;">
+                    傅里叶变换：卷积→乘法<br>
+                    Lagrange 对偶：下界估计<br>
+                    代数方法：坐标计算
+                </p>
+            </div>
+        </div>
+
+        <div class="box" style="font-size: 16px;">
+            <h2>三个经典应用场景</h2>
+            <table>
+                <tr><th>场景</th><th>原问题</th><th>对偶变换</th><th>简化效果</th></tr>
+                <tr>
+                    <td>信号处理</td>
+                    <td>信号滤波（时域卷积）</td>
+                    <td>傅里叶变换</td>
+                    <td>变成频域乘法，计算量从 \(O(n^2)\) 降到 \(O(n\log n)\)</td>
+                </tr>
+                <tr>
+                    <td>优化理论</td>
+                    <td>非凸优化（难以直接求解）</td>
+                    <td>Lagrange 对偶</td>
+                    <td>对偶问题总是凸的，可以给出最优值下界</td>
+                </tr>
+                <tr>
+                    <td>泛函分析</td>
+                    <td>证明线性泛函可以延拓</td>
+                    <td>Hahn-Banach 定理</td>
+                    <td>通过对偶空间的性质，间接证明存在性</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="insight-box">
+            <span class="hl-gold">✦ 终极心法：</span>
+            解决难题最好的方式，往往不是死磕，而是<strong>把它翻译成另一种语言</strong>。对偶就是数学中最强大的"翻译器"。
+        </div>
+    </div>
+    <div class="page-num">27 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║          总结速查                                      ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="slide accent-top-blue">
+    <div class="content">
+        <h1>📋 对偶性全景速查表</h1>
+
+        <div class="row" style="gap: 18px;">
+            <div class="col">
+                <h2>几何 & 线性代数</h2>
+                <div class="box" style="font-size: 14px; line-height: 1.9;">
+                    <p>多面体：\( V \leftrightarrow F \)，\( E \) 不变，\( V-E+F=2 \)</p>
+                    <p>射影几何：点 ↔ 线（无平行线前提下）</p>
+                    <p>对偶空间：\( V^* = \text{Hom}(V,k) \) = 所有线性泛函</p>
+                    <p>自反性：\( V \cong V^{**} \)（有限维总成立）</p>
+                    <p>对偶映射：\( (T^*f)(v) = f(Tv) \)（箭头反转）</p>
+                    <p>秩不变：\( \text{rank}(A) = \text{rank}(A^T) \)</p>
+                </div>
+
+                <h2>逻辑 & 拓扑</h2>
+                <div class="box" style="font-size: 14px; line-height: 1.9;">
+                    <p>德摩根：\( \neg(A\wedge B)=\neg A\vee\neg B \)</p>
+                    <p>对偶翻译：且 ↔ 或，∀ ↔ ∃</p>
+                    <p>庞加莱对偶：\( H_k \cong H_{n-k} \)</p>
+                    <p>Stone 对偶：布尔代数 ↔ 紧致拓扑空间</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <h2>分析 & 凸优化</h2>
+                <div class="box" style="font-size: 14px; line-height: 1.9;">
+                    <p>\( (L^p)^* = L^q \)，\( \frac{1}{p}+\frac{1}{q}=1 \)</p>
+                    <p>Riesz 定理：\( \mathcal{H}^* \cong \mathcal{H} \)（Hilbert 自对偶）</p>
+                    <p>Legendre-Fenchel：\( f^*(y) = \sup_x(xy-f(x)) \)</p>
+                    <p>傅里叶：时域 ↔ 频域，卷积 ↔ 乘法</p>
+                    <p>复杂度互补：局部 ↔ 全局，平滑 ↔ 严格凸</p>
+                </div>
+
+                <h2>范畴论（统一视角）</h2>
+                <div class="box" style="font-size: 14px; line-height: 1.9;">
+                    <p>对偶范畴 \( \mathcal{C}^{op} \)：反转所有箭头</p>
+                    <p>积 ↔ 余积，极限 ↔ 余极限</p>
+                    <p>终对象 ↔ 始对象，单射 ↔ 满射</p>
+                    <p>"co-" 前缀 = 对偶概念</p>
+                    <p>所有对偶 = 箭头反转的不同表现</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-num">28 / 38</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║                    结尾                                ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="slide cover-slide" style="background: linear-gradient(135deg, #0a0e1e 0%, #1a1040 40%, #0d1a30 100%);">
+    <div class="content">
+        <!-- 对偶的终极符号 -->
+        <svg width="200" height="120" viewBox="0 0 200 120" class="anim-float" style="margin-bottom: 20px;">
+            <!-- 莫比乌斯带简化 -->
+            <ellipse cx="100" cy="60" rx="80" ry="40" fill="none" stroke="rgba(232,184,75,0.4)" stroke-width="2"/>
+            <path d="M 20 60 Q 60 20 100 60 Q 140 100 180 60" fill="none" stroke="#9b59b6" stroke-width="2.5"/>
+            <path d="M 20 60 Q 60 100 100 60 Q 140 20 180 60" fill="none" stroke="#2980b9" stroke-width="2.5"/>
+            <circle cx="20" cy="60" r="4" fill="#e8b84b"/>
+            <circle cx="180" cy="60" r="4" fill="#e8b84b"/>
+        </svg>
+
+        <div style="font-family: var(--font-display); font-size: 42px; color: #fff; margin-bottom: 15px;">
+            每个数学实体都不是孤立的
+        </div>
+        <div style="font-size: 22px; color: var(--dual-purple); margin-bottom: 25px; font-weight: 300; max-width: 800px; line-height: 1.8;">
+            它的本质，蕴含在它与对偶世界的关系之中。
+        </div>
+
+        <div style="width: 500px; height: 2px; background: linear-gradient(90deg, transparent, var(--primal-blue), var(--dual-purple), var(--accent-gold), transparent); margin: 20px 0;"></div>
+
+        <div style="display: flex; gap: 50px; margin: 25px 0; font-size: 17px; color: #777;">
+            <div style="text-align: left;">
+                <p>✅ 照镜子 → 射影对偶</p>
+                <p>✅ 给向量打分 → 对偶空间</p>
+                <p>✅ 乐谱与均衡器 → 傅里叶</p>
+            </div>
+            <div style="text-align: left;">
+                <p>✅ 凸函数的影子 → Legendre</p>
+                <p>✅ 洞的维数互补 → 庞加莱</p>
+                <p>✅ 箭头反转 → 范畴论统一</p>
+            </div>
+        </div>
+
+        <div style="font-size: 20px; color: var(--accent-gold); margin-top: 15px; font-style: italic;">
+            "理解一个对象，往往需要同时理解它的影子。"
+        </div>
+
+        <div style="margin-top: 30px; font-size: 14px; color: #444;">
+            学习对偶的意义：一个问题在原空间难以解决时，翻译到对偶空间可能变得简单。<br>
+            这不仅是数学技巧，更是一种<strong>思维方式</strong>。
+        </div>
+    </div>
+    <div class="page-num" style="color: #333;">∎</div>
+</div>
+
+</body>
+</html>

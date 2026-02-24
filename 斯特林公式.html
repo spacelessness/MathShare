@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stirling 公式严格推导</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* ── 导航栏 ── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #dde3ec;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .nav-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2c3e6b;
+    letter-spacing: 1px;
+  }
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-btn {
+    background: #e8edf5;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 15px;
+    color: #2c3e6b;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: #d0d9ec; }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .slide-counter {
+    font-size: 15px;
+    color: #6b7a99;
+    font-weight: 600;
+    min-width: 70px;
+    text-align: center;
+  }
+
+  /* ── 进度条 ── */
+  .progress-bar {
+    position: fixed;
+    top: 56px; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f7ef8, #a78bfa);
+    transition: width 0.4s ease;
+    z-index: 99;
+  }
+
+  /* ── 幻灯片容器 ── */
+  .slides-wrapper {
+    margin-top: 72px;
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .slide {
+    display: none;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(60,80,140,0.10);
+    padding: 56px 64px 48px;
+    min-height: 560px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeSlide 0.4s ease;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 装饰角标 */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 180px; height: 180px;
+    border-radius: 0 20px 0 100%;
+    opacity: 0.06;
+  }
+
+  /* ── 标题幻灯片 ── */
+  .slide-cover { background: linear-gradient(135deg, #eef2ff 0%, #f5f0ff 100%); }
+  .slide-cover::before { background: #4f7ef8; width: 260px; height: 260px; opacity: 0.08; }
+
+  .cover-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #4f7ef8, #a78bfa);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+  .cover-title {
+    font-size: 52px;
+    font-weight: 800;
+    color: #1a2455;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .cover-subtitle {
+    font-size: 22px;
+    color: #5a6a9a;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .cover-formula {
+    background: rgba(79,126,248,0.08);
+    border-left: 5px solid #4f7ef8;
+    border-radius: 0 12px 12px 0;
+    padding: 22px 32px;
+    font-size: 28px;
+    color: #2c3e6b;
+    margin-bottom: 36px;
+    width: fit-content;
+  }
+  .cover-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: #e8edf5;
+    color: #4a5a8a;
+    font-size: 14px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  /* ── 通用幻灯片标题 ── */
+  .slide-header {
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #edf0f7;
+  }
+  .slide-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: #8a9bc0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .slide-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1a2455;
+    line-height: 1.2;
+  }
+  .slide-title span {
+    background: linear-gradient(90deg, #4f7ef8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── 内容块 ── */
+  .content { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+  .card {
+    background: #f7f9fd;
+    border-radius: 14px;
+    padding: 22px 28px;
+    border: 1px solid #e4e9f4;
+  }
+  .card-accent {
+    background: linear-gradient(135deg, #eef2ff, #f0f7ff);
+    border: 1px solid #c8d5f8;
+  }
+  .card-green {
+    background: linear-gradient(135deg, #edfaf3, #f0fdf6);
+    border: 1px solid #b8ecd1;
+  }
+  .card-purple {
+    background: linear-gradient(135deg, #f5f0ff, #fdf4ff);
+    border: 1px solid #d8c4f8;
+  }
+  .card-yellow {
+    background: linear-gradient(135deg, #fffbec, #fff8e1);
+    border: 1px solid #f5e0a0;
+  }
+  .card-red {
+    background: linear-gradient(135deg, #fff4f4, #fff0f0);
+    border: 1px solid #f8c8c8;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2c3e6b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .icon-blue  { background: #dbeafe; }
+  .icon-green { background: #d1fae5; }
+  .icon-purple{ background: #ede9fe; }
+  .icon-yellow{ background: #fef3c7; }
+  .icon-red   { background: #fee2e2; }
+
+  .card-body {
+    font-size: 19px;
+    color: #3a4a6a;
+    line-height: 1.75;
+  }
+
+  /* ── 公式块 ── */
+  .formula-box {
+    background: linear-gradient(135deg, #1a2455, #2c3e6b);
+    color: #fff;
+    border-radius: 14px;
+    padding: 24px 32px;
+    text-align: center;
+    font-size: 26px;
+    box-shadow: 0 6px 24px rgba(26,36,85,0.18);
+  }
+  .formula-box.light {
+    background: #f0f4ff;
+    color: #1a2455;
+    box-shadow: none;
+    border: 2px solid #c8d5f8;
+  }
+
+  /* ── 要点列表 ── */
+  .point-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .point-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 20px;
+    color: #2c3e6b;
+    line-height: 1.6;
+  }
+  .point-list li .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f7ef8, #a78bfa);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  /* ── 步骤序列 ── */
+  .steps {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+  .step {
+    flex: 1;
+    background: #f7f9fd;
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid #e4e9f4;
+    position: relative;
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f7ef8, #a78bfa);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .step-title { font-size: 15px; font-weight: 700; color: #2c3e6b; margin-bottom: 6px; }
+  .step-body  { font-size: 14px; color: #6b7a99; line-height: 1.5; }
+  .step-arrow {
+    width: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #b0bcd8;
+    flex-shrink: 0;
+  }
+
+  /* ── 双栏布局 ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* ── 高亮文字 ── */
+  .hl-blue   { color: #4f7ef8; font-weight: 700; }
+  .hl-purple { color: #8b5cf6; font-weight: 700; }
+  .hl-green  { color: #10b981; font-weight: 700; }
+  .hl-red    { color: #ef4444; font-weight: 700; }
+
+  /* ── 表格 ── */
+  .info-table { width: 100%; border-collapse: collapse; font-size: 18px; }
+  .info-table th {
+    background: linear-gradient(90deg, #4f7ef8, #a78bfa);
+    color: #fff;
+    padding: 13px 18px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .info-table th:first-child { border-radius: 10px 0 0 0; }
+  .info-table th:last-child  { border-radius: 0 10px 0 0; }
+  .info-table td {
+    padding: 12px 18px;
+    border-bottom: 1px solid #e8edf8;
+    color: #2c3e6b;
+    line-height: 1.6;
+  }
+  .info-table tr:last-child td { border-bottom: none; }
+  .info-table tr:nth-child(even) td { background: #f7f9fd; }
+
+  /* ── 引用块 ── */
+  .quote {
+    border-left: 5px solid #a78bfa;
+    padding: 14px 22px;
+    background: #f8f4ff;
+    border-radius: 0 10px 10px 0;
+    font-size: 19px;
+    color: #5a3a8a;
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  /* ── 结语幻灯片 ── */
+  .slide-end {
+    background: linear-gradient(135deg, #1a2455 0%, #2d1b6b 100%);
+    color: #fff;
+  }
+  .slide-end .slide-title { color: #fff; }
+  .slide-end .slide-num   { color: #8a9bc0; }
+  .end-formula {
+    font-size: 34px;
+    text-align: center;
+    margin: 28px 0;
+    color: #fff;
+  }
+  .end-tags { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
+  .end-tag {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #c8d5f8;
+    padding: 7px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ── 缩略导航点 ── */
+  .dots {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 98;
+  }
+  .dot-item {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #c8d5f8;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot-item.active {
+    background: #4f7ef8;
+    height: 22px;
+    border-radius: 4px;
+  }
+
+  /* ── 键盘提示 ── */
+  .key-hint {
+    position: fixed;
+    bottom: 18px;
+    right: 28px;
+    font-size: 13px;
+    color: #b0bcd8;
+  }
+
+  /* MathJax 字体调整 */
+  .MathJax { font-size: 1em !important; }
+
+  @media (max-width: 700px) {
+    .slide { padding: 32px 22px 28px; min-height: auto; }
+    .cover-title { font-size: 34px; }
+    .slide-title  { font-size: 26px; }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .steps { flex-direction: column; }
+    .step-arrow { transform: rotate(90deg); width: auto; height: 24px; }
+    .dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <div class="nav-title">Stirling 公式</div>
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← 上一页</button>
+    <span class="slide-counter" id="counter">1 / 10</span>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">下一页 →</button>
+  </div>
+</nav>
+
+<!-- 进度条 -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- 侧边导航点 -->
+<div class="dots" id="dotsNav"></div>
+
+<!-- ══════════════════════════════════════════
+     幻灯片内容
+══════════════════════════════════════════ -->
+<div class="slides-wrapper">
+
+<!-- ─── Slide 1：封面 ─── -->
+<div class="slide slide-cover active" id="slide-1">
+  <div class="cover-badge">MATHEMATICS · 渐近分析</div>
+  <div class="cover-title">Stirling 公式<br>严格推导</div>
+  <div class="cover-subtitle">从阶乘到 \(\sqrt{2\pi}\) 的完整旅程</div>
+  <div class="cover-formula">
+    \( n! \sim \sqrt{2\pi n}\left(\dfrac{n}{e}\right)^{n} \)
+  </div>
+  <div class="cover-tags">
+    <span class="tag">📐 渐近分析</span>
+    <span class="tag">∫ Gamma 积分</span>
+    <span class="tag">π Wallis 公式</span>
+    <span class="tag">🎲 概率视角</span>
+    <span class="tag">∑ Euler-Maclaurin</span>
+  </div>
+</div>
+
+<!-- ─── Slide 2：为什么需要 Stirling ─── -->
+<div class="slide" id="slide-2">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 01</div>
+    <div class="slide-title">为什么需要 <span>Stirling 公式</span>？</div>
+  </div>
+  <div class="content">
+    <div class="two-col">
+      <div class="card card-red">
+        <div class="card-title">
+          <div class="icon icon-red">🚫</div>直接计算的困难
+        </div>
+        <div class="card-body">
+          <ul class="point-list">
+            <li><span class="dot"></span>\(100!\approx 9.3\times 10^{157}\)，远超计算极限</li>
+            <li><span class="dot"></span>指数级增长，数值溢出</li>
+            <li><span class="dot"></span>需要 <span class="hl-red">渐近近似</span> 代替精确值</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card card-accent">
+        <div class="card-title">
+          <div class="icon icon-blue">✅</div>典型应用场景
+        </div>
+        <div class="card-body">
+          <ul class="point-list">
+            <li><span class="dot"></span>二项式系数：\(\dbinom{2n}{n}=\dfrac{(2n)!}{(n!)^2}\)</li>
+            <li><span class="dot"></span>统计物理：微态数 \(W=\binom{N}{k}\)</li>
+            <li><span class="dot"></span>随机游走：回原点概率</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="formula-box">
+      \[ \text{目标：}\lim_{n\to\infty}\frac{n!}{\sqrt{2\pi n}\left(\dfrac{n}{e}\right)^n} = 1 \]
+    </div>
+    <div class="card card-yellow">
+      <div class="card-title"><div class="icon icon-yellow">💡</div>核心思路</div>
+      <div class="card-body">
+        将乘积取对数转化为求和：\(\ln(n!)=\displaystyle\sum_{k=1}^{n}\ln k\)，再用积分与分析工具逼近
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 3：三块基石 ─── -->
+<div class="slide" id="slide-3">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 02</div>
+    <div class="slide-title">推导的三块<span>基石</span></div>
+  </div>
+  <div class="content">
+    <div class="three-col">
+      <div class="card card-accent">
+        <div class="card-title"><div class="icon icon-blue">①</div>对数求和转化</div>
+        <div class="card-body" style="font-size:17px">
+          \[\ln(n!)=\sum_{k=1}^{n}\ln k\]
+          <br>将乘积化为求和，是一切分析的出发点
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-title"><div class="icon icon-purple">②</div>Wallis 公式</div>
+        <div class="card-body" style="font-size:17px">
+          \[\prod_{n=1}^{\infty}\frac{(2n)^2}{(2n-1)(2n+1)}=\frac{\pi}{2}\]
+          <br>提供常数 \(\sqrt{\pi}\) 的来源
+        </div>
+      </div>
+      <div class="card card-green">
+        <div class="card-title"><div class="icon icon-green">③</div>Taylor 展开</div>
+        <div class="card-body" style="font-size:17px">
+          \[\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots\]
+          <br>精细估计相邻项之差
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon icon-yellow">🧩</div>Wallis 公式简证要点</div>
+      <div class="card-body">
+        令 \(I_n=\displaystyle\int_0^{\pi/2}\sin^n x\,dx\)，
+        分部积分得 \(I_n=\dfrac{n-1}{n}I_{n-2}\)，
+        再由 \(\dfrac{I_{2n}}{I_{2n+1}}\to 1\) 得 Wallis 乘积 \(=\dfrac{\pi}{2}\)
+      </div>
+    </div>
+    <div class="formula-box light">
+      这三块基石将引导我们：确定量级 → 证收敛 → 定常数 \(\sqrt{2\pi}\)
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 4：第一步，确定量级 ─── -->
+<div class="slide" id="slide-4">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 03</div>
+    <div class="slide-title"><span>第一步</span>：积分比较确定量级</div>
+  </div>
+  <div class="content">
+    <div class="card card-accent">
+      <div class="card-title"><div class="icon icon-blue">📌</div>引理</div>
+      <div class="card-body">
+        \(\ln(n!) = n\ln n - n + O(\ln n)\)，即 \(n! = C_n \cdot n^n e^{-n}\)，\(C_n\) 增长量级待定
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">📐</div>证明：夹逼不等式</div>
+      <div class="card-body">
+        \[\int_1^n \ln x\,dx \;\leq\; \sum_{k=2}^{n}\ln k \;\leq\; \int_1^{n+1}\ln x\,dx\]
+        <br>
+        左边：\(\displaystyle\int_1^n \ln x\,dx = n\ln n - n + 1\)
+        <br><br>
+        右边：\(\displaystyle\int_1^{n+1}\ln x\,dx = (n+1)\ln(n+1) - n\)
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="formula-box light">
+        \[ n\ln n - n + 1 \leq \ln(n!) \leq (n+1)\ln(n+1)-n \]
+      </div>
+      <div class="card card-yellow">
+        <div class="card-title"><div class="icon icon-yellow">🎯</div>目标精化</div>
+        <div class="card-body" style="font-size:17px">
+          预期 \(C_n \sim \sqrt{n}\)，即 \(n! \sim C\sqrt{n}\left(\dfrac{n}{e}\right)^n\)，常数 \(C\) 待定
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 5：第二步，证明收敛 ─── -->
+<div class="slide" id="slide-5">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 04</div>
+    <div class="slide-title"><span>第二步</span>：证明极限存在</div>
+  </div>
+  <div class="content">
+    <div class="card card-accent">
+      <div class="card-title"><div class="icon icon-blue">🔑</div>定义辅助序列</div>
+      <div class="card-body">
+        \[a_n = \frac{n!\cdot e^n}{n^{n+1/2}}\]
+        目标：证明 \(a_n\) 单调有界，从而收敛到某正常数 \(C\)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">🧮</div>计算相邻差（关键步骤）</div>
+      <div class="card-body">
+        \[\ln a_n - \ln a_{n+1} = \left(n+\frac{1}{2}\right)\ln\!\left(1+\frac{1}{n}\right) - 1\]
+        <br>
+        代入 Taylor 展开 \(\ln(1+\tfrac{1}{n})=\tfrac{1}{n}-\tfrac{1}{2n^2}+\tfrac{1}{3n^3}-\cdots\)
+      </div>
+    </div>
+    <div class="card card-green">
+      <div class="card-title"><div class="icon icon-green">✅</div>展开结果</div>
+      <div class="card-body">
+        \[\left(n+\frac{1}{2}\right)\ln\!\left(1+\frac{1}{n}\right) = 1 + \frac{1}{12n^2} + O(n^{-3})\]
+        <br>
+        因此 \(\ln a_n - \ln a_{n+1} = \dfrac{1}{12n^2}+O(n^{-3}) > 0\)
+        <br><br>
+        \(\Rightarrow\) \(\{a_n\}\) <span class="hl-green">单调递减</span>，且有正下界 \(\Rightarrow\) <span class="hl-green">极限存在</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 6：Taylor 展开详情 ─── -->
+<div class="slide" id="slide-6">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 05</div>
+    <div class="slide-title">展开细节：<span>逐项计算</span></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">📝</div>完整展开过程</div>
+      <div class="card-body">
+        \[\left(n+\frac{1}{2}\right)\left(\frac{1}{n}-\frac{1}{2n^2}+\frac{1}{3n^3}-\frac{1}{4n^4}+\cdots\right)\]
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card card-yellow">
+        <div class="card-title"><div class="icon icon-yellow">× n 的项</div></div>
+        <div class="card-body" style="font-size:17px">
+          \(n \cdot \dfrac{1}{n} = 1\)
+          <br><br>
+          \(n \cdot \left(-\dfrac{1}{2n^2}\right) = -\dfrac{1}{2n}\)
+          <br><br>
+          \(n \cdot \dfrac{1}{3n^3} = \dfrac{1}{3n^2}\)
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-title"><div class="icon icon-purple">× 1/2 的项</div></div>
+        <div class="card-body" style="font-size:17px">
+          \(\dfrac{1}{2}\cdot\dfrac{1}{n} = \dfrac{1}{2n}\)
+          <br><br>
+          \(\dfrac{1}{2}\cdot\left(-\dfrac{1}{2n^2}\right) = -\dfrac{1}{4n^2}\)
+        </div>
+      </div>
+    </div>
+    <div class="formula-box">
+      \[ = 1 + \underbrace{\left(-\frac{1}{2n}+\frac{1}{2n}\right)}_{=\,0} + \left(\frac{1}{3}-\frac{1}{4}\right)\frac{1}{n^2}+\cdots = 1 + \frac{1}{12n^2}+O(n^{-3}) \]
+    </div>
+    <div class="quote">
+      \(\tfrac{1}{2n}\) 项奇妙抵消，正是 \(n+\tfrac{1}{2}\) 这个选取的精妙之处
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 7：第三步，Wallis 定常数 ─── -->
+<div class="slide" id="slide-7">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 06</div>
+    <div class="slide-title"><span>第三步</span>：用 Wallis 公式定常数</div>
+  </div>
+  <div class="content">
+    <div class="card card-accent">
+      <div class="card-title"><div class="icon icon-blue">📌</div>已知：\(n!\sim C\sqrt{n}(n/e)^n\)，目标：求 \(C\)</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">🔗</div>Wallis 公式的阶乘形式</div>
+      <div class="card-body">
+        利用 \((2n)!!=2^n n!\) 与 \((2n-1)!!=\dfrac{(2n)!}{2^n n!}\)，Wallis 公式化为：
+        \[\lim_{n\to\infty}\frac{2^{4n}(n!)^4}{(2n)!^2\cdot(2n+1)}=\frac{\pi}{2}\]
+      </div>
+    </div>
+    <div class="card card-yellow">
+      <div class="card-title"><div class="icon icon-yellow">⚡</div>代入 Stirling 近似</div>
+      <div class="card-body">
+        \(n!\sim C\sqrt{n}\dfrac{n^n}{e^n}\)，\((2n)!\sim C\sqrt{2n}\dfrac{(2n)^{2n}}{e^{2n}}\)，代入后分子分母化简：
+        \[\frac{2^{4n}\cdot C^4\cdot n^2\cdot n^{4n}/e^{4n}}{C^2\cdot 4n^2\cdot 2^{4n}\cdot n^{4n}/e^{4n}} = \frac{C^2}{4}\]
+      </div>
+    </div>
+    <div class="formula-box">
+      \[ \frac{C^2}{4}=\frac{\pi}{2} \implies C^2=2\pi \implies \boxed{C=\sqrt{2\pi}} \]
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 8：Laplace 方法 ─── -->
+<div class="slide" id="slide-8">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 07</div>
+    <div class="slide-title">优雅的替代：<span>Laplace 方法</span></div>
+  </div>
+  <div class="content">
+    <div class="card card-accent">
+      <div class="card-title"><div class="icon icon-blue">∫</div>从 Gamma 函数出发</div>
+      <div class="card-body">
+        \[n!=\Gamma(n+1)=\int_0^{\infty}t^n e^{-t}\,dt\]
+        换元 \(t=n\tau\)：
+        \[n!=n^{n+1}\int_0^{\infty}e^{n(\ln\tau-\tau)}\,d\tau\]
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card card-green">
+        <div class="card-title"><div class="icon icon-green">📍</div>找最大值点（鞍点）</div>
+        <div class="card-body" style="font-size:17px">
+          令 \(f(\tau)=\ln\tau-\tau\)
+          <br><br>
+          \(f'(\tau)=\dfrac{1}{\tau}-1=0\Rightarrow\tau^*=1\)
+          <br><br>
+          \(f(1)=-1,\quad f''(1)=-1\)
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-title"><div class="icon icon-purple">🔭</div>局部二次近似</div>
+        <div class="card-body" style="font-size:17px">
+          \(\tau^*=1\) 附近：
+          \[f(\tau)\approx -1-\frac{(\tau-1)^2}{2}\]
+          <br>
+          大 \(n\) 时被积函数集中在 \(\tau=1\) 附近，宽度 \(\sim 1/\!\sqrt{n}\)
+        </div>
+      </div>
+    </div>
+    <div class="formula-box">
+      \[ n!\approx n^{n+1}e^{-n}\int_{-\infty}^{+\infty}e^{-nu^2/2}\,du = n^{n+1}e^{-n}\sqrt{\frac{2\pi}{n}} = \sqrt{2\pi n}\cdot n^n e^{-n} \]
+    </div>
+  </div>
+</div>
+
+<!-- ─── Slide 9：精细化与应用 ─── -->
+<div class="slide" id="slide-9">
+  <div class="slide-header">
+    <div class="slide-num">SLIDE 08</div>
+    <div class="slide-title"><span>精细化</span>与经典应用</div>
+  </div>
+  <div class="content">
+    <div class="card card-purple">
+      <div class="card-title"><div class="icon icon-purple">🔬</div>完整渐近展开（Euler-Maclaurin）</div>
+      <div class="card-body">
+        \[n!=\sqrt{2\pi n}\left(\frac{n}{e}\right)^n\exp\!\left(\frac{1}{12n}-\frac{1}{360n^3}+\frac{1}{1260n^5}-\cdots\right)\]
+        系数由 <span class="hl-purple">Bernoulli 数</span> \(B_{2k}\) 给出，余项有精确上界：
+        \[n!=\sqrt{2\pi n}\left(\frac{n}{e}\right)^n e^{\theta_n/(12n)},\quad 0<\theta_n<1\]
+      </div>
+    </div>
+    <table class="info-table">
+      <thead>
+        <tr><th>应用</th><th>结果</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>中心二项式系数</td>
+          <td>\(\dbinom{2n}{n}\sim\dfrac{4^n}{\sqrt{\pi n}}\)</td>
+          <td>概率论、组合数学</td>
+        </tr>
+        <tr>
+          <td>随机游走回原点</td>
+          <td>\(P_{2n}\sim\dfrac{1}{\sqrt{\pi n}}\)</td>
+          <td>一维对称游走</td>
+        </tr>
+        <tr>
+          <td>统计物理熵</td>
+          <td>\(\ln\binom{N}{k}\approx NH(p)\)</td>
+          <td>\(H(p)=-p\ln p-(1-p)\ln(1-p)\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─── Slide 10：总结 ─── -->
+<div class="slide slide-end" id="slide-10">
+  <div class="slide-header">
+    <div class="slide-num" style="color:#8a9bc0">FINALE</div>
+    <div class="slide-title" style="color:#fff">Stirling 公式的<span>多重本质</span></div>
+  </div>
+  <div class="end-formula">
+    \[ n! = \sqrt{2\pi n}\left(\frac{n}{e}\right)^n \cdot e^{\,\frac{1}{12n}+O(n^{-2})} \]
+  </div>
+  <table class="info-table" style="font-size:17px">
+    <thead>
+      <tr><th>视角</th><th>本质含义</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>📐 分析</td><td>\(\ln(n!)\) 的积分近似 + 精细余项修正</td></tr>
+      <tr><td>🔢 代数</td><td>单调有界序列收敛 + Wallis 公式定值</td></tr>
+      <tr><td>🎲 概率</td><td>Gamma 分布的 CLT：Poisson → 正态</td></tr>
+      <tr><td>⚛️ 物理</td><td>鞍点近似（最速下降法）的典范</td></tr>
+    </tbody>
+  </table>
+  <div class="end-tags">
+    <span class="end-tag">e · π · n 的统一</span>
+    <span class="end-tag">渐近分析经典</span>
+    <span class="end-tag">三种独立推导殊途同归</span>
+  </div>
+</div>
+
+</div><!-- slides-wrapper -->
+
+<div class="key-hint">← → 方向键翻页</div>
+
+<script>
+  const TOTAL = 10;
+  let cur = 1;
+
+  // 生成导航点
+  const dotsNav = document.getElementById('dotsNav');
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot-item' + (i===1?' active':'');
+    d.title = 'Slide ' + i;
+    d.onclick = () => goTo(i);
+    dotsNav.appendChild(d);
+  }
+
+  function goTo(n) {
+    document.getElementById('slide-'+cur).classList.remove('active');
+    document.querySelectorAll('.dot-item')[cur-1].classList.remove('active');
+    cur = Math.max(1, Math.min(TOTAL, n));
+    document.getElementById('slide-'+cur).classList.add('active');
+    document.querySelectorAll('.dot-item')[cur-1].classList.add('active');
+    document.getElementById('counter').textContent = cur + ' / ' + TOTAL;
+    document.getElementById('prevBtn').disabled = cur === 1;
+    document.getElementById('nextBtn').disabled = cur === TOTAL;
+    document.getElementById('progressBar').style.width = (cur/TOTAL*100)+'%';
+    MathJax.typesetPromise([document.getElementById('slide-'+cur)]);
+  }
+
+  function changeSlide(dir) { goTo(cur + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    changeSlide(-1);
+  });
+
+  // 初始化
+  goTo(1);
+</script>
+</body>
+</html>

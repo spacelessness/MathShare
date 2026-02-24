@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多元微积分 20 题通关 - PPT讲稿</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f1419;
+            --bg-gradient: linear-gradient(135deg, #0a0f14 0%, #1a252f 100%);
+            --text-main: #e0e0e0;
+            --accent-gold: #f4d03f;
+            --accent-cyan: #5dade2;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-purple: #9b59b6;
+            --accent-orange: #e67e22;
+            --box-bg: rgba(255, 255, 255, 0.05);
+            --box-border: 1px solid rgba(255, 255, 255, 0.15);
+            --font-family: 'Noto Serif SC', serif;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: #000; color: var(--text-main);
+            font-family: var(--font-family);
+            display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px;
+        }
+
+        .slide {
+            width: 1280px; height: 720px; background: var(--bg-gradient);
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6); border: 1px solid #333;
+            padding: 50px 70px; box-sizing: border-box;
+            display: flex; flex-direction: column;
+        }
+
+        .slide::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px; pointer-events: none; z-index: 0;
+        }
+
+        .content { z-index: 1; height: 100%; display: flex; flex-direction: column; }
+
+        h1 {
+            font-size: 40px; color: #fff; margin-bottom: 20px; font-weight: 700;
+            border-bottom: 2px solid var(--accent-purple); display: inline-block; padding-bottom: 10px; width: 100%;
+        }
+        h1 .topic-num { color: var(--accent-gold); margin-right: 15px; font-size: 36px; }
+
+        h2 { font-size: 24px; color: var(--accent-cyan); margin-bottom: 10px; margin-top: 0; }
+        h3 { font-size: 20px; color: var(--accent-gold); margin: 8px 0; }
+        
+        .box {
+            background: var(--box-bg); border: var(--box-border);
+            padding: 15px 22px; border-radius: 8px; margin-bottom: 12px;
+            font-size: 18px; line-height: 1.7;
+        }
+
+        .question-box {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid var(--accent-purple);
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        .answer-box {
+            background: rgba(244, 208, 63, 0.05);
+            border: 1px solid rgba(244, 208, 63, 0.3);
+        }
+
+        .tip-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--accent-green);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .warning-box {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--accent-red);
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--accent-gold);
+            text-align: center;
+            padding: 18px;
+        }
+
+        .highlight-gold { color: var(--accent-gold); font-weight: bold; }
+        .highlight-cyan { color: var(--accent-cyan); font-weight: bold; }
+        .highlight-green { color: var(--accent-green); }
+        .highlight-red { color: var(--accent-red); }
+        .highlight-purple { color: var(--accent-purple); font-weight: bold; }
+
+        .row { display: flex; gap: 20px; flex: 1; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+
+        .tag {
+            display: inline-block; padding: 4px 12px; border-radius: 15px;
+            font-size: 13px; margin-right: 8px;
+        }
+        .tag-point { background: var(--accent-purple); color: #fff; }
+        .tag-method { background: var(--accent-gold); color: #000; }
+        .tag-formula { background: var(--accent-cyan); color: #000; }
+
+        .step { margin: 6px 0; padding-left: 18px; border-left: 2px solid #444; }
+        .step-num { 
+            display: inline-block; width: 22px; height: 22px; 
+            background: var(--accent-purple); color: #fff; 
+            border-radius: 50%; text-align: center; line-height: 22px;
+            font-size: 13px; font-weight: bold; margin-right: 8px;
+        }
+
+        .result-box {
+            background: linear-gradient(90deg, rgba(155,89,182,0.2), transparent);
+            border-left: 4px solid var(--accent-purple);
+            padding: 12px 18px; margin-top: 12px;
+            font-size: 22px;
+        }
+
+        .separator-bar { width: 100%; text-align: center; color: #555; margin: 30px 0; font-size: 14px; }
+
+        /* 封面特殊样式 */
+        .cover-slide .content {
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .cover-title { font-size: 56px; color: #fff; margin-bottom: 20px; }
+        .cover-subtitle { font-size: 26px; color: var(--accent-purple); margin-bottom: 40px; }
+
+        /* 目录样式 */
+        .toc-item {
+            display: flex; align-items: center; padding: 10px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 20px;
+        }
+        .toc-num { 
+            width: 36px; height: 36px; background: var(--accent-purple); 
+            color: #fff; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; 
+            font-weight: bold; margin-right: 18px; font-size: 16px;
+        }
+        .toc-count { margin-left: auto; color: #666; }
+
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; font-size: 16px; }
+        th { background: rgba(155, 89, 182, 0.2); color: var(--accent-purple); padding: 10px; text-align: left; }
+        td { padding: 8px 10px; border-bottom: 1px solid #333; }
+
+        .arrow { font-size: 20px; color: var(--accent-gold); margin: 0 8px; }
+
+        /* 页码 */
+        .page-num {
+            position: absolute; bottom: 15px; right: 25px;
+            color: #555; font-size: 13px;
+        }
+
+        /* 3D坐标示意 */
+        .coord-3d {
+            width: 120px; height: 120px;
+            position: relative;
+            margin: 10px auto;
+        }
+        .coord-3d::before {
+            content: ""; position: absolute;
+            width: 80px; height: 2px; background: var(--accent-red);
+            bottom: 20px; left: 30px; transform: rotate(-30deg);
+        }
+        .coord-3d::after {
+            content: ""; position: absolute;
+            width: 2px; height: 80px; background: var(--accent-green);
+            bottom: 20px; left: 60px;
+        }
+
+        /* 小标签 */
+        .mini-tag {
+            font-size: 12px; padding: 2px 8px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 封面 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 30px;">🌐</div>
+            <div class="cover-title">多元微积分 <span style="color: var(--accent-gold);">20</span> 题通关</div>
+            <div class="cover-subtitle">Multivariable Calculus · Core Problems</div>
+            <div style="width: 400px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); margin: 30px 0;"></div>
+            <div style="font-size: 18px; color: #888;">
+                <p>从平面到空间，从一维到多维</p>
+                <p style="color: var(--accent-gold);">偏导数 × 重积分 × 曲线曲面积分</p>
+            </div>
+            <div style="margin-top: 40px; display: flex; gap: 15px;">
+                <div class="tag" style="background: var(--accent-cyan); color: #000;">微分学 8题</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">重积分 6题</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">线面积分 6题</div>
+            </div>
+        </div>
+        <div class="page-num">1 / 28</div>
+    </div>
+
+    <!-- ==================== 目录 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>目录 · Table of Contents</h1>
+            
+            <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
+                <div style="flex: 1;">
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅰ</div>
+                        <div>多元函数微分学</div>
+                        <div class="toc-count">8 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        偏导数 · 全微分 · 方向导数 · 极值
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅱ</div>
+                        <div>重积分</div>
+                        <div class="toc-count">6 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        二重积分 · 三重积分 · 坐标变换
+                    </div>
+                    
+                    <div class="toc-item">
+                        <div class="toc-num">Ⅲ</div>
+                        <div>曲线曲面积分</div>
+                        <div class="toc-count">6 题</div>
+                    </div>
+                    <div style="padding-left: 60px; font-size: 14px; color: #888; margin: 5px 0 15px;">
+                        线积分 · 面积分 · 三大公式
+                    </div>
+                </div>
+                
+                <div style="flex: 0.8;">
+                    <div class="box" style="border: 2px solid var(--accent-purple);">
+                        <h3>🎯 维度跃迁</h3>
+                        <div style="font-size: 16px; text-align: center; padding: 15px 0;">
+                            <p>一元 → 多元</p>
+                            <p style="font-size: 24px; color: var(--accent-gold);">
+                                \( \dfrac{dy}{dx} \) → \( \dfrac{\partial f}{\partial x}, \dfrac{\partial f}{\partial y} \)
+                            </p>
+                            <p style="margin-top: 15px;">\( \int_a^b \) → \( \iint_D \) → \( \iiint_\Omega \)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box" style="margin-top: 15px;">
+                        <p style="font-size: 14px;"><strong>学习建议：</strong></p>
+                        <p style="font-size: 14px;">先掌握"几何直觉"，再熟练"计算技巧"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">2 / 28</div>
+    </div>
+
+    <!-- ==================== PART I 标题页 ==================== -->
+    <div class="separator-bar">== PART I: 多元函数微分学 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅰ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">多元函数微分学</h1>
+            <p style="font-size: 24px; color: var(--accent-purple);">Multivariable Differential Calculus</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag tag-point">偏导数</div>
+                <div class="tag tag-point">链式法则</div>
+                <div class="tag tag-point">全微分</div>
+                <div class="tag tag-point">方向导数</div>
+                <div class="tag tag-point">梯度</div>
+                <div class="tag tag-point">极值</div>
+                <div class="tag tag-point">拉格朗日乘数</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                从 \( f(x) \) 到 \( f(x, y, z) \)，导数变成了"向量"
+            </div>
+        </div>
+        <div class="page-num">3 / 28</div>
+    </div>
+
+    <!-- ==================== 题1 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">01</span>二元函数极限</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 多元极限 · 路径法
+                <div style="font-size: 26px; margin-top: 15px; text-align: center;">
+                    求 \( \displaystyle\lim_{(x,y)\to(0,0)}\frac{xy}{x^2+y^2} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>解题思路：路径检验法</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>沿 \( y = 0 \)（x轴）趋近：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \lim\limits_{x\to 0}\dfrac{x \cdot 0}{x^2+0} = 0 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>沿 \( y = x \) 趋近：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \lim\limits_{x\to 0}\dfrac{x \cdot x}{x^2+x^2} = \dfrac{x^2}{2x^2} = \dfrac{1}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>沿 \( y = 2x \) 趋近：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \lim\limits_{x\to 0}\dfrac{2x^2}{x^2+4x^2} = \dfrac{2}{5} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>结论</h2>
+                    <div class="box" style="border: 2px solid var(--accent-red);">
+                        <p>不同路径得到<span class="highlight-red">不同极限值</span></p>
+                        <p style="text-align: center; font-size: 22px; margin: 15px 0; color: var(--accent-gold);">
+                            ⇒ 极限<strong>不存在</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 多元极限 vs 一元极限</h3>
+                        <p style="font-size: 15px;"><strong>一元：</strong>只需左右极限相等</p>
+                        <p style="font-size: 15px;"><strong>多元：</strong>必须沿<strong>任意路径</strong>趋近都相等</p>
+                    </div>
+                    
+                    <div class="warning-box box">
+                        <h3>⚠️ 常用检验路径</h3>
+                        <p style="font-size: 14px;">\( y = 0 \), \( y = x \), \( y = x^2 \), \( y = kx \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\lim_{(x,y)\to(0,0)}\frac{xy}{x^2+y^2} \) <span class="highlight-red">不存在</span>（不同路径极限不同）
+            </div>
+        </div>
+        <div class="page-num">4 / 28</div>
+    </div>
+
+    <!-- ==================== 题2 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">02</span>复合函数偏导数</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 多元链式法则
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    设 \( z = f(x^2 - y^2, e^{xy}) \)，其中 \( f \) 可微，求 \( \dfrac{\partial z}{\partial x} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="flex: 1.2;">
+                    <h2>链式法则框架</h2>
+                    <div class="box answer-box">
+                        <p>设 \( u = x^2 - y^2 \)，\( v = e^{xy} \)，则 \( z = f(u, v) \)</p>
+                        
+                        <div class="formula-box" style="margin: 15px 0;">
+                            \( \dfrac{\partial z}{\partial x} = \dfrac{\partial f}{\partial u} \cdot \dfrac{\partial u}{\partial x} + \dfrac{\partial f}{\partial v} \cdot \dfrac{\partial v}{\partial x} \)
+                        </div>
+                        
+                        <div class="step">
+                            <span class="step-num">1</span>\( \dfrac{\partial u}{\partial x} = 2x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \dfrac{\partial v}{\partial x} = ye^{xy} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入得结果
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>树形图理解</h2>
+                    <div class="box" style="text-align: center; padding: 20px;">
+                        <pre style="font-family: monospace; color: var(--accent-cyan); font-size: 14px;">
+        z = f(u, v)
+           /    \
+          u      v
+         / \    / \
+        x   y  x   y
+                        </pre>
+                        <p style="font-size: 14px; margin-top: 10px;">
+                            求 \(\partial z/\partial x\)：找所有从 z 到 x 的路径
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记号约定</h3>
+                        <p style="font-size: 14px;">\( f_1' \) 或 \( f_u' \)：对第一个变量求偏导</p>
+                        <p style="font-size: 14px;">\( f_2' \) 或 \( f_v' \)：对第二个变量求偏导</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \dfrac{\partial z}{\partial x} = \boxed{2x f_1' + ye^{xy} f_2'} \)
+                <span class="mini-tag">其中 \( f_1', f_2' \) 在 \( (x^2-y^2, e^{xy}) \) 处取值</span>
+            </div>
+        </div>
+        <div class="page-num">5 / 28</div>
+    </div>
+
+    <!-- ==================== 题3 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">03</span>隐函数求偏导</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 隐函数存在定理
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    设 \( F(x, y, z) = x^2 + y^2 + z^2 - 4z = 0 \) 确定 \( z = z(x, y) \)，求 \( \dfrac{\partial z}{\partial x} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>公式法（推荐）</h2>
+                    <div class="box formula-box">
+                        <p style="color: var(--accent-gold); font-size: 22px;">
+                            \( \dfrac{\partial z}{\partial x} = -\dfrac{F_x}{F_z} \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            前提：\( F_z \neq 0 \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( F_x = 2x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( F_z = 2z - 4 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( \dfrac{\partial z}{\partial x} = -\dfrac{2x}{2z-4} = -\dfrac{x}{z-2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>直接求导法</h2>
+                    <div class="box answer-box">
+                        <p>将 \( z \) 视为 \( x, y \) 的函数，对 \( x \) 求偏导：</p>
+                        <p style="margin: 10px 0;">\( 2x + 0 + 2z\dfrac{\partial z}{\partial x} - 4\dfrac{\partial z}{\partial x} = 0 \)</p>
+                        <p>\( (2z - 4)\dfrac{\partial z}{\partial x} = -2x \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 完整公式组</h3>
+                        <p>\( \dfrac{\partial z}{\partial x} = -\dfrac{F_x}{F_z} \)</p>
+                        <p>\( \dfrac{\partial z}{\partial y} = -\dfrac{F_y}{F_z} \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \dfrac{\partial z}{\partial x} = \boxed{-\dfrac{x}{z-2}} \)，同理 \( \dfrac{\partial z}{\partial y} = -\dfrac{y}{z-2} \)
+            </div>
+        </div>
+        <div class="page-num">6 / 28</div>
+    </div>
+
+    <!-- ==================== 题4 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">04</span>全微分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 全微分计算与应用
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    设 \( z = x^2 y + \sin(xy) \)，求全微分 \( dz \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>全微分公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 24px; color: var(--accent-gold);">
+                            \( dz = \dfrac{\partial z}{\partial x}dx + \dfrac{\partial z}{\partial y}dy \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求 \( \dfrac{\partial z}{\partial x} \)：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \dfrac{\partial z}{\partial x} = 2xy + y\cos(xy) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>求 \( \dfrac{\partial z}{\partial y} \)：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \dfrac{\partial z}{\partial y} = x^2 + x\cos(xy) \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>几何意义</h2>
+                    <div class="box" style="text-align: center;">
+                        <p>全微分 = 切平面的"增量"</p>
+                        <div style="margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            <p>\( \Delta z \approx dz \)（当 \(\Delta x, \Delta y\) 很小时）</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 可微的条件</h3>
+                        <p style="font-size: 14px;">偏导存在 ✗ 可微</p>
+                        <p style="font-size: 14px;">偏导连续 ⇒ 可微</p>
+                        <p style="font-size: 14px;">可微 ⇒ 连续、偏导存在</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( dz = \boxed{(2xy + y\cos xy)dx + (x^2 + x\cos xy)dy} \)
+            </div>
+        </div>
+        <div class="page-num">7 / 28</div>
+    </div>
+
+    <!-- ==================== 题5 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">05</span>方向导数与梯度</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 方向导数 · 梯度
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    设 \( f(x, y) = x^2 + xy + y^2 \)，求在点 \( (1, 1) \) 处沿 \( \vec{l} = (1, 1) \) 方向的方向导数
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>方向导数公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 20px; color: var(--accent-gold);">
+                            \( \dfrac{\partial f}{\partial l} = f_x \cos\alpha + f_y \cos\beta \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            或写成 \( \dfrac{\partial f}{\partial l} = \nabla f \cdot \vec{e}_l \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求偏导：\( f_x = 2x + y \)，\( f_y = x + 2y \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>在 \((1,1)\)：\( f_x = 3 \)，\( f_y = 3 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>单位化 \(\vec{l}\)：\( \vec{e}_l = \dfrac{1}{\sqrt{2}}(1, 1) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( \dfrac{\partial f}{\partial l} = 3 \cdot \dfrac{1}{\sqrt{2}} + 3 \cdot \dfrac{1}{\sqrt{2}} = 3\sqrt{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>梯度的意义</h2>
+                    <div class="box" style="text-align: center;">
+                        <p style="font-size: 20px; color: var(--accent-gold);">
+                            \( \nabla f = \left(\dfrac{\partial f}{\partial x}, \dfrac{\partial f}{\partial y}\right) \)
+                        </p>
+                        <p style="margin-top: 15px;">在 \((1,1)\) 处：\( \nabla f = (3, 3) \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 梯度的几何性质</h3>
+                        <p style="font-size: 14px;">1. 梯度方向 = 函数增长<strong>最快</strong>方向</p>
+                        <p style="font-size: 14px;">2. 梯度大小 = 最大方向导数</p>
+                        <p style="font-size: 14px;">3. 梯度 ⊥ 等值线</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>最大方向导数：</strong></p>
+                        <p>\( |\nabla f| = \sqrt{3^2 + 3^2} = 3\sqrt{2} \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                方向导数：\( \boxed{3\sqrt{2}} \)，梯度：\( \nabla f = (3, 3) \)
+            </div>
+        </div>
+        <div class="page-num">8 / 28</div>
+    </div>
+
+    <!-- ==================== 题6 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">06</span>多元函数无条件极值</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 极值的必要与充分条件
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    求 \( f(x, y) = x^3 + y^3 - 3xy \) 的极值
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>求解步骤</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>求驻点（令 \( f_x = f_y = 0 \)）：
+                            <div style="margin: 8px 0 8px 35px; font-size: 16px;">
+                                \( f_x = 3x^2 - 3y = 0 \) ⇒ \( y = x^2 \)<br>
+                                \( f_y = 3y^2 - 3x = 0 \) ⇒ \( x = y^2 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>联立求解：
+                            <div style="margin: 8px 0 8px 35px; font-size: 16px;">
+                                \( x = (x^2)^2 = x^4 \) ⇒ \( x(x^3 - 1) = 0 \)<br>
+                                驻点：\( (0, 0) \) 和 \( (1, 1) \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>用判别式判断（见右）
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>二阶判别法</h2>
+                    <div class="box formula-box" style="font-size: 16px;">
+                        <p>设 \( A = f_{xx}, B = f_{xy}, C = f_{yy} \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px;">\( \Delta = AC - B^2 \)</p>
+                        <p style="font-size: 14px; margin-top: 10px;">
+                            \( \Delta > 0 \) 且 \( A > 0 \) ⇒ 极小<br>
+                            \( \Delta > 0 \) 且 \( A < 0 \) ⇒ 极大<br>
+                            \( \Delta < 0 \) ⇒ 鞍点
+                        </p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p>\( f_{xx} = 6x, f_{xy} = -3, f_{yy} = 6y \)</p>
+                        <p style="margin-top: 10px;"><strong>在 (0,0)：</strong>\( \Delta = 0 - 9 < 0 \) → 鞍点</p>
+                        <p><strong>在 (1,1)：</strong>\( \Delta = 36 - 9 > 0, A = 6 > 0 \) → 极小</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                极小值：\( f(1, 1) = \boxed{-1} \)，\( (0, 0) \) 是鞍点
+            </div>
+        </div>
+        <div class="page-num">9 / 28</div>
+    </div>
+
+    <!-- ==================== 题7 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">07</span>拉格朗日乘数法</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 条件极值
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    求 \( f(x, y) = xy \) 在约束 \( x + y = 1 \) 下的极值
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>拉格朗日乘数法</h2>
+                    <div class="box formula-box">
+                        <p>构造辅助函数：</p>
+                        <p style="font-size: 22px; color: var(--accent-gold); margin: 10px 0;">
+                            \( L = f - \lambda g \)
+                        </p>
+                        <p style="font-size: 14px;">其中 \( g(x,y) = 0 \) 是约束条件</p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <p>\( L = xy - \lambda(x + y - 1) \)</p>
+                        <div class="step" style="margin-top: 10px;">
+                            <span class="step-num">1</span>\( L_x = y - \lambda = 0 \) ⇒ \( \lambda = y \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( L_y = x - \lambda = 0 \) ⇒ \( \lambda = x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( L_\lambda = -(x + y - 1) = 0 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>由 ①② 得 \( x = y \)，代入 ③ 得 \( x = y = \dfrac{1}{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>几何直观</h2>
+                    <div class="box" style="text-align: center; padding: 20px;">
+                        <p>极值点处：</p>
+                        <p style="font-size: 20px; color: var(--accent-gold); margin: 15px 0;">
+                            \( \nabla f \parallel \nabla g \)
+                        </p>
+                        <p style="font-size: 14px;">等值线与约束曲线相切</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 多约束情形</h3>
+                        <p style="font-size: 14px;">两个约束 \( g_1 = 0, g_2 = 0 \)：</p>
+                        <p style="font-size: 14px;">\( L = f - \lambda_1 g_1 - \lambda_2 g_2 \)</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>验证：</strong></p>
+                        <p>\( f\left(\dfrac{1}{2}, \dfrac{1}{2}\right) = \dfrac{1}{4} \)</p>
+                        <p>这是极大值（边界趋向 ±∞ 时 \( f \to -\infty \)）</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                在约束 \( x + y = 1 \) 下，极大值 \( f\left(\dfrac{1}{2}, \dfrac{1}{2}\right) = \boxed{\dfrac{1}{4}} \)
+            </div>
+        </div>
+        <div class="page-num">10 / 28</div>
+    </div>
+
+    <!-- ==================== 题8 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">08</span>闭区域最值问题</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 内部驻点 + 边界极值
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    求 \( f(x, y) = x^2 + y^2 - 2x \) 在闭区域 \( D: x^2 + y^2 \leq 4 \) 上的最值
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>步骤一：内部驻点</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( f_x = 2x - 2 = 0 \) ⇒ \( x = 1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( f_y = 2y = 0 \) ⇒ \( y = 0 \)
+                        </div>
+                        <p style="margin-top: 10px;">驻点 \( (1, 0) \in D \) ✓</p>
+                        <p>\( f(1, 0) = 1 + 0 - 2 = -1 \)</p>
+                    </div>
+                    
+                    <h2>步骤二：边界极值</h2>
+                    <div class="box answer-box">
+                        <p>边界 \( x^2 + y^2 = 4 \)，参数化：\( x = 2\cos\theta, y = 2\sin\theta \)</p>
+                        <p>\( f = 4 - 4\cos\theta \)</p>
+                        <p>最大：\( \theta = \pi \) 时 \( f = 8 \)，点 \( (-2, 0) \)</p>
+                        <p>最小：\( \theta = 0 \) 时 \( f = 0 \)，点 \( (2, 0) \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>汇总比较</h2>
+                    <div class="box" style="font-size: 17px;">
+                        <table>
+                            <tr><th>点</th><th>位置</th><th>函数值</th></tr>
+                            <tr><td>\( (1, 0) \)</td><td>内部驻点</td><td class="highlight-cyan">\( -1 \)</td></tr>
+                            <tr><td>\( (2, 0) \)</td><td>边界</td><td>\( 0 \)</td></tr>
+                            <tr><td>\( (-2, 0) \)</td><td>边界</td><td class="highlight-gold">\( 8 \)</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 闭区域最值方法</h3>
+                        <p style="font-size: 14px;">1. 求内部所有驻点</p>
+                        <p style="font-size: 14px;">2. 用拉格朗日或参数化求边界极值</p>
+                        <p style="font-size: 14px;">3. 比较所有候选点的函数值</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                最小值：\( f(1, 0) = \boxed{-1} \)，最大值：\( f(-2, 0) = \boxed{8} \)
+            </div>
+        </div>
+        <div class="page-num">11 / 28</div>
+    </div>
+
+    <!-- ==================== PART II 标题页 ==================== -->
+    <div class="separator-bar">== PART II: 重积分 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅱ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">重积分</h1>
+            <p style="font-size: 24px; color: var(--accent-green);">Multiple Integrals</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag" style="background: var(--accent-green); color: #000;">二重积分</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">三重积分</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">极坐标</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">柱坐标</div>
+                <div class="tag" style="background: var(--accent-green); color: #000;">球坐标</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 20px; color: #666;">
+                \( \displaystyle\int_a^b \) → \( \displaystyle\iint_D \) → \( \displaystyle\iiint_\Omega \)
+            </div>
+        </div>
+        <div class="page-num">12 / 28</div>
+    </div>
+
+    <!-- ==================== 题9 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">09</span>二重积分（直角坐标）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 累次积分 · 积分区域
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iint_D xy\, dxdy \)，其中 \( D: 0 \leq x \leq 1, 0 \leq y \leq x \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>化为累次积分</h2>
+                    <div class="box formula-box">
+                        <p style="color: var(--accent-gold);">X-型区域（先 y 后 x）：</p>
+                        <p>\( \displaystyle\iint_D f\, dxdy = \int_a^b dx \int_{y_1(x)}^{y_2(x)} f\, dy \)</p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>确定积分次序：
+                            <div style="margin: 8px 0 8px 35px;">
+                                外层 \( x: 0 \to 1 \)，内层 \( y: 0 \to x \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>先对 y 积分：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \int_0^x xy\, dy = x \cdot \dfrac{y^2}{2}\Big|_0^x = \dfrac{x^3}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>再对 x 积分：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \int_0^1 \dfrac{x^3}{2}\, dx = \dfrac{1}{2} \cdot \dfrac{x^4}{4}\Big|_0^1 = \dfrac{1}{8} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>区域图示</h2>
+                    <div class="box" style="text-align: center; padding: 20px;">
+                        <svg viewBox="0 0 200 200" style="width: 180px; height: 180px;">
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#2ecc71;stop-opacity:0.3" />
+                                    <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:0.1" />
+                                </linearGradient>
+                            </defs>
+                            <polygon points="30,170 170,170 170,30" fill="url(#grad1)" stroke="#2ecc71" stroke-width="2"/>
+                            <line x1="30" y1="170" x2="180" y2="170" stroke="#888" stroke-width="1"/>
+                            <line x1="30" y1="170" x2="30" y2="20" stroke="#888" stroke-width="1"/>
+                            <text x="175" y="185" fill="#888" font-size="14">x</text>
+                            <text x="15" y="25" fill="#888" font-size="14">y</text>
+                            <text x="100" y="120" fill="#2ecc71" font-size="16">D</text>
+                            <text x="150" y="60" fill="#f4d03f" font-size="12">y=x</text>
+                        </svg>
+                        <p style="font-size: 14px; margin-top: 10px;">三角形区域 \( 0 \leq y \leq x \leq 1 \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 区域类型选择</h3>
+                        <p style="font-size: 14px;"><strong>X-型：</strong>上下边界是 \( y = f(x) \)</p>
+                        <p style="font-size: 14px;"><strong>Y-型：</strong>左右边界是 \( x = g(y) \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iint_D xy\, dxdy = \boxed{\dfrac{1}{8}} \)
+            </div>
+        </div>
+        <div class="page-num">13 / 28</div>
+    </div>
+
+    <!-- ==================== 题10 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">10</span>二重积分（极坐标）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 极坐标换元
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iint_D e^{-(x^2+y^2)}\, dxdy \)，其中 \( D: x^2 + y^2 \leq 1 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>极坐标变换</h2>
+                    <div class="box formula-box">
+                        <p>\( x = r\cos\theta, \quad y = r\sin\theta \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px; font-size: 22px;">
+                            \( dxdy = r\, dr\, d\theta \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>变换被积函数：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( e^{-(x^2+y^2)} = e^{-r^2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>确定积分限：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \theta: 0 \to 2\pi \)，\( r: 0 \to 1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>计算：
+                            <div style="margin: 8px 0 8px 35px; font-size: 16px;">
+                                \( \int_0^{2\pi} d\theta \int_0^1 e^{-r^2} \cdot r\, dr \)<br>
+                                \( = 2\pi \cdot \left[-\dfrac{1}{2}e^{-r^2}\right]_0^1 \)<br>
+                                \( = 2\pi \cdot \dfrac{1}{2}(1 - e^{-1}) \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>适用场景</h2>
+                    <div class="box">
+                        <p><strong>被积函数含：</strong></p>
+                        <ul style="font-size: 16px;">
+                            <li>\( x^2 + y^2 \)</li>
+                            <li>\( \sqrt{x^2 + y^2} \)</li>
+                            <li>\( \arctan\dfrac{y}{x} \)</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>积分区域：</strong></p>
+                        <ul style="font-size: 16px;">
+                            <li>圆、扇形、环形</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="warning-box box">
+                        <h3>⚠️ 别忘了 r</h3>
+                        <p style="font-size: 14px;">\( dxdy = \color{#e74c3c}{r}\, dr\, d\theta \)</p>
+                        <p style="font-size: 14px;">这是雅可比行列式的结果！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iint_D e^{-(x^2+y^2)}\, dxdy = \boxed{\pi(1 - e^{-1})} \)
+            </div>
+        </div>
+        <div class="page-num">14 / 28</div>
+    </div>
+
+    <!-- ==================== 题11 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">11</span>交换积分次序</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 积分次序交换
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    交换积分次序：\( \displaystyle\int_0^1 dx \int_x^1 f(x, y)\, dy \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>分析原积分区域</h2>
+                    <div class="box answer-box">
+                        <p><strong>原次序（先 y 后 x）：</strong></p>
+                        <p>\( x: 0 \to 1 \)</p>
+                        <p>\( y: x \to 1 \)（下界是斜线 \( y = x \)）</p>
+                        
+                        <div style="margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                            <p>区域 D：由 \( y = x \)，\( y = 1 \)，\( x = 0 \) 围成的三角形</p>
+                        </div>
+                    </div>
+                    
+                    <h2>改写为 Y-型</h2>
+                    <div class="box answer-box">
+                        <p><strong>新次序（先 x 后 y）：</strong></p>
+                        <p>\( y: 0 \to 1 \)</p>
+                        <p>\( x: 0 \to y \)（右界是 \( x = y \)）</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>图示对比</h2>
+                    <div class="box" style="text-align: center; padding: 15px;">
+                        <svg viewBox="0 0 200 200" style="width: 160px; height: 160px;">
+                            <polygon points="30,30 30,170 170,30" fill="rgba(46,204,113,0.2)" stroke="#2ecc71" stroke-width="2"/>
+                            <line x1="30" y1="170" x2="180" y2="170" stroke="#888" stroke-width="1"/>
+                            <line x1="30" y1="170" x2="30" y2="20" stroke="#888" stroke-width="1"/>
+                            <text x="175" y="185" fill="#888" font-size="12">x</text>
+                            <text x="15" y="25" fill="#888" font-size="12">y</text>
+                            <text x="50" y="80" fill="#2ecc71" font-size="14">D</text>
+                            <line x1="30" y1="30" x2="30" y2="170" stroke="#f4d03f" stroke-width="2" stroke-dasharray="5,3"/>
+                            <text x="35" y="110" fill="#f4d03f" font-size="10">x=0</text>
+                            <text x="90" y="60" fill="#5dade2" font-size="10">y=x</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 交换步骤</h3>
+                        <p style="font-size: 14px;">1. 画出积分区域</p>
+                        <p style="font-size: 14px;">2. 按新次序确定边界</p>
+                        <p style="font-size: 14px;">3. 写出新的累次积分</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int_0^1 dx \int_x^1 f\, dy = \boxed{\int_0^1 dy \int_0^y f\, dx} \)
+            </div>
+        </div>
+        <div class="page-num">15 / 28</div>
+    </div>
+
+    <!-- ==================== 题12 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">12</span>三重积分（直角坐标）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 三重累次积分
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iiint_\Omega z\, dV \)，其中 \( \Omega: 0 \leq x \leq 1, 0 \leq y \leq 1, 0 \leq z \leq xy \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>投影法（先 z）</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 18px;">\( \displaystyle\iiint_\Omega f\, dV = \iint_{D_{xy}} dxdy \int_{z_1}^{z_2} f\, dz \)</p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>先对 z 积分（\( z: 0 \to xy \)）：
+                            <div style="margin: 8px 0 8px 35px; font-size: 16px;">
+                                \( \int_0^{xy} z\, dz = \dfrac{z^2}{2}\Big|_0^{xy} = \dfrac{x^2 y^2}{2} \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>再对 xy 积分：
+                            <div style="margin: 8px 0 8px 35px; font-size: 16px;">
+                                \( \int_0^1 dx \int_0^1 \dfrac{x^2 y^2}{2}\, dy \)<br>
+                                \( = \dfrac{1}{2} \int_0^1 x^2\, dx \cdot \int_0^1 y^2\, dy \)<br>
+                                \( = \dfrac{1}{2} \cdot \dfrac{1}{3} \cdot \dfrac{1}{3} = \dfrac{1}{18} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>三重积分次序</h2>
+                    <div class="box" style="font-size: 16px;">
+                        <p><strong>常用次序：</strong></p>
+                        <ul>
+                            <li>先 z 后 xy（投影到 xy 平面）</li>
+                            <li>先 y 后 xz（投影到 xz 平面）</li>
+                            <li>先 x 后 yz（投影到 yz 平面）</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 选择原则</h3>
+                        <p style="font-size: 14px;">看哪个变量的上下限<strong>最简单</strong>（常数或只含一个变量）</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>可分离时：</strong></p>
+                        <p>\( \iiint f(x)g(y)h(z)\, dV = \int f \cdot \int g \cdot \int h \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iiint_\Omega z\, dV = \boxed{\dfrac{1}{18}} \)
+            </div>
+        </div>
+        <div class="page-num">16 / 28</div>
+    </div>
+
+    <!-- ==================== 题13 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">13</span>三重积分（柱坐标）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 柱坐标变换
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iiint_\Omega z\, dV \)，其中 \( \Omega \) 是圆锥 \( z = \sqrt{x^2+y^2} \) 与 \( z = 1 \) 之间的区域
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>柱坐标变换</h2>
+                    <div class="box formula-box">
+                        <p>\( x = r\cos\theta, y = r\sin\theta, z = z \)</p>
+                        <p style="color: var(--accent-gold); margin-top: 10px; font-size: 20px;">
+                            \( dV = r\, dr\, d\theta\, dz \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>变换后的积分限：
+                            <div style="margin: 8px 0 8px 35px; font-size: 15px;">
+                                \( \theta: 0 \to 2\pi \)，\( r: 0 \to 1 \)，\( z: r \to 1 \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>计算：
+                            <div style="margin: 8px 0 8px 35px; font-size: 15px;">
+                                \( \int_0^{2\pi} d\theta \int_0^1 r\, dr \int_r^1 z\, dz \)<br>
+                                \( = 2\pi \int_0^1 r \cdot \dfrac{1-r^2}{2}\, dr \)<br>
+                                \( = \pi \int_0^1 (r - r^3)\, dr = \pi \cdot \dfrac{1}{4} \)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>适用场景</h2>
+                    <div class="box">
+                        <p><strong>区域特征：</strong></p>
+                        <ul style="font-size: 16px;">
+                            <li>柱面 \( x^2 + y^2 = a^2 \)</li>
+                            <li>锥面 \( z = \sqrt{x^2 + y^2} \)</li>
+                            <li>抛物面 \( z = x^2 + y^2 \)</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>被积函数含：</strong></p>
+                        <ul style="font-size: 16px;">
+                            <li>\( x^2 + y^2 \)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 与极坐标的关系</h3>
+                        <p style="font-size: 14px;">柱坐标 = 极坐标 + z 轴</p>
+                        <p style="font-size: 14px;">把 xy 平面用极坐标，z 不变</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iiint_\Omega z\, dV = \boxed{\dfrac{\pi}{4}} \)
+            </div>
+        </div>
+        <div class="page-num">17 / 28</div>
+    </div>
+
+    <!-- ==================== 题14 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">14</span>三重积分（球坐标）</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 球坐标变换
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iiint_\Omega (x^2+y^2+z^2)\, dV \)，其中 \( \Omega: x^2+y^2+z^2 \leq R^2 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>球坐标变换</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 16px;">
+                            \( x = \rho\sin\varphi\cos\theta \)<br>
+                            \( y = \rho\sin\varphi\sin\theta \)<br>
+                            \( z = \rho\cos\varphi \)
+                        </p>
+                        <p style="color: var(--accent-gold); margin-top: 10px; font-size: 18px;">
+                            \( dV = \rho^2 \sin\varphi\, d\rho\, d\varphi\, d\theta \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <p>\( x^2+y^2+z^2 = \rho^2 \)</p>
+                        <div class="step" style="margin-top: 10px;">
+                            <span class="step-num">1</span>积分限：\( \rho: 0 \to R \)，\( \varphi: 0 \to \pi \)，\( \theta: 0 \to 2\pi \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>
+                            \( \int_0^{2\pi} d\theta \int_0^\pi \sin\varphi\, d\varphi \int_0^R \rho^2 \cdot \rho^2\, d\rho \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>
+                            \( = 2\pi \cdot 2 \cdot \dfrac{R^5}{5} = \dfrac{4\pi R^5}{5} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>坐标系对比</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <table>
+                            <tr><th>坐标系</th><th>适用场景</th><th>体积元</th></tr>
+                            <tr>
+                                <td>直角</td>
+                                <td>长方体</td>
+                                <td>\( dxdydz \)</td>
+                            </tr>
+                            <tr>
+                                <td>柱坐标</td>
+                                <td>柱、锥、抛物面</td>
+                                <td>\( r\,drd\theta dz \)</td>
+                            </tr>
+                            <tr>
+                                <td>球坐标</td>
+                                <td>球、锥面（顶点原点）</td>
+                                <td>\( \rho^2\sin\varphi\, d\rho d\varphi d\theta \)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆球坐标</h3>
+                        <p style="font-size: 14px;">\( \varphi \)：从 z 轴向下的"纬度"（0 到 π）</p>
+                        <p style="font-size: 14px;">\( \theta \)：xy 平面的"经度"（0 到 2π）</p>
+                        <p style="font-size: 14px;">\( \rho \)：到原点的距离</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iiint_\Omega (x^2+y^2+z^2)\, dV = \boxed{\dfrac{4\pi R^5}{5}} \)
+            </div>
+        </div>
+        <div class="page-num">18 / 28</div>
+    </div>
+
+    <!-- ==================== PART III 标题页 ==================== -->
+    <div class="separator-bar">== PART III: 曲线曲面积分 ==</div>
+    <div class="slide">
+        <div class="content" style="justify-content: center; align-items: center;">
+            <div style="font-size: 120px; margin-bottom: 20px; opacity: 0.3;">Ⅲ</div>
+            <h1 style="border: none; text-align: center; font-size: 50px;">曲线曲面积分</h1>
+            <p style="font-size: 24px; color: var(--accent-orange);">Line & Surface Integrals</p>
+            <div style="margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <div class="tag" style="background: var(--accent-orange); color: #000;">第一类线积分</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">第二类线积分</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">格林公式</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">曲面积分</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">高斯公式</div>
+                <div class="tag" style="background: var(--accent-orange); color: #000;">斯托克斯公式</div>
+            </div>
+            <div style="margin-top: 50px; font-size: 18px; color: #666;">
+                向量场中的积分 —— 物理学的语言
+            </div>
+        </div>
+        <div class="page-num">19 / 28</div>
+    </div>
+
+    <!-- ==================== 题15 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">15</span>第一类曲线积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 对弧长的曲线积分
+                <div style="font-size: 24px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\int_L (x^2 + y^2)\, ds \)，其中 \( L \) 是圆 \( x^2 + y^2 = a^2 \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>参数化方法</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 18px;">若 \( L: x = x(t), y = y(t) \)，则：</p>
+                        <p style="color: var(--accent-gold); font-size: 20px; margin-top: 10px;">
+                            \( ds = \sqrt{x'^2 + y'^2}\, dt \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>参数化：\( x = a\cos t, y = a\sin t, t \in [0, 2\pi] \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>计算 \( ds \)：
+                            <div style="margin: 5px 0 5px 35px; font-size: 15px;">
+                                \( ds = \sqrt{a^2\sin^2 t + a^2\cos^2 t}\, dt = a\, dt \)
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：\( x^2 + y^2 = a^2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( \int_0^{2\pi} a^2 \cdot a\, dt = a^3 \cdot 2\pi = 2\pi a^3 \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>物理意义</h2>
+                    <div class="box">
+                        <p>第一类曲线积分 = <strong>线密度的质量</strong></p>
+                        <p style="margin-top: 10px; font-size: 16px;">
+                            若 \( \rho(x,y) \) 是曲线的线密度，则：
+                        </p>
+                        <p style="text-align: center; margin: 10px 0;">
+                            质量 \( M = \int_L \rho\, ds \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 与第二类的区别</h3>
+                        <p style="font-size: 14px;"><strong>第一类：</strong>对弧长积分，与方向无关</p>
+                        <p style="font-size: 14px;"><strong>第二类：</strong>对坐标积分，与方向有关</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>对称性技巧：</strong></p>
+                        <p>圆上 \( x^2 + y^2 = a^2 \) 为常数，直接提出！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int_L (x^2 + y^2)\, ds = \boxed{2\pi a^3} \)
+            </div>
+        </div>
+        <div class="page-num">20 / 28</div>
+    </div>
+
+    <!-- ==================== 题16 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">16</span>第二类曲线积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 对坐标的曲线积分
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\int_L y\, dx + x\, dy \)，其中 \( L \) 是从 \( (0,0) \) 到 \( (1,1) \) 的直线段
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>参数化方法</h2>
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>参数化直线：\( x = t, y = t, t \in [0, 1] \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( dx = dt, dy = dt \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：
+                            <div style="margin: 8px 0 8px 35px;">
+                                \( \int_0^1 (t \cdot 1 + t \cdot 1)\, dt = \int_0^1 2t\, dt = 1 \)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h2>另一种方法：直接代入</h2>
+                    <div class="box answer-box">
+                        <p>在直线 \( y = x \) 上，\( dy = dx \)</p>
+                        <p>\( \int_L y\, dx + x\, dy = \int_0^1 (x + x)\, dx = 1 \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>物理意义</h2>
+                    <div class="box">
+                        <p>第二类曲线积分 = <strong>力做的功</strong></p>
+                        <p style="margin-top: 10px; font-size: 16px;">
+                            若 \( \vec{F} = (P, Q) \) 是力场，则：
+                        </p>
+                        <p style="text-align: center; margin: 10px 0;">
+                            功 \( W = \int_L P\, dx + Q\, dy \)
+                        </p>
+                    </div>
+                    
+                    <div class="warning-box box">
+                        <h3>⚠️ 方向性</h3>
+                        <p style="font-size: 14px;">改变积分路径的方向，积分变号！</p>
+                        <p style="font-size: 14px;">\( \int_{-L} = -\int_L \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 通用公式</h3>
+                        <p style="font-size: 14px;">\( \int_L P\, dx + Q\, dy = \int_\alpha^\beta [P x' + Q y']\, dt \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\int_L y\, dx + x\, dy = \boxed{1} \)
+            </div>
+        </div>
+        <div class="page-num">21 / 28</div>
+    </div>
+
+    <!-- ==================== 题17 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">17</span>格林公式</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 格林公式 · 曲线→区域
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\oint_L (x^2 - y)\, dx + (y^2 + x)\, dy \)，\( L \) 是单位圆周（逆时针）
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>格林公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 22px; color: var(--accent-gold);">
+                            \( \oint_L P\, dx + Q\, dy = \iint_D \left(\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y}\right) dxdy \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            L 为 D 的边界，取正向（逆时针）
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( P = x^2 - y \)，\( Q = y^2 + x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \dfrac{\partial Q}{\partial x} = 1 \)，\( \dfrac{\partial P}{\partial y} = -1 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>被积函数：\( 1 - (-1) = 2 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( \iint_D 2\, dxdy = 2 \cdot \pi \cdot 1^2 = 2\pi \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>使用条件</h2>
+                    <div class="box">
+                        <ul style="font-size: 16px;">
+                            <li>L 是<strong>闭曲线</strong></li>
+                            <li>D 是 L 围成的<strong>单连通区域</strong></li>
+                            <li>P, Q 在 D 内<strong>一阶偏导连续</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 面积公式</h3>
+                        <p style="font-size: 16px;">取 \( P = -y, Q = x \) 时：</p>
+                        <p style="text-align: center; color: var(--accent-gold);">
+                            \( S = \dfrac{1}{2}\oint_L x\, dy - y\, dx \)
+                        </p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>路径无关条件：</strong></p>
+                        <p>\( \dfrac{\partial Q}{\partial x} = \dfrac{\partial P}{\partial y} \) 时，积分与路径无关</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\oint_L (x^2 - y)\, dx + (y^2 + x)\, dy = \boxed{2\pi} \)
+            </div>
+        </div>
+        <div class="page-num">22 / 28</div>
+    </div>
+
+    <!-- ==================== 题18 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">18</span>第一类曲面积分</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 对面积的曲面积分
+                <div style="font-size: 22px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\iint_\Sigma z\, dS \)，其中 \( \Sigma \) 是半球面 \( z = \sqrt{1 - x^2 - y^2} \)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>投影法公式</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 18px;">设 \( z = z(x, y) \)，则：</p>
+                        <p style="color: var(--accent-gold); font-size: 18px; margin-top: 10px;">
+                            \( dS = \sqrt{1 + z_x^2 + z_y^2}\, dxdy \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 15px;">
+                        <div class="step">
+                            <span class="step-num">1</span>\( z_x = \dfrac{-x}{\sqrt{1-x^2-y^2}} \)，\( z_y = \dfrac{-y}{\sqrt{1-x^2-y^2}} \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( dS = \dfrac{1}{\sqrt{1-x^2-y^2}}\, dxdy \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>代入：\( \iint_D \sqrt{1-x^2-y^2} \cdot \dfrac{1}{\sqrt{1-x^2-y^2}}\, dxdy \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( = \iint_D dxdy = \pi \cdot 1^2 = \pi \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>物理意义</h2>
+                    <div class="box">
+                        <p>第一类曲面积分 = <strong>面密度的质量</strong></p>
+                        <p style="margin-top: 10px; font-size: 16px;">
+                            若 \( \rho(x,y,z) \) 是曲面的面密度：
+                        </p>
+                        <p style="text-align: center;">质量 \( M = \iint_\Sigma \rho\, dS \)</p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 参数化方法</h3>
+                        <p style="font-size: 14px;">若 \( \Sigma: \vec{r}(u,v) \)，则：</p>
+                        <p style="font-size: 14px;">\( dS = |\vec{r}_u \times \vec{r}_v|\, dudv \)</p>
+                    </div>
+                    
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>球面积分技巧：</strong></p>
+                        <p>常用球坐标参数化！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\iint_\Sigma z\, dS = \boxed{\pi} \)
+            </div>
+        </div>
+        <div class="page-num">23 / 28</div>
+    </div>
+
+    <!-- ==================== 题19 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">19</span>高斯公式</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 高斯公式 · 曲面→体积
+                <div style="font-size: 20px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\oiint_\Sigma x\, dydz + y\, dzdx + z\, dxdy \)，\( \Sigma \) 是球面 \( x^2+y^2+z^2 = 1 \) 外侧
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>高斯公式（散度定理）</h2>
+                    <div class="box formula-box">
+                        <p style="font-size: 18px; color: var(--accent-gold);">
+                            \( \oiint_\Sigma P\, dydz + Q\, dzdx + R\, dxdy \)
+                        </p>
+                        <p style="font-size: 18px; color: var(--accent-gold); margin-top: 5px;">
+                            \( = \iiint_\Omega \left(\dfrac{\partial P}{\partial x} + \dfrac{\partial Q}{\partial y} + \dfrac{\partial R}{\partial z}\right) dV \)
+                        </p>
+                        <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                            = \( \iiint_\Omega \text{div}\, \vec{F}\, dV \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box">
+                        <div class="step">
+                            <span class="step-num">1</span>\( P = x, Q = y, R = z \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>\( \dfrac{\partial P}{\partial x} + \dfrac{\partial Q}{\partial y} + \dfrac{\partial R}{\partial z} = 1 + 1 + 1 = 3 \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>\( \iiint_\Omega 3\, dV = 3 \cdot \dfrac{4\pi}{3} = 4\pi \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>向量形式</h2>
+                    <div class="box">
+                        <p style="text-align: center; font-size: 20px;">
+                            \( \oiint_\Sigma \vec{F} \cdot d\vec{S} = \iiint_\Omega \nabla \cdot \vec{F}\, dV \)
+                        </p>
+                        <p style="margin-top: 15px; font-size: 16px;">
+                            <strong>散度：</strong>\( \nabla \cdot \vec{F} = \text{div}\, \vec{F} \)
+                        </p>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 物理意义</h3>
+                        <p style="font-size: 14px;">曲面的通量 = 内部源的总和</p>
+                        <p style="font-size: 14px;">（流出 - 流入 = 内部产生）</p>
+                    </div>
+                    
+                    <div class="warning-box box">
+                        <h3>⚠️ 方向</h3>
+                        <p style="font-size: 14px;">高斯公式要求<strong>外侧</strong>法向</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\oiint_\Sigma x\, dydz + y\, dzdx + z\, dxdy = \boxed{4\pi} \)
+            </div>
+        </div>
+        <div class="page-num">24 / 28</div>
+    </div>
+
+    <!-- ==================== 题20 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1><span class="topic-num">20</span>斯托克斯公式</h1>
+            
+            <div class="box question-box">
+                <span class="tag tag-point">考点</span> 斯托克斯公式 · 曲面→边界
+                <div style="font-size: 18px; margin-top: 15px; text-align: center;">
+                    计算 \( \displaystyle\oint_L y\, dx + z\, dy + x\, dz \)，\( L \) 是平面 \( x+y+z=1 \) 与坐标面的交线（从 z 轴正向看逆时针）
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h2>斯托克斯公式</h2>
+                    <div class="box formula-box" style="font-size: 14px;">
+                        <p style="color: var(--accent-gold); font-size: 16px;">
+                            \( \oint_L P\, dx + Q\, dy + R\, dz = \iint_\Sigma \text{rot}\, \vec{F} \cdot d\vec{S} \)
+                        </p>
+                        <p style="margin-top: 10px;">
+                            旋度：\( \text{rot}\, \vec{F} = \nabla \times \vec{F} = \begin{vmatrix} \vec{i} & \vec{j} & \vec{k} \\ \partial_x & \partial_y & \partial_z \\ P & Q & R \end{vmatrix} \)
+                        </p>
+                    </div>
+                    
+                    <div class="box answer-box" style="font-size: 14px;">
+                        <div class="step">
+                            <span class="step-num">1</span>\( P = y, Q = z, R = x \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">2</span>旋度 = \( (R_y - Q_z, P_z - R_x, Q_x - P_y) = (0-1, 0-1, 0-1) = (-1,-1,-1) \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">3</span>法向量 \( \vec{n} = \dfrac{1}{\sqrt{3}}(1,1,1) \)，\( dS = \sqrt{3}\, dxdy \)
+                        </div>
+                        <div class="step">
+                            <span class="step-num">4</span>\( \iint (-1-1-1) \cdot \dfrac{1}{\sqrt{3}} \cdot \sqrt{3}\, dxdy = -3 \cdot \dfrac{1}{2} = -\dfrac{3}{2} \)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>三大公式对比</h2>
+                    <div class="box" style="font-size: 13px;">
+                        <table>
+                            <tr><th>公式</th><th>转换</th><th>核心</th></tr>
+                            <tr>
+                                <td>格林</td>
+                                <td>线 → 面（2D）</td>
+                                <td>\( Q_x - P_y \)</td>
+                            </tr>
+                            <tr>
+                                <td>高斯</td>
+                                <td>面 → 体</td>
+                                <td>散度 div</td>
+                            </tr>
+                            <tr>
+                                <td>斯托克斯</td>
+                                <td>线 → 面（3D）</td>
+                                <td>旋度 rot</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="tip-box box">
+                        <h3>💡 记忆技巧</h3>
+                        <p style="font-size: 13px;">格林是斯托克斯的特例（z=0）</p>
+                        <p style="font-size: 13px;">三公式本质：<strong>降维打击</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                \( \displaystyle\oint_L y\, dx + z\, dy + x\, dz = \boxed{-\dfrac{3}{2}} \)
+            </div>
+        </div>
+        <div class="page-num">25 / 28</div>
+    </div>
+
+    <!-- ==================== 公式总结 ==================== -->
+    <div class="separator-bar">== FORMULA SUMMARY ==</div>
+    <div class="slide">
+        <div class="content">
+            <h1>📋 多元微积分公式速查表</h1>
+            
+            <div class="row">
+                <div class="col">
+                    <h2>微分学</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>链式法则：</strong>\( \dfrac{\partial z}{\partial x} = \dfrac{\partial f}{\partial u}\dfrac{\partial u}{\partial x} + \dfrac{\partial f}{\partial v}\dfrac{\partial v}{\partial x} \)</p>
+                        <p><strong>隐函数：</strong>\( \dfrac{\partial z}{\partial x} = -\dfrac{F_x}{F_z} \)</p>
+                        <p><strong>方向导数：</strong>\( \dfrac{\partial f}{\partial l} = \nabla f \cdot \vec{e}_l \)</p>
+                        <p><strong>梯度：</strong>\( \nabla f = (f_x, f_y, f_z) \)</p>
+                        <p><strong>极值判别：</strong>\( \Delta = AC - B^2 \)</p>
+                    </div>
+                    
+                    <h2>重积分</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>极坐标：</strong>\( dxdy = r\, dr d\theta \)</p>
+                        <p><strong>柱坐标：</strong>\( dV = r\, dr d\theta dz \)</p>
+                        <p><strong>球坐标：</strong>\( dV = \rho^2 \sin\varphi\, d\rho d\varphi d\theta \)</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>曲线曲面积分</h2>
+                    <div class="box" style="font-size: 14px;">
+                        <p><strong>第一类线：</strong>\( ds = \sqrt{x'^2 + y'^2}\, dt \)</p>
+                        <p><strong>第一类面：</strong>\( dS = \sqrt{1 + z_x^2 + z_y^2}\, dxdy \)</p>
+                    </div>
+                    
+                    <h2>三大公式</h2>
+                    <div class="box" style="font-size: 13px; border: 2px solid var(--accent-gold);">
+                        <p><strong>格林：</strong></p>
+                        <p>\( \oint_L P dx + Q dy = \iint_D (Q_x - P_y)\, dxdy \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 8px 0;">
+                        <p><strong>高斯：</strong></p>
+                        <p>\( \oiint_\Sigma = \iiint_\Omega (P_x + Q_y + R_z)\, dV \)</p>
+                        <hr style="border: 0; border-top: 1px solid #444; margin: 8px 0;">
+                        <p><strong>斯托克斯：</strong></p>
+                        <p>\( \oint_L = \iint_\Sigma (\text{rot}\, \vec{F}) \cdot d\vec{S} \)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-num">26 / 28</div>
+    </div>
+
+    <!-- ==================== 方法总结 ==================== -->
+    <div class="slide">
+        <div class="content">
+            <h1>🎯 解题方法速查</h1>
+            
+            <div class="row">
+                <div class="col">
+                    <h2>坐标系选择</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <table>
+                            <tr><th>区域特征</th><th>推荐坐标系</th></tr>
+                            <tr><td>矩形、长方体</td><td>直角坐标</td></tr>
+                            <tr><td>圆、扇形、环</td><td>极坐标</td></tr>
+                            <tr><td>圆柱、圆锥</td><td>柱坐标</td></tr>
+                            <tr><td>球、上半球</td><td>球坐标</td></tr>
+                        </table>
+                    </div>
+                    
+                    <h2>积分化简技巧</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <ul>
+                            <li><strong>对称性：</strong>奇函数在对称区域上积分为 0</li>
+                            <li><strong>轮换对称：</strong>\( \int x^2 = \int y^2 = \int z^2 \)</li>
+                            <li><strong>分离变量：</strong>可分离时各因子分开积分</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>何时用公式转换</h2>
+                    <div class="box" style="font-size: 15px;">
+                        <p><strong>用格林：</strong></p>
+                        <ul>
+                            <li>闭曲线积分</li>
+                            <li>\( Q_x - P_y \) 是简单函数</li>
+                        </ul>
+                        
+                        <p style="margin-top: 10px;"><strong>用高斯：</strong></p>
+                        <ul>
+                            <li>闭曲面积分</li>
+                            <li>散度是简单函数</li>
+                        </ul>
+                        
+                        <p style="margin-top: 10px;"><strong>用斯托克斯：</strong></p>
+                        <ul>
+                            <li>空间闭曲线积分</li>
+                            <li>旋度容易计算</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="box" style="text-align: center; margin-top: 15px; border: 2px solid var(--accent-purple);">
+                <p style="font-size: 20px; color: var(--accent-purple);">
+                    掌握这 20 题 + 三大公式，多元微积分通关！🎉
+                </p>
+            </div>
+        </div>
+        <div class="page-num">27 / 28</div>
+    </div>
+
+    <!-- ==================== 结束页 ==================== -->
+    <div class="slide cover-slide">
+        <div class="content">
+            <div style="font-size: 80px; margin-bottom: 30px;">🏆</div>
+            <div class="cover-title" style="font-size: 48px;">多元微积分 · 完</div>
+            <div style="width: 400px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); margin: 30px 0;"></div>
+            <div style="font-size: 20px; color: #888; margin-top: 20px;">
+                <p>下一步学习建议：</p>
+                <div style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
+                    <div class="tag" style="background: #333; color: var(--accent-cyan);">级数理论</div>
+                    <div class="tag" style="background: #333; color: var(--accent-green);">常微分方程</div>
+                    <div class="tag" style="background: #333; color: var(--accent-gold);">向量场论</div>
+                </div>
+            </div>
+            <div style="margin-top: 50px; font-size: 16px; color: #555;">
+                "几何直觉 + 计算熟练 = 多元微积分的两条腿"
+            </div>
+        </div>
+        <div class="page-num">28 / 28</div>
+    </div>
+
+</body>
+</html>
