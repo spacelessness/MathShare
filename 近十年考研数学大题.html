@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>近十年考研数学最难15题 · 保姆级详解</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#faf9f6;--card:#ffffff;--warm:#f5f3ed;--border:#e8e5dd;
+  --green:#2d5016;--green-light:#e8f0e2;--green-mid:#4a7c28;
+  --blue:#1a5276;--blue-light:#dce8f0;--blue-mid:#2471a3;
+  --red:#b03a2e;--red-light:#f8e8e6;
+  --purple:#6c3483;--purple-light:#efe6f5;
+  --orange:#c27607;--orange-light:#fdf2e0;
+  --teal:#117864;--teal-light:#e0f2ef;
+  --text:#2a2a2a;--text2:#555;--text3:#888;
+  --fs:min(1.65vmin,14px);
+  --radius:0.7em;--shadow:0 1px 4px rgba(0,0,0,.06);
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:#e8e6e0;font-family:'Noto Sans SC',sans-serif;font-size:var(--fs);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+.deck{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+
+.slide{
+  position:absolute;
+  width:min(177.78vh,100vw);height:min(56.25vw,100vh);
+  background:var(--bg);overflow:hidden;
+  display:none;flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,.12);
+}
+.slide.active{display:flex;}
+
+/* ===== PAGE HEADER ===== */
+.page-hdr{
+  display:flex;align-items:center;gap:1em;
+  padding:0.6em 2.8em;min-height:3em;
+  background:#fff;border-bottom:2px solid var(--border);
+  flex-shrink:0;
+}
+.badge{
+  font-size:0.82em;font-weight:700;color:#fff;
+  padding:0.2em 0.9em;border-radius:2em;white-space:nowrap;
+  letter-spacing:0.03em;
+}
+.badge.g{background:var(--green)}.badge.b{background:var(--blue)}.badge.r{background:var(--red)}
+.badge.p{background:var(--purple)}.badge.t{background:var(--teal)}.badge.o{background:var(--orange)}
+.page-hdr h2{
+  font-family:'Noto Serif SC',serif;font-size:1.35em;font-weight:700;
+  flex:1;
+}
+
+/* ===== PAGE BODY ===== */
+.page-body{
+  flex:1;min-height:0;padding:1.2em 2.8em 0.8em;
+  display:flex;flex-direction:column;gap:0.8em;
+}
+
+/* ===== GRIDS ===== */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2em;flex:1;min-height:0;}
+.g2w{display:grid;grid-template-columns:1.15fr 0.85fr;gap:1.2em;flex:1;min-height:0;}
+.g2n{display:grid;grid-template-columns:0.85fr 1.15fr;gap:1.2em;flex:1;min-height:0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1em;flex:1;min-height:0;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.8em;}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1em 1.2em;
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:0.5em;
+  overflow:hidden;
+}
+.card.hl{border-left:4px solid var(--green);}
+.card.info{border-left:4px solid var(--blue);}
+.card.result{border-left:4px solid var(--red);}
+.card.warn{border-left:4px solid var(--orange);background:var(--orange-light);}
+.card.purple{border-left:4px solid var(--purple);}
+.card.teal{border-left:4px solid var(--teal);}
+.card.green-top{border-top:3px solid var(--green);}
+.card.blue-top{border-top:3px solid var(--blue);}
+.card.red-top{border-top:3px solid var(--red);}
+
+.card h3{font-family:'Noto Serif SC',serif;font-size:1.15em;font-weight:700;color:var(--green);}
+.card h3.b{color:var(--blue)}.card h3.r{color:var(--red)}.card h3.p{color:var(--purple)}
+.card h3.t{color:var(--teal)}.card h3.o{color:var(--orange)}
+
+.card-label{
+  font-size:0.72em;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.12em;color:var(--green);margin-bottom:0.1em;
+}
+.card-label.b{color:var(--blue)}.card-label.r{color:var(--red)}
+.card-label.p{color:var(--purple)}.card-label.t{color:var(--teal)}
+
+/* ===== MATH ===== */
+.math{
+  font-family:'Noto Serif SC','Times New Roman',serif;
+  font-style:italic;color:var(--blue);font-size:1.15em;
+  line-height:2;
+}
+.math-block{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:0.7em 1.2em;
+  text-align:center;box-shadow:var(--shadow);
+}
+.math-big{font-size:1.4em;color:var(--red);font-weight:600;}
+.math-mid{font-size:1.2em;}
+.arrow-down{text-align:center;color:var(--text3);font-size:1.2em;line-height:1.2;margin:0.1em 0;}
+
+/* ===== STEPS ===== */
+.step{display:flex;gap:0.8em;align-items:flex-start;}
+.step-num{
+  width:2em;height:2em;border-radius:50%;
+  background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:0.95em;flex-shrink:0;
+}
+.step-num.b{background:var(--blue)}.step-num.r{background:var(--red)}
+.step-num.p{background:var(--purple)}.step-num.t{background:var(--teal)}
+.step-body{flex:1;min-width:0;}
+.step-body strong{color:var(--green);font-size:1.02em;}
+.step-body strong.b{color:var(--blue);}
+.step-body strong.r{color:var(--red);}
+
+/* ===== EMPHASIS ===== */
+.em-r{color:var(--red);font-weight:700;}
+.em-b{color:var(--blue);font-weight:600;}
+.em-g{color:var(--teal);font-weight:600;}
+.em-p{color:var(--purple);font-weight:600;}
+.em-o{color:var(--orange);font-weight:600;}
+
+/* ===== NOTE ===== */
+.note{
+  background:#fffcf0;border:1px solid #e8d9a0;border-radius:var(--radius);
+  padding:0.6em 1em;font-size:0.92em;color:#7a6520;
+  display:flex;gap:0.5em;align-items:flex-start;
+}
+.note::before{content:'💡';flex-shrink:0;}
+
+/* ===== CHECK LIST ===== */
+.chk{list-style:none;display:flex;flex-direction:column;gap:0.3em;}
+.chk li{padding-left:1.5em;position:relative;line-height:1.6;}
+.chk li::before{content:'✓';position:absolute;left:0;color:var(--teal);font-weight:700;}
+
+/* ===== COVER ===== */
+.cover{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1.2em;
+  text-align:center;padding:2em 4em;
+}
+.cover-title{
+  font-family:'Noto Serif SC',serif;font-size:3.2em;font-weight:700;
+  color:var(--green);line-height:1.3;letter-spacing:0.02em;
+}
+.cover-sub{font-size:1.4em;color:var(--text2);font-weight:300;letter-spacing:0.05em;}
+.cover-tags{display:flex;gap:0.6em;flex-wrap:wrap;justify-content:center;margin-top:0.5em;}
+.cover-tags span{
+  font-size:0.85em;padding:0.3em 1em;border-radius:2em;
+  border:1px solid var(--border);color:var(--text2);background:var(--card);
+}
+.cover-line{width:5em;height:3px;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:2px;}
+
+/* ===== DIVIDER (SECTION) ===== */
+.divider{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;padding:2em 4em;
+}
+.div-bg{
+  position:absolute;font-family:'Noto Serif SC',serif;
+  font-size:12em;font-weight:700;color:var(--green);opacity:0.04;
+  line-height:1;pointer-events:none;
+}
+.div-content{text-align:center;z-index:1;display:flex;flex-direction:column;gap:0.8em;align-items:center;}
+.div-source{font-size:1em;color:var(--text3);letter-spacing:0.08em;font-weight:500;}
+.div-title{font-family:'Noto Serif SC',serif;font-size:2.2em;font-weight:700;color:var(--text);line-height:1.4;}
+.div-desc{font-size:1.1em;color:var(--text2);max-width:32em;}
+.div-line{width:3em;height:3px;border-radius:2px;}
+
+/* ===== ICON CARD ===== */
+.icon-card{
+  text-align:center;padding:1em;
+  display:flex;flex-direction:column;align-items:center;gap:0.4em;
+}
+.icon-card .ico{font-size:2.2em;}
+.icon-card h4{font-weight:700;font-size:1em;}
+.icon-card p{font-size:0.88em;color:var(--text2);line-height:1.5;}
+
+/* ===== TABLE ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:0.92em;}
+.tbl th{background:var(--green);color:#fff;padding:0.5em 0.8em;text-align:center;font-weight:600;}
+.tbl td{padding:0.45em 0.8em;border-bottom:1px solid var(--border);text-align:center;}
+.tbl tr:nth-child(even) td{background:var(--warm);}
+.tbl.blue th{background:var(--blue);}
+
+/* ===== MATRIX ===== */
+.matrix{
+  display:inline-grid;gap:0.1em 0.6em;
+  font-family:'Noto Serif SC',serif;font-style:italic;color:var(--blue);
+  vertical-align:middle;
+}
+.matrix.c3{grid-template-columns:repeat(3,auto);}
+.matrix.c2{grid-template-columns:repeat(2,auto);}
+.mbr{
+  display:inline-flex;align-items:center;gap:0.15em;
+}
+.mbr::before,.mbr::after{
+  content:'';border:1.5px solid var(--blue);height:100%;min-height:1.5em;
+}
+.mbr::before{border-right:none;border-radius:3px 0 0 3px;padding-left:3px;}
+.mbr::after{border-left:none;border-radius:0 3px 3px 0;padding-right:3px;}
+
+/* ===== FLOW ===== */
+.flow{display:flex;align-items:center;gap:0.5em;flex-wrap:wrap;justify-content:center;}
+.flow-node{
+  background:var(--card);border:1.5px solid var(--green);border-radius:0.5em;
+  padding:0.4em 0.8em;font-size:0.9em;font-weight:500;
+}
+.flow-node.active{background:var(--green);color:#fff;}
+.flow-arrow{color:var(--text3);font-size:1.1em;}
+
+/* ===== STAR RATING ===== */
+.stars{color:var(--orange);letter-spacing:0.1em;}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(177.78vh,100vw);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.35em 1.5em;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);z-index:999;
+  font-size:0.88em;
+}
+.nav button{
+  background:none;border:1.5px solid var(--border);
+  border-radius:0.5em;padding:0.3em 1em;cursor:pointer;
+  font-family:inherit;font-size:1em;color:var(--text2);
+  transition:all .2s;
+}
+.nav button:hover:not(:disabled){background:var(--green);color:#fff;border-color:var(--green);}
+.nav button:disabled{opacity:0.25;cursor:default;}
+.dots{display:flex;gap:0.3em;align-items:center;flex-wrap:wrap;justify-content:center;max-width:70%;}
+.dot{
+  width:7px;height:7px;border-radius:50%;background:var(--border);
+  cursor:pointer;transition:all .2s;border:none;padding:0;
+}
+.dot.on{background:var(--green);transform:scale(1.3);}
+.page-num{font-size:0.9em;color:var(--text3);min-width:5em;text-align:right;}
+
+/* ===== UTILITIES ===== */
+.gap-s{gap:0.4em!important}.gap-m{gap:0.8em!important}
+.flex-1{flex:1;min-height:0;display:flex;flex-direction:column;}
+.jcc{justify-content:center}.aic{align-items:center}
+.tac{text-align:center}.fs-s{font-size:0.88em}.fs-xs{font-size:0.78em}
+.lh18{line-height:1.8}.lh16{line-height:1.6}
+.mt-auto{margin-top:auto}.mb05{margin-bottom:0.5em}
+.colg{color:var(--green)}.colb{color:var(--blue)}.colr{color:var(--red)}
+.fw7{font-weight:700}.fw5{font-weight:500}
+.serif{font-family:'Noto Serif SC',serif;}
+.w100{width:100%}.oh{overflow:hidden}
+.pill{display:inline-block;font-size:0.72em;padding:0.15em 0.6em;border-radius:1em;font-weight:600;}
+.pill-g{background:var(--green-light);color:var(--green);}
+.pill-b{background:var(--blue-light);color:var(--blue);}
+.pill-r{background:var(--red-light);color:var(--red);}
+.pill-p{background:var(--purple-light);color:var(--purple);}
+.pill-t{background:var(--teal-light);color:var(--teal);}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ==================== SLIDE 1: COVER ==================== -->
+<div class="slide active" data-i="0">
+<div class="cover">
+  <div class="cover-line"></div>
+  <div class="cover-title">近十年考研数学<br>最难 15 题</div>
+  <div class="cover-sub">保姆级详解 · 推导过程 · 知识点串讲</div>
+  <div class="cover-tags">
+    <span>2014 — 2024</span><span>数学一</span><span>高等数学</span>
+    <span>线性代数</span><span>概率论</span><span>真题精讲</span>
+  </div>
+  <div style="margin-top:0.8em;font-size:0.92em;color:var(--text3)">共 60+ 页 · 每题完整推导 · 核心知识点速览</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 2: DIVIDER Q1 ==================== -->
+<div class="slide" data-i="1">
+<div class="divider">
+  <div class="div-bg">01</div>
+  <div class="div-content">
+    <div class="div-source">2018 · 数学一 · 第18题</div>
+    <div class="div-line" style="background:var(--green)"></div>
+    <div class="div-title">构造辅助函数 + 罗尔定理</div>
+    <div class="div-desc">证明存在 ξ 使得变限积分等式成立 —— 考研证明题经典范式</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 3: Q1 PROBLEM ==================== -->
+<div class="slide" data-i="2">
+<div class="page-hdr"><span class="badge g">题 1</span><h2>题目 · 2018 数学一 · 第18题</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card hl" style="justify-content:center">
+      <div class="card-label">已知条件</div>
+      <h3>设 f(x) 在 [a, b] 上连续</h3>
+      <div class="lh18" style="margin-top:0.3em;">
+        函数 <span class="math">f(x)</span> 在闭区间 <span class="math">[a, b]</span> 上连续，满足连续函数的一切性质（介值定理、最值定理等均可使用）。
+      </div>
+    </div>
+    <div class="card info" style="justify-content:center">
+      <div class="card-label b">求证目标</div>
+      <h3 class="b">存在性证明</h3>
+      <div class="math-block" style="margin:0.5em 0;">
+        <span class="math math-mid">∃ ξ ∈ (a, b)，使得</span><br>
+        <span class="math math-big" style="font-size:1.5em;">∫<sub>a</sub><sup>ξ</sup> f(t) dt = (b − ξ) f(ξ)</span>
+      </div>
+      <div class="fs-s" style="color:var(--text2)">即：找到一个点 ξ，使得 f 从 a 到 ξ 的积分恰好等于矩形 (b−ξ)×f(ξ) 的面积。</div>
+    </div>
+  </div>
+  <div class="note">此类「证明存在 ξ」的题目，核心套路是<strong>构造辅助函数</strong>，使其导数为零时恰好给出目标等式。</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 4: Q1 KNOWLEDGE ==================== -->
+<div class="slide" data-i="3">
+<div class="page-hdr"><span class="badge g">题 1</span><h2>知识点储备</h2></div>
+<div class="page-body">
+  <div class="g3" style="flex:1">
+    <div class="card green-top">
+      <div class="card-label">知识点 A</div>
+      <h3>罗尔定理</h3>
+      <div class="lh16 fs-s">
+        若 <span class="math">G(x)</span> 在 <span class="math">[a,b]</span> 连续，在 <span class="math">(a,b)</span> 可导，且
+        <span class="em-r">G(a) = G(b)</span>，则 ∃ ξ ∈ (a,b) 使得
+      </div>
+      <div class="math-block"><span class="math">G′(ξ) = 0</span></div>
+    </div>
+    <div class="card green-top">
+      <div class="card-label">知识点 B</div>
+      <h3>变限积分求导</h3>
+      <div class="lh16 fs-s">
+        若 <span class="math">F(x) = ∫<sub>a</sub><sup>x</sup> f(t) dt</span>，则
+      </div>
+      <div class="math-block"><span class="math">F′(x) = f(x)</span></div>
+      <div class="fs-s" style="color:var(--text2)">（f 连续时成立，牛顿-莱布尼茨的核心）</div>
+    </div>
+    <div class="card green-top">
+      <div class="card-label">知识点 C</div>
+      <h3>构造函数策略</h3>
+      <div class="lh16 fs-s">
+        目标：<span class="math">G′(ξ) = 0</span> 恰好给出待证等式。<br><br>
+        <strong>逆向思维</strong>：将等式移项 → 看作某函数的导数 → 反积分得到 G(x)。
+      </div>
+    </div>
+  </div>
+  <div class="note">三大核心定理（零点/罗尔/拉格朗日）是考研证明题的根基，几乎每年必考。构造辅助函数是「灵魂一步」。</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 5: Q1 DERIVATION ==================== -->
+<div class="slide" data-i="4">
+<div class="page-hdr"><span class="badge g">题 1</span><h2>推导过程</h2></div>
+<div class="page-body">
+  <div class="g2w" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.7em;">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>构造辅助函数</strong><br>
+          <span class="lh16">由目标等式 <span class="math">∫<sub>a</sub><sup>ξ</sup>f(t)dt = (b−ξ)f(ξ)</span>，构造：</span>
+        </div>
+      </div>
+      <div class="math-block"><span class="math math-mid em-r" style="font-style:italic">G(x) = (b − x) ∫<sub>a</sub><sup>x</sup> f(t) dt</span></div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>对 G(x) 求导</strong><br>
+          <span class="lh16">乘法法则：G′ = (b−x)′·∫ + (b−x)·(∫)′</span>
+        </div>
+      </div>
+      <div class="math-block">
+        <span class="math">G′(x) = <span class="em-p">−∫<sub>a</sub><sup>x</sup>f(t)dt</span> + <span class="em-b">(b−x)f(x)</span></span>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>验证端点值</strong><br>
+          <span class="lh16"><span class="math">G(a) = (b−a)·0 = <span class="em-r">0</span></span><br>
+          <span class="math">G(b) = 0·∫<sub>a</sub><sup>b</sup>f(t)dt = <span class="em-r">0</span></span></span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7em;">
+      <div class="card result" style="flex:1;justify-content:center">
+        <div class="card-label r">第四步 · 应用罗尔定理</div>
+        <h3 class="r">条件逐一验证</h3>
+        <ul class="chk" style="margin:0.5em 0">
+          <li><span class="math">G(x)</span> 在 [a,b] 连续 ✓</li>
+          <li><span class="math">G(x)</span> 在 (a,b) 可导 ✓</li>
+          <li><span class="math">G(a) = G(b) = 0</span> ✓</li>
+        </ul>
+        <div style="margin-top:0.5em;padding:0.6em;background:var(--red-light);border-radius:var(--radius);text-align:center;">
+          <span style="font-size:0.85em;color:var(--text2)">由罗尔定理 →</span><br>
+          <span class="math math-big">∃ ξ ∈ (a,b)，G′(ξ) = 0</span>
+        </div>
+        <div style="margin-top:0.5em;text-align:center;">
+          <span class="arrow-down">↓ 即 ↓</span><br>
+          <span class="math math-mid em-r">∫<sub>a</sub><sup>ξ</sup> f(t)dt = (b−ξ)f(ξ)</span>
+        </div>
+        <div style="text-align:right;font-size:1.2em;margin-top:0.3em;">∎</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 6: DIVIDER Q2 ==================== -->
+<div class="slide" data-i="5">
+<div class="divider">
+  <div class="div-bg">02</div>
+  <div class="div-content">
+    <div class="div-source">2019 · 数学一 · 第19题</div>
+    <div class="div-line" style="background:var(--blue)"></div>
+    <div class="div-title">欧拉常数与级数求和</div>
+    <div class="div-desc">裂项消元 + 泰勒展开判敛 —— 级数求和的精妙操作</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 7: Q2 PROBLEM ==================== -->
+<div class="slide" data-i="6">
+<div class="page-hdr"><span class="badge b">题 2</span><h2 class="colb">题目 · 级数敛散性与求和</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card info" style="justify-content:center">
+      <div class="card-label b">题目</div>
+      <h3 class="b">判断级数敛散性，若收敛求和</h3>
+      <div class="math-block" style="margin:0.8em 0">
+        <span class="math" style="font-size:1.6em;color:var(--blue)">S = ∑<sub>n=1</sub><sup>∞</sup> (1/n − ln((n+1)/n))</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7em;">
+      <div class="card hl">
+        <h3>分析思路</h3>
+        <div class="lh16 fs-s">通项 <span class="math">a<sub>n</sub> = 1/n − ln(1+1/n)</span>，需要先判断通项衰减速度，再利用部分和结构求极限。</div>
+      </div>
+      <div class="card purple">
+        <div class="card-label p">关键预备知识</div>
+        <h3 class="p">欧拉-马歇罗尼常数 γ</h3>
+        <div class="math-block"><span class="math">γ = lim<sub>n→∞</sub>(∑<sub>k=1</sub><sup>n</sup> 1/k − ln n) ≈ 0.5772</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 8: Q2 DERIVATION ==================== -->
+<div class="slide" data-i="7">
+<div class="page-hdr"><span class="badge b">题 2</span><h2 class="colb">推导过程</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.6em;">
+      <div class="step"><div class="step-num b">1</div>
+        <div class="step-body"><strong class="b">泰勒展开分析通项</strong><br>
+        <span class="fs-s lh16">令 u=1/n，展开 ln(1+u)=u − u²/2 + u³/3 − ⋯</span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">a<sub>n</sub> = 1/n − (1/n − 1/(2n²) + O(1/n³))</span><br>
+        <span class="math em-r">= 1/(2n²) + O(1/n³)</span>
+      </div>
+      <div class="card info" style="padding:0.5em 0.8em">
+        <span class="fs-s">与 ∑1/n² 比较（p=2 &gt; 1），级数 <span class="em-r">收敛</span>。</span>
+      </div>
+      <div class="step"><div class="step-num b">2</div>
+        <div class="step-body"><strong class="b">裂项求部分和</strong><br>
+        <span class="fs-s lh16">对数项可望远镜消去：</span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">∑<sub>n=1</sub><sup>N</sup> ln((n+1)/n) = ln(N+1)</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em;">
+      <div class="step"><div class="step-num b">3</div>
+        <div class="step-body"><strong class="b">写出部分和表达式</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">S<sub>N</sub> = ∑<sub>n=1</sub><sup>N</sup> 1/n − ln(N+1)</span><br>
+        <span class="arrow-down">↓ 变形 ↓</span><br>
+        <span class="math">= (∑<sub>n=1</sub><sup>N</sup> 1/n − ln N) − ln((N+1)/N)</span>
+      </div>
+      <div class="step"><div class="step-num b">4</div>
+        <div class="step-body"><strong class="b">取极限</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">∑1/k − ln N → γ</span><br>
+        <span class="math">ln((N+1)/N) → 0</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:0.8em">
+        <span class="math math-big" style="font-size:1.8em">S = γ</span>
+        <div class="fs-s" style="color:var(--text2);margin-top:0.3em">γ ≈ 0.5772（欧拉常数）</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 9: DIVIDER Q3 ==================== -->
+<div class="slide" data-i="8">
+<div class="divider">
+  <div class="div-bg">03</div>
+  <div class="div-content">
+    <div class="div-source">2017 · 数学一 · 第16题</div>
+    <div class="div-line" style="background:var(--teal)"></div>
+    <div class="div-title">高斯公式与挖球法</div>
+    <div class="div-desc">曲面积分遇到奇点 —— 经典的「挖去小球」处理技巧</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 10: Q3 PROBLEM ==================== -->
+<div class="slide" data-i="9">
+<div class="page-hdr"><span class="badge t">题 3</span><h2 style="color:var(--teal)">题目 · 曲面积分</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card teal" style="justify-content:center">
+      <div class="card-label t">计算</div>
+      <div class="math-block" style="margin:0.5em 0">
+        <span class="math" style="font-size:1.3em;color:var(--teal)">I = ∯<sub>Σ</sub> (x dy dz + y dz dx + z dx dy) / (x²+y²+z²)<sup>3/2</sup></span>
+      </div>
+      <div class="lh16">其中 Σ 为封闭曲面（球面），取外侧方向，且<span class="em-r">原点在曲面内部</span>。</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7em">
+      <div class="card" style="border-left:4px solid var(--teal)">
+        <h3 class="t">核心难点</h3>
+        <div class="lh16 fs-s">被积函数在原点 <span class="math">r = 0</span> 处无定义 → <span class="em-r">不能直接用高斯公式</span>。需要特殊处理。</div>
+      </div>
+      <div class="card warn">
+        <div class="fw7 em-o">⚠ 关键事实</div>
+        <div class="lh16 fs-s">
+          令 <span class="math">P=x/r³, Q=y/r³, R=z/r³</span>（r=√(x²+y²+z²)），<br>
+          在 <span class="em-r">r ≠ 0</span> 处：<span class="math em-r">∂P/∂x + ∂Q/∂y + ∂R/∂z = 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 11: Q3 DERIVATION ==================== -->
+<div class="slide" data-i="10">
+<div class="page-hdr"><span class="badge t">题 3</span><h2 style="color:var(--teal)">推导 · 挖球法</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="step"><div class="step-num t">1</div>
+        <div class="step-body"><strong style="color:var(--teal)">散度为零的证明</strong><br>
+        <span class="fs-s lh18">∂(x/r³)/∂x = (r²−3x²)/r⁵，三项求和：(3r²−3r²)/r⁵ = 0</span></div>
+      </div>
+      <div class="step"><div class="step-num t">2</div>
+        <div class="step-body"><strong style="color:var(--teal)">挖去小球 Σ<sub>ε</sub></strong><br>
+        <span class="fs-s lh18">在原点挖半径 ε 的小球，夹层区域 Ω 内散度 = 0。由高斯公式：</span></div>
+      </div>
+      <div class="math-block"><span class="math">∯<sub>Σ</sub> − ∯<sub>Σ<sub>ε</sub></sub> = ∭<sub>Ω</sub> 0 dV = 0</span></div>
+      <div class="card info" style="padding:0.5em 0.8em">
+        <span class="math fs-s">∴ I = ∯<sub>Σ<sub>ε</sub>(外侧)</sub></span>（转化为小球面上计算！）
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="step"><div class="step-num t">3</div>
+        <div class="step-body"><strong style="color:var(--teal)">小球面上直接计算</strong><br>
+        <span class="fs-s lh18">在 Σ<sub>ε</sub> 上 r = ε，法向 <strong>n</strong> = (x,y,z)/ε</span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">I = ∯ (x²+y²+z²)/(ε³·ε) dS</span><br>
+        <span class="arrow-down">↓</span><br>
+        <span class="math">= 1/ε² · ∯ dS = 1/ε² · 4πε²</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:1em">
+        <span class="math math-big" style="font-size:2em">I = 4π</span>
+        <div class="fs-s" style="color:var(--text2);margin-top:0.3em">与外层曲面形状无关！</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 12: DIVIDER Q4 ==================== -->
+<div class="slide" data-i="11">
+<div class="divider">
+  <div class="div-bg">04</div>
+  <div class="div-content">
+    <div class="div-source">2016 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--purple)"></div>
+    <div class="div-title">Gronwall 不等式思想</div>
+    <div class="div-desc">f(0)=0 + |f′| ≤ k|f| → 证明 f ≡ 0 —— 微分方程唯一性的核心</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 13: Q4 PROBLEM ==================== -->
+<div class="slide" data-i="12">
+<div class="page-hdr"><span class="badge p">题 4</span><h2 style="color:var(--purple)">题目 · 恒等于零的证明</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card purple" style="justify-content:center">
+      <div class="card-label p">已知</div>
+      <h3 class="p">条件设定</h3>
+      <ul class="chk" style="margin-top:0.5em">
+        <li><span class="math">f(x)</span> 在 [0, +∞) 上可导</li>
+        <li><span class="math">f(0) = 0</span></li>
+        <li>∃ k &gt; 0 使得 <span class="math em-r">|f′(x)| ≤ k|f(x)|</span> 对 ∀x ≥ 0 成立</li>
+      </ul>
+    </div>
+    <div class="card result" style="justify-content:center;text-align:center">
+      <div class="card-label r">求证</div>
+      <div class="math-block" style="margin:1em 0">
+        <span class="math math-big" style="font-size:2em">f(x) ≡ 0</span>
+      </div>
+      <div class="note" style="margin-top:0.5em">
+        直觉：f(0)=0，若 f 想「长起来」，其导数受 f 本身限制 → 被「锁死」在零。这就是 Gronwall 不等式的精髓。
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 14: Q4 DERIVATION ==================== -->
+<div class="slide" data-i="13">
+<div class="page-hdr"><span class="badge p">题 4</span><h2 style="color:var(--purple)">推导 · 三步证明</h2></div>
+<div class="page-body">
+  <div class="g3" style="flex:1">
+    <div class="card green-top">
+      <div class="step"><div class="step-num p">1</div>
+        <div class="step-body"><strong class="p" style="color:var(--purple)">积分放大</strong></div>
+      </div>
+      <div class="lh16 fs-s" style="margin-top:0.3em">
+        <span class="math">|f(x)| = |∫<sub>0</sub><sup>x</sup> f′(t)dt|</span><br>
+        <span class="math">≤ ∫<sub>0</sub><sup>x</sup> |f′(t)|dt</span><br>
+        <span class="math em-r">≤ k ∫<sub>0</sub><sup>x</sup> |f(t)|dt</span>
+      </div>
+      <div style="margin-top:0.5em;padding:0.4em;background:var(--purple-light);border-radius:0.4em;text-align:center;">
+        <span class="fs-s">令 <span class="math">g(x) = ∫<sub>0</sub><sup>x</sup>|f(t)|dt</span></span><br>
+        <span class="fs-s">则 <span class="math">g′(x) = |f(x)| ≤ kg(x)</span></span>
+      </div>
+    </div>
+    <div class="card blue-top">
+      <div class="step"><div class="step-num p">2</div>
+        <div class="step-body"><strong class="p" style="color:var(--purple)">构造 h(x)</strong></div>
+      </div>
+      <div class="math-block" style="margin:0.5em 0">
+        <span class="math em-r">h(x) = g(x) · e<sup>−kx</sup></span>
+      </div>
+      <div class="lh16 fs-s">
+        求导：<br>
+        <span class="math">h′ = g′e<sup>−kx</sup> − kg·e<sup>−kx</sup></span><br>
+        <span class="math">= e<sup>−kx</sup>(g′−kg)</span><br>
+        <span class="math em-r">≤ 0</span>（因为 g′ ≤ kg）
+      </div>
+      <div style="margin-top:0.3em;padding:0.4em;background:var(--blue-light);border-radius:0.4em;text-align:center;">
+        <span class="fs-s fw7">h(x) 单调递减</span>
+      </div>
+    </div>
+    <div class="card red-top">
+      <div class="step"><div class="step-num p">3</div>
+        <div class="step-body"><strong class="p" style="color:var(--purple)">锁定为零</strong></div>
+      </div>
+      <div class="lh16" style="margin-top:0.5em">
+        <span class="em-g">h(0) = g(0) = 0</span><br><br>
+        <span class="em-b">h(x) ≥ 0</span>（因为 g ≥ 0）<br><br>
+        <span class="em-r">h(x) 单调递减</span>
+      </div>
+      <div style="margin-top:0.5em;text-align:center">
+        <span class="fw7">递减 + 非负 + 初值为 0</span>
+      </div>
+      <div class="math-block" style="margin-top:0.5em;background:var(--red-light)">
+        <span class="math math-big">h(x) ≡ 0</span><br>
+        <span class="math">⟹ g(x) ≡ 0 ⟹ f(x) ≡ 0</span>
+      </div>
+      <div style="text-align:right;font-size:1.2em">∎</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 15: DIVIDER Q5 ==================== -->
+<div class="slide" data-i="14">
+<div class="divider">
+  <div class="div-bg">05</div>
+  <div class="div-content">
+    <div class="div-source">2021 · 数学一 · 第18题</div>
+    <div class="div-line" style="background:var(--blue)"></div>
+    <div class="div-title">参数积分法 + Gamma 函数</div>
+    <div class="div-desc">∫ ln x / (1+x²)² dx —— 对参数求导再积回的高级技巧</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 16: Q5 DERIVATION ==================== -->
+<div class="slide" data-i="15">
+<div class="page-hdr"><span class="badge b">题 5</span><h2 class="colb">反常积分 · 参数微分法</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="math-block"><span class="math" style="font-size:1.25em">I = ∫<sub>0</sub><sup>∞</sup> ln x / (1+x²)² dx</span></div>
+      <div class="step"><div class="step-num b">1</div>
+        <div class="step-body"><strong class="b">引入参数 I(s)</strong><br>
+        <span class="fs-s"><span class="math">I(s) = ∫<sub>0</sub><sup>∞</sup> x<sup>s</sup>/(1+x²)² dx</span>，则 <span class="em-r">I = I′(0)</span></span></div>
+      </div>
+      <div class="step"><div class="step-num b">2</div>
+        <div class="step-body"><strong class="b">用 Beta 函数计算 I(s)</strong><br>
+        <span class="fs-s">换元 x²=t → 化为 B(p,q)/Γ(2) 形式</span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">I(s) = ½ · Γ((s+1)/2) · Γ((3−s)/2) / Γ(2)</span>
+      </div>
+      <div class="step"><div class="step-num b">3</div>
+        <div class="step-body"><strong class="b">余元公式化简</strong><br>
+        <span class="fs-s">Γ(z)Γ(1−z) = π/sin(πz)</span></div>
+      </div>
+      <div class="math-block" style="background:var(--blue-light)">
+        <span class="math em-b">I(s) = (1−s)π / (4 cos(πs/2))</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="step"><div class="step-num b">4</div>
+        <div class="step-body"><strong class="b">对 s 求导，令 s = 0</strong></div>
+      </div>
+      <div class="card info">
+        <div class="fs-s lh18">
+          用商法则对 <span class="math">(1−s)π / (4cos(πs/2))</span> 求导：<br><br>
+          <span class="math">I′(s) = [−4π cos(πs/2) + 2π²(1−s) sin(πs/2)] / [16 cos²(πs/2)]</span>
+        </div>
+      </div>
+      <div class="card" style="background:var(--warm);text-align:center;padding:0.8em">
+        <span class="fs-s">令 s = 0：cos(0)=1, sin(0)=0</span><br>
+        <span class="math">I′(0) = (−4π + 0) / 16</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:1em">
+        <span class="math math-big" style="font-size:2em">I = −π/4</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 17: DIVIDER Q6 ==================== -->
+<div class="slide" data-i="16">
+<div class="divider">
+  <div class="div-bg">06</div>
+  <div class="div-content">
+    <div class="div-source">2020 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--green)"></div>
+    <div class="div-title">二次型的正交变换</div>
+    <div class="div-desc">求特征值 → 特征向量 → 施密特正交化 → 标准形</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 18: Q6 PROBLEM & MATRIX ==================== -->
+<div class="slide" data-i="17">
+<div class="page-hdr"><span class="badge g">题 6</span><h2>二次型 · 正交变换化标准形</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="card hl">
+        <h3>二次型</h3>
+        <div class="math-block" style="margin:0.5em 0">
+          <span class="math" style="font-size:1.3em">f = 2x₁x₂ + 2x₁x₃ − 2x₂x₃</span>
+        </div>
+      </div>
+      <div class="card info">
+        <h3 class="b">对应矩阵 A</h3>
+        <div style="text-align:center;margin:0.5em 0">
+          <span class="math" style="font-size:1.2em">A = </span>
+          <span class="mbr"><span class="matrix c3">
+            <span>0</span><span>1</span><span>1</span>
+            <span>1</span><span>0</span><span>−1</span>
+            <span>1</span><span>−1</span><span>0</span>
+          </span></span>
+        </div>
+        <div class="fs-s" style="color:var(--text2)">主对角线 = x<sub>i</sub>² 的系数 = 0；非对角线 = 交叉项系数的一半。</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="card">
+        <h3>特征多项式</h3>
+        <div class="math-block" style="margin:0.3em 0">
+          <span class="math">|A − λI| = −λ³ + 3λ − 2</span><br>
+          <span class="math">= −(λ−1)²(λ+2)</span>
+        </div>
+      </div>
+      <div class="card result" style="text-align:center">
+        <h3 class="r">特征值</h3>
+        <div style="display:flex;gap:1em;justify-content:center;margin:0.5em 0">
+          <div style="padding:0.5em 1.2em;background:var(--blue-light);border-radius:0.5em">
+            <span class="math" style="font-size:1.4em;color:var(--blue)">λ₁ = 1</span><br>
+            <span class="fs-xs" style="color:var(--text2)">（二重根）</span>
+          </div>
+          <div style="padding:0.5em 1.2em;background:var(--red-light);border-radius:0.5em">
+            <span class="math" style="font-size:1.4em;color:var(--red)">λ₂ = −2</span><br>
+            <span class="fs-xs" style="color:var(--text2)">（单根）</span>
+          </div>
+        </div>
+      </div>
+      <div class="note fs-s">λ=1 是二重根 → 需对该特征空间做施密特正交化。</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 19: Q6 EIGENVECTORS ==================== -->
+<div class="slide" data-i="18">
+<div class="page-hdr"><span class="badge g">题 6</span><h2>特征向量 → 正交化 → 标准形</h2></div>
+<div class="page-body">
+  <div class="g3" style="flex:1">
+    <div class="card hl">
+      <h3>λ = −2 的特征向量</h3>
+      <div class="fs-s lh18" style="margin-top:0.3em">
+        解 (A+2I)x=0 → <span class="math">x = −y, y = z</span><br><br>
+        <span class="math em-r">ξ₁ = (−1, 1, 1)<sup>T</sup></span>
+      </div>
+    </div>
+    <div class="card info">
+      <h3 class="b">λ = 1 的特征向量（2个）</h3>
+      <div class="fs-s lh18" style="margin-top:0.3em">
+        解 (A−I)x=0 → <span class="math">x = y + z</span><br>
+        <span class="math">ξ₂ = (1,1,0)<sup>T</sup></span><br>
+        <span class="math">ξ₃ = (1,0,1)<sup>T</sup></span><br><br>
+        <strong class="b">施密特正交化：</strong><br>
+        <span class="math">ξ₃′ = ξ₃ − (ξ₃·ξ₂/|ξ₂|²)ξ₂</span><br>
+        <span class="math em-r">= (1, −1, 2)<sup>T</sup></span>
+      </div>
+    </div>
+    <div class="card result">
+      <h3 class="r">标准形</h3>
+      <div style="text-align:center;margin:0.5em 0">
+        <span class="fs-xs" style="color:var(--text2)">单位化后组成 Q，令 x = Qy：</span>
+      </div>
+      <div class="math-block" style="background:var(--red-light);margin:0.3em 0">
+        <span class="math math-big" style="font-size:1.5em">f = −2y₁² + y₂² + y₃²</span>
+      </div>
+      <div class="fs-s lh16" style="margin-top:0.3em;color:var(--text2)">
+        惯性指数：正惯性指数 p=2，负惯性指数 q=1。二次型不定。
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 20: DIVIDER Q7 ==================== -->
+<div class="slide" data-i="19">
+<div class="divider">
+  <div class="div-bg">07</div>
+  <div class="div-content">
+    <div class="div-source">2015 · 数学一 · 第19题</div>
+    <div class="div-line" style="background:var(--green)"></div>
+    <div class="div-title">三重积分 · 柱坐标系</div>
+    <div class="div-desc">旋转抛物面与平面围成区域 —— 投影法的标准应用</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 21: Q7 FULL ==================== -->
+<div class="slide" data-i="20">
+<div class="page-hdr"><span class="badge g">题 7</span><h2>三重积分 · 柱坐标计算</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="card hl">
+        <h3>题目</h3>
+        <div class="math-block"><span class="math" style="font-size:1.2em">I = ∭<sub>Ω</sub> (x²+y²) dV</span></div>
+        <div class="fs-s">Ω 由抛物面 z = x²+y² 与平面 z = 1 围成。</div>
+      </div>
+      <div class="step"><div class="step-num">1</div>
+        <div class="step-body"><strong>柱坐标变换</strong><br>
+        <span class="fs-s"><span class="math">x=rcosθ, y=rsinθ</span>，<span class="math">dV = r dr dθ dz</span></span></div>
+      </div>
+      <div class="step"><div class="step-num">2</div>
+        <div class="step-body"><strong>积分限</strong><br>
+        <span class="fs-s"><span class="math">θ: 0→2π,  r: 0→1,  z: r²→1</span></span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">I = ∫<sub>0</sub><sup>2π</sup>∫<sub>0</sub><sup>1</sup>∫<sub>r²</sub><sup>1</sup> r² · r dz dr dθ</span><br>
+        <span class="math">= 2π ∫<sub>0</sub><sup>1</sup> r³(1−r²) dr</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="step"><div class="step-num">3</div>
+        <div class="step-body"><strong>逐步计算</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">∫<sub>0</sub><sup>1</sup>(r³ − r⁵)dr = 1/4 − 1/6 = 1/12</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:1.5em;flex:1;justify-content:center">
+        <span class="math math-big" style="font-size:2.5em">I = π/6</span>
+      </div>
+      <div class="note fs-s">柱坐标三重积分的关键：① 利用对称性消去 θ 积分（2π）；② 正确确定 z 的上下限（投影法）。</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 22: DIVIDER Q8 ==================== -->
+<div class="slide" data-i="21">
+<div class="divider">
+  <div class="div-bg">08</div>
+  <div class="div-content">
+    <div class="div-source">2022 · 数学一 · 第20题</div>
+    <div class="div-line" style="background:var(--blue)"></div>
+    <div class="div-title">微分方程逆问题</div>
+    <div class="div-desc">已知特解反推方程 —— 特解之差为齐次解的核心定理</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 23: Q8 FULL ==================== -->
+<div class="slide" data-i="22">
+<div class="page-hdr"><span class="badge b">题 8</span><h2 class="colb">微分方程 · 由特解反推方程</h2></div>
+<div class="page-body">
+  <div class="g2w" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="card info">
+        <h3 class="b">核心定理</h3>
+        <div class="math-block" style="margin:0.4em 0;background:var(--blue-light)">
+          <span class="math em-b">y₁ − y₂ 是齐次方程的解</span>
+        </div>
+        <div class="fs-s">非齐次方程的两个特解之差，满足对应齐次方程。</div>
+      </div>
+      <div class="step"><div class="step-num b">1</div>
+        <div class="step-body"><strong class="b">代入齐次方程</strong><br>
+        <span class="fs-s lh18">φ = y₁−y₂ 代入 y″+py′+qy=0，按 e<sup>x</sup> 和 e<sup>2x</sup> 系数分组：</span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">(1+p+q)e<sup>x</sup> + (−4−2p−q)e<sup>2x</sup> = 0</span>
+      </div>
+      <div class="step"><div class="step-num b">2</div>
+        <div class="step-body"><strong class="b">解线性方程组</strong><br>
+        <span class="fs-s"><span class="math">1+p+q=0, −4−2p−q=0</span></span></div>
+      </div>
+      <div class="card" style="text-align:center;background:var(--warm)">
+        <span class="math em-b" style="font-size:1.15em">p = −3,  q = 2</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="step"><div class="step-num b">3</div>
+        <div class="step-body"><strong class="b">写出方程与特征根</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">y″ − 3y′ + 2y = f(x)</span><br>
+        <span class="arrow-down">↓ 特征方程 ↓</span><br>
+        <span class="math">r² − 3r + 2 = (r−1)(r−2) = 0</span>
+      </div>
+      <div class="card" style="text-align:center;background:var(--warm)">
+        <span class="math">r₁ = 1,  r₂ = 2</span>
+      </div>
+      <div class="step"><div class="step-num b">4</div>
+        <div class="step-body"><strong class="b">通解</strong></div>
+      </div>
+      <div class="card result" style="text-align:center;padding:0.8em">
+        <div class="card-label r">通解</div>
+        <span class="math math-big" style="font-size:1.3em">y = C₁e<sup>x</sup> + C₂e<sup>2x</sup> + y<sub>特</sub></span>
+        <div class="fs-s" style="color:var(--text2);margin-top:0.3em">其中 y<sub>特</sub> 为已知的某个特解</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 24: DIVIDER Q9 ==================== -->
+<div class="slide" data-i="23">
+<div class="divider">
+  <div class="div-bg">09</div>
+  <div class="div-content">
+    <div class="div-source">2023 · 数学一 · 第19题</div>
+    <div class="div-line" style="background:var(--orange)"></div>
+    <div class="div-title">幂级数求和函数</div>
+    <div class="div-desc">拆分 + 几何级数求导 —— 幂级数求和的标准套路</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 25: Q9 FULL ==================== -->
+<div class="slide" data-i="24">
+<div class="page-hdr"><span class="badge o">题 9</span><h2 style="color:var(--orange)">幂级数求和</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="math-block"><span class="math" style="font-size:1.3em;color:var(--orange)">S(x) = ∑<sub>n=1</sub><sup>∞</sup> (2n−1)/2<sup>n</sup> · x<sup>2n</sup></span></div>
+      <div class="step"><div class="step-num" style="background:var(--orange)">1</div>
+        <div class="step-body"><strong style="color:var(--orange)">换元 t = x²</strong><br>
+        <span class="fs-s">收敛半径 R<sub>t</sub>=2 → |x|&lt;√2</span></div>
+      </div>
+      <div class="step"><div class="step-num" style="background:var(--orange)">2</div>
+        <div class="step-body"><strong style="color:var(--orange)">拆分为两个级数</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">S(t) = 2∑ n/2<sup>n</sup>·t<sup>n</sup> − ∑ (t/2)<sup>n</sup></span>
+      </div>
+      <div class="step"><div class="step-num" style="background:var(--orange)">3</div>
+        <div class="step-body"><strong style="color:var(--orange)">利用已知级数</strong></div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--orange);">
+        <div class="fs-s lh18">
+          <span class="math">∑ u<sup>n</sup> = u/(1−u)</span><br>
+          <span class="math">∑ nu<sup>n</sup> = u/(1−u)²</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="step"><div class="step-num" style="background:var(--orange)">4</div>
+        <div class="step-body"><strong style="color:var(--orange)">代入 u = t/2</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">第二项 = t/(2−t)</span><br>
+        <span class="math">第一项 = 2 · 2t/(2−t)² = 4t/(2−t)²</span>
+      </div>
+      <div class="step"><div class="step-num" style="background:var(--orange)">5</div>
+        <div class="step-body"><strong style="color:var(--orange)">合并化简</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">S(t) = [4t − t(2−t)] / (2−t)²</span><br>
+        <span class="math">= (t² + 2t) / (2−t)²</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:0.8em">
+        <span class="fs-s" style="color:var(--text2)">代回 t = x²</span>
+        <div class="math-block" style="background:var(--red-light);margin-top:0.3em;border:none">
+          <span class="math math-big" style="font-size:1.5em">S(x) = (x⁴+2x²) / (2−x²)²</span>
+        </div>
+        <span class="fs-xs" style="color:var(--text3)">|x| &lt; √2</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 26: DIVIDER Q10 ==================== -->
+<div class="slide" data-i="25">
+<div class="divider">
+  <div class="div-bg">10</div>
+  <div class="div-content">
+    <div class="div-source">2019 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--green)"></div>
+    <div class="div-title">矩阵表示与线性无关证明</div>
+    <div class="div-desc">A 在基 α₁,α₂,α₃ 下的表示矩阵 —— 线性代数综合大题</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 27: Q10 PROBLEM ==================== -->
+<div class="slide" data-i="26">
+<div class="page-hdr"><span class="badge g">题 10</span><h2>线性代数 · 矩阵与基</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card hl" style="justify-content:center">
+      <div class="card-label">已知条件</div>
+      <h3>矩阵 A 的作用关系</h3>
+      <div class="lh18" style="margin-top:0.5em">
+        <div class="math-block" style="text-align:left;padding:0.8em 1.2em">
+          <span class="math">A α₁ = α₂</span><br>
+          <span class="math">A α₂ = α₃</span><br>
+          <span class="math">A α₃ = α₁ + α₂</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7em">
+      <div class="card info">
+        <h3 class="b">求解目标 (1)</h3>
+        <div class="fs-s">证明 α₁, α₂, α₃ <span class="em-r">线性无关</span></div>
+      </div>
+      <div class="card info">
+        <h3 class="b">求解目标 (2)</h3>
+        <div class="fs-s">
+          求 A 在基 {α₁,α₂,α₃} 下的<span class="em-b">矩阵表示 M</span>，并判断 A 是否可逆。
+        </div>
+      </div>
+      <div class="note fs-s">
+        核心公式：A(α₁,α₂,α₃) = (α₁,α₂,α₃)M，其中 M 的各列就是像向量在基下的坐标。
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 28: Q10 DERIVATION ==================== -->
+<div class="slide" data-i="27">
+<div class="page-hdr"><span class="badge g">题 10</span><h2>推导 · 表示矩阵与可逆性</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="step"><div class="step-num">1</div>
+        <div class="step-body"><strong>写出矩阵等式</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">A(α₁,α₂,α₃) = (α₂, α₃, α₁+α₂)</span><br>
+        <span class="arrow-down">↓ 表示为基的组合 ↓</span><br>
+        <span class="math">= (α₁,α₂,α₃) · M</span>
+      </div>
+      <div class="card result" style="text-align:center">
+        <h3 class="r">表示矩阵 M</h3>
+        <div style="margin:0.5em 0">
+          <span class="math" style="font-size:1.15em">M = </span>
+          <span class="mbr"><span class="matrix c3">
+            <span>0</span><span>0</span><span>1</span>
+            <span>1</span><span>0</span><span>1</span>
+            <span>0</span><span>1</span><span>0</span>
+          </span></span>
+        </div>
+      </div>
+      <div class="step"><div class="step-num">2</div>
+        <div class="step-body"><strong>计算行列式</strong></div>
+      </div>
+      <div class="math-block" style="background:var(--green-light)">
+        <span class="math em-r">|M| = 0·(0−1) − 0 + 1·(1−0) = 1 ≠ 0</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="step"><div class="step-num">3</div>
+        <div class="step-body"><strong>证明线性无关</strong></div>
+      </div>
+      <div class="card info">
+        <div class="fs-s lh18">
+          设 k₁α₁+k₂α₂+k₃α₃ = 0（<strong>k</strong> ≠ <strong>0</strong>）<br><br>
+          反复用 A 作用，得到 M<sup>T</sup><strong>k</strong> 也是零空间向量。<br><br>
+          M 的最小多项式 = 特征多项式 <span class="math">λ³−λ−1</span>（ℚ上不可约），故 <strong>k</strong>, M<sup>T</sup><strong>k</strong>, (M<sup>T</sup>)²<strong>k</strong> <span class="em-r">线性无关</span>。<br><br>
+          三个线性无关向量都在零空间 → P=0 → 矛盾。
+        </div>
+      </div>
+      <div class="card result" style="text-align:center;padding:0.8em">
+        <span class="em-g" style="font-size:1.1em">✓ α₁, α₂, α₃ 线性无关</span><br>
+        <span class="em-r" style="font-size:1.1em">✓ |M| = 1 ≠ 0 → A 可逆</span>
+        <div style="text-align:right;font-size:1.1em">∎</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 29: DIVIDER Q11 ==================== -->
+<div class="slide" data-i="28">
+<div class="divider">
+  <div class="div-bg">11</div>
+  <div class="div-content">
+    <div class="div-source">2017 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--purple)"></div>
+    <div class="div-title">随机变量函数的分布</div>
+    <div class="div-desc">绝对值变换 + 分段讨论 —— 概率论中的变量替换经典题</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 30: Q11 FULL ==================== -->
+<div class="slide" data-i="29">
+<div class="page-hdr"><span class="badge p">题 11</span><h2 style="color:var(--purple)">随机变量函数的分布</h2></div>
+<div class="page-body">
+  <div class="g2w" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="card purple">
+        <h3 class="p">X 的密度函数</h3>
+        <div class="math-block" style="margin:0.3em 0;font-size:0.95em">
+          <span class="math">f(x) = { ½,  0&lt;x&lt;1</span><br>
+          <span class="math" style="margin-left:3.8em">{ ½e<sup>−(x−1)</sup>,  x≥1</span><br>
+          <span class="math" style="margin-left:3.8em">{ 0,  x&lt;0</span>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--purple)">
+        <h3 class="p">变换 Y = 1 − |1 − X|</h3>
+        <div class="fs-s lh18">
+          <strong>分段分析：</strong><br>
+          • 0&lt;X&lt;1 → |1−X|=1−X → <span class="em-b">Y = X</span><br>
+          • X≥1 → |1−X|=X−1 → <span class="em-b">Y = 2−X</span><br>
+          <br>
+          <strong>Y 的范围：</strong> Y ≤ 1（始终成立）
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="card info">
+        <h3 class="b">分情况求 F<sub>Y</sub>(y)</h3>
+        <div class="fs-s lh18">
+          <span class="em-b">y ≥ 1：</span> F<sub>Y</sub>(y) = 1<br><br>
+          <span class="em-b">0 &lt; y &lt; 1：</span><br>
+          P(X≤y, 0&lt;X&lt;1) = <span class="math">y/2</span><br>
+          P(X≥2−y) = <span class="math">½e<sup>y−1</sup></span><br>
+          <span class="em-r">F<sub>Y</sub> = y/2 + ½e<sup>y−1</sup></span><br><br>
+          <span class="em-b">y ≤ 0：</span> F<sub>Y</sub>(y) = <span class="math">½e<sup>y−1</sup></span>
+        </div>
+      </div>
+      <div class="card result" style="text-align:center;padding:0.6em">
+        <h3 class="r" style="font-size:1em">分布函数</h3>
+        <div class="math-block" style="border:none;margin:0.3em 0;background:var(--red-light);font-size:0.95em">
+          <span class="math">F<sub>Y</sub>(y) = { ½e<sup>y−1</sup>,  y≤0</span><br>
+          <span class="math" style="margin-left:5em">{ y/2 + ½e<sup>y−1</sup>,  0&lt;y&lt;1</span><br>
+          <span class="math" style="margin-left:5em">{ 1,  y≥1</span>
+        </div>
+        <span class="fs-xs em-g">✓ 在 y=0 和 y=1 处均连续</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 31: DIVIDER Q12 ==================== -->
+<div class="slide" data-i="30">
+<div class="divider">
+  <div class="div-bg">12</div>
+  <div class="div-content">
+    <div class="div-source">2021 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--blue)"></div>
+    <div class="div-title">矩阵相似对角化</div>
+    <div class="div-desc">求特征值 → 判断可对角化 → 构造可逆矩阵 P</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 32: Q12 FULL ==================== -->
+<div class="slide" data-i="31">
+<div class="page-hdr"><span class="badge b">题 12</span><h2 class="colb">相似对角化 · 完整过程</h2></div>
+<div class="page-body">
+  <div class="g3" style="flex:1">
+    <div class="card info">
+      <h3 class="b">矩阵 A 与特征值</h3>
+      <div style="text-align:center;margin:0.3em 0">
+        <span class="math">A = </span>
+        <span class="mbr"><span class="matrix c3" style="font-size:0.95em">
+          <span>0</span><span>−1</span><span>1</span>
+          <span>2</span><span>−3</span><span>1</span>
+          <span>2</span><span>−1</span><span>−1</span>
+        </span></span>
+      </div>
+      <div class="fs-s lh16" style="margin-top:0.3em">
+        特征多项式：<br>
+        <span class="math">|λI−A| = λ(λ+2)²</span><br><br>
+        <span class="em-r">λ₁ = 0</span>（单根），<span class="em-b">λ₂ = −2</span>（二重根）
+      </div>
+    </div>
+    <div class="card hl">
+      <h3>特征向量</h3>
+      <div class="fs-s lh16" style="margin-top:0.3em">
+        <strong>λ = 0：</strong>Ax=0<br>
+        <span class="math">ξ₁ = (1, 1, 1)<sup>T</sup></span><br><br>
+        <strong>λ = −2：</strong>(A+2I)x=0<br>
+        秩=1 → 解空间维数=<span class="em-r">2</span><br>
+        <span class="math">ξ₂ = (1, 1, −1)<sup>T</sup></span><br>
+        <span class="math">ξ₃ = (−1, 0, 2)<sup>T</sup></span><br><br>
+        <span class="em-g">几何重数 = 代数重数 = 2 ✓</span>
+      </div>
+    </div>
+    <div class="card result">
+      <h3 class="r">可以对角化！</h3>
+      <div style="text-align:center;margin:0.5em 0">
+        <span class="math">P = </span>
+        <span class="mbr"><span class="matrix c3" style="font-size:0.95em">
+          <span>1</span><span>1</span><span>−1</span>
+          <span>1</span><span>1</span><span>0</span>
+          <span>1</span><span>−1</span><span>2</span>
+        </span></span>
+      </div>
+      <div class="math-block" style="background:var(--red-light);margin-top:0.5em">
+        <span class="math" style="font-size:1.1em">P<sup>−1</sup>AP = </span>
+        <span class="mbr"><span class="matrix c3">
+          <span>0</span><span>0</span><span>0</span>
+          <span>0</span><span>−2</span><span>0</span>
+          <span>0</span><span>0</span><span>−2</span>
+        </span></span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 33: DIVIDER Q13 ==================== -->
+<div class="slide" data-i="32">
+<div class="divider">
+  <div class="div-bg">13</div>
+  <div class="div-content">
+    <div class="div-source">2023 · 数学一 · 第18题</div>
+    <div class="div-line" style="background:var(--teal)"></div>
+    <div class="div-title">格林公式速解</div>
+    <div class="div-desc">验证散度 → 区域面积 —— 曲线积分的降维打击</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 34: Q13 FULL ==================== -->
+<div class="slide" data-i="33">
+<div class="page-hdr"><span class="badge t">题 13</span><h2 style="color:var(--teal)">格林公式 · 曲线积分</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="math-block">
+        <span class="math" style="font-size:1.15em">I = ∮<sub>L</sub> (e<sup>x</sup>sin y − 2y)dx + (e<sup>x</sup>cos y − 2)dy</span>
+      </div>
+      <div class="card" style="border-left:4px solid var(--teal)">
+        <div class="fs-s"><span class="em-g">L: x² + y² = 1</span>，逆时针方向。</div>
+      </div>
+      <div class="step"><div class="step-num t">1</div>
+        <div class="step-body"><strong style="color:var(--teal)">计算 ∂Q/∂x − ∂P/∂y</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">∂P/∂y = e<sup>x</sup>cos y − 2</span><br>
+        <span class="math">∂Q/∂x = e<sup>x</sup>cos y</span><br>
+        <span class="arrow-down">↓</span><br>
+        <span class="math em-r">∂Q/∂x − ∂P/∂y = 2</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="step"><div class="step-num t">2</div>
+        <div class="step-body"><strong style="color:var(--teal)">格林公式</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">I = ∬<sub>D</sub> 2 dA = 2 · Area(D)</span>
+      </div>
+      <div class="card" style="text-align:center;background:var(--warm)">
+        <span class="math">D 为单位圆盘，面积 = π</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:1.5em;flex:1;justify-content:center">
+        <span class="math math-big" style="font-size:2.8em">I = 2π</span>
+      </div>
+      <div class="note fs-s">格林公式将线积分转为面积分。当 ∂Q/∂x − ∂P/∂y = 常数时，积分直接变成「常数 × 面积」，秒解！</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 35: DIVIDER Q14-15 ==================== -->
+<div class="slide" data-i="34">
+<div class="divider">
+  <div class="div-bg">14</div>
+  <div class="div-content">
+    <div class="div-source">2018 · 数学一 · 第21题</div>
+    <div class="div-line" style="background:var(--red)"></div>
+    <div class="div-title" style="font-size:2em">递推数列极限 + Stolz 定理</div>
+    <div class="div-desc">x<sub>n+1</sub> = ln(1+x<sub>n</sub>) → 证 lim nx<sub>n</sub> = 2 —— 公认最难证明题之一</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 36: Q14 PROBLEM ==================== -->
+<div class="slide" data-i="35">
+<div class="page-hdr"><span class="badge r">题 14</span><h2 class="colr">递推数列 · 三问连击</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card result" style="justify-content:center">
+      <div class="card-label r">递推关系</div>
+      <div class="math-block" style="margin:0.5em 0">
+        <span class="math" style="font-size:1.6em;color:var(--red)">x₁ &gt; 0,  x<sub>n+1</sub> = ln(1 + x<sub>n</sub>)</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.6em">
+      <div class="card" style="border-top:3px solid var(--green)">
+        <span class="pill pill-g">第 (1) 问</span>
+        <div class="math" style="margin-top:0.3em">证明 lim<sub>n→∞</sub> x<sub>n</sub> = 0</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--blue)">
+        <span class="pill pill-b">第 (2) 问</span>
+        <div class="math" style="margin-top:0.3em">证明 lim<sub>n→∞</sub> x<sub>n+1</sub>/x<sub>n</sub> = 1</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--red)">
+        <span class="pill pill-r">第 (3) 问 · 最难</span>
+        <div class="math" style="margin-top:0.3em;font-size:1.3em">证明 lim<sub>n→∞</sub> n · x<sub>n</sub> = 2</div>
+      </div>
+    </div>
+  </div>
+  <div class="note">第 (3) 问是重中之重，需要用到 <strong>Stolz 定理</strong>（离散版的洛必达法则）。</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 37: Q14 PART 1&2 ==================== -->
+<div class="slide" data-i="36">
+<div class="page-hdr"><span class="badge r">题 14</span><h2 class="colr">第 (1)(2) 问 · 单调有界 + 基本极限</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div class="card green-top" style="justify-content:center">
+      <span class="pill pill-g" style="align-self:flex-start">第 (1) 问</span>
+      <h3>证明 lim x<sub>n</sub> = 0</h3>
+      <div class="step" style="margin-top:0.5em"><div class="step-num">1</div>
+        <div class="step-body"><strong>x<sub>n</sub> &gt; 0</strong>（归纳法）<br>
+        <span class="fs-s">x₁&gt;0, x<sub>n</sub>&gt;0 → x<sub>n+1</sub>=ln(1+x<sub>n</sub>)&gt;0 ✓</span></div>
+      </div>
+      <div class="step"><div class="step-num">2</div>
+        <div class="step-body"><strong>x<sub>n+1</sub> &lt; x<sub>n</sub></strong>（单调递减）<br>
+        <span class="fs-s">设 g(x)=x−ln(1+x), g(0)=0, g′(x)=x/(1+x)&gt;0<br>
+        → g(x)&gt;0 即 <span class="em-r">ln(1+x) &lt; x</span> ✓</span></div>
+      </div>
+      <div class="step"><div class="step-num">3</div>
+        <div class="step-body"><strong>极限方程</strong><br>
+        <span class="fs-s">设 lim x<sub>n</sub>=a, 则 a=ln(1+a) → <span class="em-r">a=0</span> ✓</span></div>
+      </div>
+    </div>
+    <div class="card blue-top" style="justify-content:center">
+      <span class="pill pill-b" style="align-self:flex-start">第 (2) 问</span>
+      <h3 class="b">证明 lim x<sub>n+1</sub>/x<sub>n</sub> = 1</h3>
+      <div style="margin-top:0.8em">
+        <div class="math-block">
+          <span class="math" style="font-size:1.3em">x<sub>n+1</sub>/x<sub>n</sub> = ln(1+x<sub>n</sub>)/x<sub>n</sub></span>
+        </div>
+        <div class="arrow-down" style="font-size:1.5em">↓</div>
+        <div style="text-align:center;padding:0.5em;background:var(--warm);border-radius:var(--radius)">
+          <span class="fs-s" style="color:var(--text2)">由第 (1) 问 x<sub>n</sub>→0，利用基本极限</span>
+        </div>
+        <div class="arrow-down" style="font-size:1.5em">↓</div>
+        <div class="math-block" style="background:var(--blue-light)">
+          <span class="math" style="font-size:1.5em">lim<sub>u→0</sub> ln(1+u)/u = 1</span>
+        </div>
+        <div style="text-align:center;margin-top:0.5em">
+          <span class="em-r" style="font-size:1.2em">∴ 极限 = 1 ∎</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 38: Q14 PART 3 (KEY!) ==================== -->
+<div class="slide" data-i="37">
+<div class="page-hdr"><span class="badge r">题 14</span><h2 class="colr">第 (3) 问 · Stolz 定理 —— 全卷最难</h2></div>
+<div class="page-body">
+  <div class="g2" style="flex:1">
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="card" style="border-left:4px solid var(--red)">
+        <div class="card-label r">Stolz 定理</div>
+        <div class="fs-s lh16">若 b<sub>n</sub> 严格递增趋于 +∞，且 <span class="math">lim (a<sub>n+1</sub>−a<sub>n</sub>)/(b<sub>n+1</sub>−b<sub>n</sub>) = L</span>，则 <span class="math em-r">lim a<sub>n</sub>/b<sub>n</sub> = L</span></div>
+      </div>
+      <div class="step"><div class="step-num r">1</div>
+        <div class="step-body"><strong class="r">计算关键差分</strong><br>
+        <span class="fs-s lh18">令 <span class="math em-b">a<sub>n</sub> = 1/x<sub>n</sub></span>（→∞），<span class="math em-b">b<sub>n</sub> = n</span></span></div>
+      </div>
+      <div class="math-block">
+        <span class="math">1/x<sub>n+1</sub> − 1/x<sub>n</sub> = (x<sub>n</sub> − ln(1+x<sub>n</sub>)) / (x<sub>n</sub>·ln(1+x<sub>n</sub>))</span>
+      </div>
+      <div class="step"><div class="step-num r">2</div>
+        <div class="step-body"><strong class="r">泰勒展开（x<sub>n</sub>→0）</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math fs-s">分子 = x<sub>n</sub>²/2 − x<sub>n</sub>³/3 + ⋯</span><br>
+        <span class="math fs-s">分母 = x<sub>n</sub>² − x<sub>n</sub>³/2 + ⋯</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5em">
+      <div class="step"><div class="step-num r">3</div>
+        <div class="step-body"><strong class="r">求极限</strong></div>
+      </div>
+      <div class="math-block" style="background:var(--orange-light)">
+        <span class="math">比值 → (½ · x<sub>n</sub>²) / (x<sub>n</sub>²) = <span class="em-r">1/2</span></span>
+      </div>
+      <div class="step"><div class="step-num r">4</div>
+        <div class="step-body"><strong class="r">应用 Stolz 定理</strong></div>
+      </div>
+      <div class="math-block">
+        <span class="math">lim (a<sub>n+1</sub>−a<sub>n</sub>) / (b<sub>n+1</sub>−b<sub>n</sub>) = (1/2) / 1 = 1/2</span><br>
+        <span class="arrow-down">↓ Stolz ↓</span><br>
+        <span class="math">lim a<sub>n</sub>/b<sub>n</sub> = lim (1/x<sub>n</sub>)/n = 1/2</span>
+      </div>
+      <div class="card result" style="text-align:center;padding:1em">
+        <span class="math">lim 1/(nx<sub>n</sub>) = 1/2</span><br>
+        <span class="math math-big" style="font-size:2.2em">∴ lim n·x<sub>n</sub> = 2</span>
+        <div style="text-align:right;font-size:1.1em">∎</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 39: KNOWLEDGE STOLZ ==================== -->
+<div class="slide" data-i="38">
+<div class="page-hdr"><span class="badge r">题 14</span><h2 class="colr">知识点 · Stolz 定理深度解读</h2></div>
+<div class="page-body">
+  <div class="g3" style="flex:1">
+    <div class="card red-top">
+      <div class="card-label r">定理陈述</div>
+      <h3 class="r">Stolz-Cesàro 定理</h3>
+      <div class="fs-s lh18" style="margin-top:0.3em">
+        <strong>∞/∞ 型：</strong><br>
+        设 {b<sub>n</sub>} 严格递增且 b<sub>n</sub>→+∞<br><br>
+        若 <span class="math">lim (a<sub>n+1</sub>−a<sub>n</sub>)/(b<sub>n+1</sub>−b<sub>n</sub>) = L</span><br>
+        则 <span class="math em-r">lim a<sub>n</sub>/b<sub>n</sub> = L</span>
+      </div>
+    </div>
+    <div class="card blue-top">
+      <div class="card-label b">使用条件</div>
+      <h3 class="b">何时想到 Stolz？</h3>
+      <ul class="chk fs-s" style="margin-top:0.3em">
+        <li>求 lim (nx<sub>n</sub>) 型问题</li>
+        <li>分母是 n（或 n 的简单函数）</li>
+        <li>分子 1/x<sub>n</sub> 的差分容易计算</li>
+        <li>相当于离散版洛必达法则</li>
+      </ul>
+    </div>
+    <div class="card green-top">
+      <div class="card-label">关键步骤</div>
+      <h3>本题的核心操作</h3>
+      <div class="fs-s lh18" style="margin-top:0.3em">
+        <span class="em-p">① 取倒数</span>：将 nx<sub>n</sub>→? 转化为 (1/x<sub>n</sub>)/n→?<br><br>
+        <span class="em-p">② 算差分</span>：1/x<sub>n+1</sub>−1/x<sub>n</sub><br><br>
+        <span class="em-p">③ 泰勒展开</span>：分子分母同除 x<sub>n</sub>²<br><br>
+        <span class="em-p">④ 结论</span>：差分极限 = 1/2
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 40: DIVIDER Q15 ==================== -->
+<div class="slide" data-i="39">
+<div class="divider">
+  <div class="div-bg">15</div>
+  <div class="div-content">
+    <div class="div-source">2023 · 数学一 · 第18题（补充）</div>
+    <div class="div-line" style="background:var(--green)"></div>
+    <div class="div-title">三重积分综合题（补充）</div>
+    <div class="div-desc">更多题型回顾与方法论总结</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 41: SUMMARY TABLE ==================== -->
+<div class="slide" data-i="40">
+<div class="page-hdr"><span class="badge g">总结</span><h2>15 题难度与知识点总览</h2></div>
+<div class="page-body" style="gap:0.5em">
+  <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+    <table class="tbl" style="font-size:0.85em;">
+      <thead>
+        <tr><th style="width:3em">题号</th><th>年份</th><th>核心知识点</th><th>难度</th><th>关键方法</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>2018</td><td>罗尔定理 · 辅助函数</td><td class="stars">★★★★★</td><td>G(x)=(b−x)∫f(t)dt</td></tr>
+        <tr><td>2</td><td>2019</td><td>级数求和 · 欧拉常数</td><td class="stars">★★★★</td><td>裂项 + 泰勒判敛</td></tr>
+        <tr><td>3</td><td>2017</td><td>曲面积分 · 高斯公式</td><td class="stars">★★★★★</td><td>挖球法处理奇点</td></tr>
+        <tr><td>4</td><td>2016</td><td>Gronwall 不等式</td><td class="stars">★★★★★</td><td>h=ge<sup>−kx</sup> 单调递减</td></tr>
+        <tr><td>5</td><td>2021</td><td>参数积分 · Gamma 函数</td><td class="stars">★★★★★</td><td>I(s)→I′(0)</td></tr>
+        <tr><td>6</td><td>2020</td><td>二次型正交变换</td><td class="stars">★★★★</td><td>施密特正交化</td></tr>
+        <tr><td>7</td><td>2015</td><td>三重积分 · 柱坐标</td><td class="stars">★★★</td><td>投影法定积分限</td></tr>
+        <tr><td>8</td><td>2022</td><td>微分方程逆问题</td><td class="stars">★★★★</td><td>特解之差为齐次解</td></tr>
+        <tr><td>9</td><td>2023</td><td>幂级数求和</td><td class="stars">★★★★</td><td>∑nu<sup>n</sup> 公式</td></tr>
+        <tr><td>10</td><td>2019</td><td>矩阵表示 · 线性无关</td><td class="stars">★★★★★</td><td>最小多项式不可约</td></tr>
+        <tr><td>11</td><td>2017</td><td>随机变量函数分布</td><td class="stars">★★★★</td><td>分段 + 混合分布</td></tr>
+        <tr><td>12</td><td>2021</td><td>相似对角化</td><td class="stars">★★★★</td><td>几何重数=代数重数</td></tr>
+        <tr><td>13</td><td>2023</td><td>格林公式</td><td class="stars">★★★</td><td>散度=常数→面积</td></tr>
+        <tr><td>14</td><td>2018</td><td>递推数列 · Stolz 定理</td><td class="stars">★★★★★</td><td>取倒数+泰勒差分</td></tr>
+        <tr><td>15</td><td>—</td><td>综合复习</td><td class="stars">—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 42: METHOD SUMMARY ==================== -->
+<div class="slide" data-i="41">
+<div class="page-hdr"><span class="badge g">总结</span><h2>五大核心方法论</h2></div>
+<div class="page-body">
+  <div class="g2" style="margin-bottom:0.8em">
+    <div class="card green-top">
+      <h3>🏗️ 构造法（证明题灵魂）</h3>
+      <ul class="chk fs-s">
+        <li>看到「证 ∃ξ 使 … = 0」→ 想罗尔定理</li>
+        <li>将目标等式视为某函数导数为零</li>
+        <li>反积分构造辅助函数 G(x)</li>
+        <li>典型构造：(b−x)∫f、e<sup>−kx</sup>·g(x)</li>
+      </ul>
+    </div>
+    <div class="card blue-top">
+      <h3 class="b">🔄 对称换元（积分降维）</h3>
+      <ul class="chk fs-s">
+        <li>x → 1/x 可消去对数积分</li>
+        <li>x → a+b−x 用于定积分对称</li>
+        <li>参数微分法：I(s), I′(0)</li>
+        <li>挖球法处理奇点</li>
+      </ul>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card icon-card" style="border-top:3px solid var(--purple)">
+      <div class="ico">📐</div>
+      <h4 style="color:var(--purple)">Stolz 定理</h4>
+      <p>递推数列 n·x<sub>n</sub> 型极限的终极武器：取倒数 + 差分 + 泰勒展开</p>
+    </div>
+    <div class="card icon-card" style="border-top:3px solid var(--orange)">
+      <div class="ico">🧮</div>
+      <h4 style="color:var(--orange)">特征值分析</h4>
+      <p>二次型/相似对角化：特征多项式 → 特征向量 → 施密特正交化 → 标准形</p>
+    </div>
+    <div class="card icon-card" style="border-top:3px solid var(--teal)">
+      <div class="ico">🎯</div>
+      <h4 style="color:var(--teal)">散度定理</h4>
+      <p>高斯/格林公式：散度=0 → 挖球；散度=常数 → 体积/面积速算</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 43: ENDING ==================== -->
+<div class="slide" data-i="42">
+<div class="cover" style="background:linear-gradient(135deg,#f8f9f6 0%,#eef2e8 100%)">
+  <div class="cover-line"></div>
+  <div class="cover-title" style="font-size:2.8em">祝考研顺利 🎓</div>
+  <div class="cover-sub">方法掌握了，难题也不过如此</div>
+  <div style="margin-top:1.5em;display:flex;gap:1.5em">
+    <div style="text-align:center">
+      <div style="font-size:2.5em;font-weight:700;color:var(--green)">15</div>
+      <div class="fs-s" style="color:var(--text2)">道难题精讲</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:2.5em;font-weight:700;color:var(--blue)">5</div>
+      <div class="fs-s" style="color:var(--text2)">大核心方法</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:2.5em;font-weight:700;color:var(--red)">43</div>
+      <div class="fs-s" style="color:var(--text2)">页完整演示</div>
+    </div>
+  </div>
+  <div class="cover-tags" style="margin-top:1.5em">
+    <span>构造辅助函数</span><span>Stolz 定理</span><span>挖球法</span>
+    <span>参数微分</span><span>施密特正交化</span><span>格林/高斯公式</span>
+  </div>
+</div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ===== NAVIGATION ===== -->
+<div class="nav" id="nav">
+  <button id="prev" onclick="go(-1)">◂ 上一页</button>
+  <div class="dots" id="dots"></div>
+  <span class="page-num" id="pnum">1 / 43</span>
+  <button id="next" onclick="go(1)">下一页 ▸</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),
+      dots=document.getElementById('dots'),
+      pnum=document.getElementById('pnum'),
+      prevB=document.getElementById('prev'),
+      nextB=document.getElementById('next');
+let cur=0,total=slides.length;
+
+// create dots
+for(let i=0;i<total;i++){
+  const d=document.createElement('button');
+  d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>jump(i);
+  dots.appendChild(d);
+}
+
+function jump(n){
+  if(n<0||n>=total)return;
+  slides[cur].classList.remove('active');
+  dots.children[cur].classList.remove('on');
+  cur=n;
+  slides[cur].classList.add('active');
+  dots.children[cur].classList.add('on');
+  pnum.textContent=`${cur+1} / ${total}`;
+  prevB.disabled=cur===0;
+  nextB.disabled=cur===total-1;
+}
+function go(d){jump(cur+d);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  else if(e.key==='ArrowLeft')go(-1);
+  else if(e.key==='Home')jump(0);
+  else if(e.key==='End')jump(total-1);
+});
+
+// swipe
+let sx=0;
+document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx;
+  if(Math.abs(dx)>50) go(dx<0?1:-1);
+});
+
+prevB.disabled=true;
+</script>
+</body>
+</html>

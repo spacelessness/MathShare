@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>矢量场</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;font-family:'Helvetica Neue',sans-serif}
+canvas{display:block;position:fixed;top:0;left:0;z-index:1}
+#overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.txt{text-align:center;opacity:0;transition:opacity 1.4s ease;max-width:90%}
+.t1{font-size:clamp(1.8rem,5vw,4.2rem);font-weight:800;color:#fff;text-shadow:0 0 50px rgba(100,180,255,.7),0 0 100px rgba(100,180,255,.3);letter-spacing:.06em}
+.t2{font-size:clamp(.9rem,2.2vw,1.6rem);font-weight:300;color:rgba(180,215,255,.85);text-shadow:0 0 30px rgba(100,180,255,.4);margin-top:.7rem;letter-spacing:.05em}
+.t3{font-size:clamp(1.1rem,3vw,2.4rem);font-weight:300;color:#fff;font-family:Georgia,serif;font-style:italic;text-shadow:0 0 50px rgba(255,180,80,.8),0 0 100px rgba(255,120,50,.4);margin-top:.5rem}
+.vis{opacity:1!important}
+#progress{position:fixed;bottom:0;left:0;height:2px;background:linear-gradient(90deg,#4af,#fa0,#4fa,#a6f);z-index:10;transition:width .1s linear}
+#vig{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.65)100%);pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vig"></div>
+<div id="overlay">
+<div class="txt t1" id="t1"></div>
+<div class="txt t2" id="t2"></div>
+<div class="txt t3" id="t3"></div>
+</div>
+<div id="progress"></div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d'),T1=document.getElementById('t1'),T2=document.getElementById('t2'),T3=document.getElementById('t3'),PB=document.getElementById('progress');
+let W,H;function resize(){W=C.width=innerWidth;H=C.height=innerHeight}resize();addEventListener('resize',resize);
+const DUR=40;let t0=null;
+
+// 3D helpers
+function rotY(x,y,z,a){let c=Math.cos(a),s=Math.sin(a);return[x*c+z*s,y,-x*s+z*c]}
+function rotX(x,y,z,a){let c=Math.cos(a),s=Math.sin(a);return[x,y*c-z*s,y*s+z*c]}
+function proj(x,y,z,f){let d=z+6;if(d<.1)d=.1;let s=f/d;return[W/2+x*s,H/2-y*s,s,d]}
+
+function drawArrow3D(ox,oy,oz,dx,dy,dz,camY,camX,col,w,fov){
+  let p0=rotY(...rotX(ox,oy,oz,camX),camY);
+  let p1=rotY(...rotX(ox+dx,oy+dy,oz+dz,camX),camY);
+  let pr0=proj(...p0,fov),pr1=proj(...p1,fov);
+  if(pr0[3]<.5||pr1[3]<.5)return;
+  let sx=pr1[0]-pr0[0],sy=pr1[1]-pr0[1],len=Math.sqrt(sx*sx+sy*sy);
+  if(len<1)return;
+  let ux=sx/len,uy=sy/len;
+  X.beginPath();X.moveTo(pr0[0],pr0[1]);X.lineTo(pr1[0],pr1[1]);
+  X.strokeStyle=col;X.lineWidth=w*Math.min(1,pr0[2]*.12);X.stroke();
+  let hs=Math.min(8,len*.35)*Math.min(1,pr0[2]*.12);
+  X.beginPath();X.moveTo(pr1[0],pr1[1]);
+  X.lineTo(pr1[0]-ux*hs+uy*hs*.4,pr1[1]-uy*hs-ux*hs*.4);
+  X.lineTo(pr1[0]-ux*hs-uy*hs*.4,pr1[1]-uy*hs+ux*hs*.4);
+  X.closePath();X.fillStyle=col;X.fill();
+}
+
+function glow(x,y,r,c1,c2){
+  let g=X.createRadialGradient(x,y,0,x,y,r);
+  g.addColorStop(0,c1);g.addColorStop(1,c2);
+  X.fillStyle=g;X.beginPath();X.arc(x,y,r,0,6.283);X.fill();
+}
+
+// =================== SCENES ===================
+
+function sceneVectorField(time,lt){
+  // A beautiful flowing 3D vector field
+  let camY=.4+Math.sin(time*.12)*.25;
+  let camX=.35+Math.sin(time*.08)*.1;
+  let fov=Math.min(W,H)*.7;
+
+  // Grid of arrows
+  let n=12;
+  for(let i=-n;i<=n;i++){
+    for(let j=-n;j<=n;j++){
+      let x=i*.25,z=j*.25;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>3.2)continue;
+      let y=-.02;
+      // Flowing field: circular + radial
+      let angle=Math.atan2(z,x);
+      let vx=Math.cos(angle+1.57)*.12+Math.cos(angle)*.03*Math.sin(time+r*2);
+      let vy=.02*Math.sin(r*3-time*2)*Math.exp(-r*.4);
+      let vz=Math.sin(angle+1.57)*.12+Math.sin(angle)*.03*Math.sin(time+r*2);
+      let fade=Math.min(1,lt*3)*(1-r/3.5);
+      if(fade<=0)continue;
+      let speed=Math.sqrt(vx*vx+vy*vy+vz*vz);
+      let hue=speed*800;
+      let cr=Math.floor(80+175*Math.sin(hue*.017));
+      let cg=Math.floor(120+100*Math.sin(hue*.017+2.1));
+      let cb=Math.floor(200+55*Math.sin(hue*.017+4.2));
+      drawArrow3D(x,y,z,vx*2.5,vy*2.5,vz*2.5,camY,camX,`rgba(${cr},${cg},${cb},${fade*.55})`,1.8,fov);
+    }
+  }
+
+  // Ground plane grid lines
+  X.globalAlpha=.04*Math.min(1,lt*3);
+  for(let i=-n;i<=n;i++){
+    X.beginPath();let st=false;
+    for(let j=-n;j<=n;j++){
+      let p=rotY(...rotX(i*.25,-.02,j*.25,camX),camY);
+      let pr=proj(...p,fov);
+      if(!st){X.moveTo(pr[0],pr[1]);st=true}else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle='#6080cc';X.lineWidth=.5;X.stroke();
+  }
+  for(let j=-n;j<=n;j++){
+    X.beginPath();let st=false;
+    for(let i=-n;i<=n;i++){
+      let p=rotY(...rotX(i*.25,-.02,j*.25,camX),camY);
+      let pr=proj(...p,fov);
+      if(!st){X.moveTo(pr[0],pr[1]);st=true}else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle='#6080cc';X.lineWidth=.5;X.stroke();
+  }
+  X.globalAlpha=1;
+}
+
+function sceneGradient(time,lt){
+  // 3D scalar field surface with gradient arrows
+  let camY=.5+Math.sin(time*.1)*.2;
+  let camX=.45+Math.sin(time*.13)*.08;
+  let fov=Math.min(W,H)*.65;
+  let fade=Math.min(1,lt*2.5);
+
+  let n=18;
+  // Draw surface as dots
+  for(let i=-n;i<=n;i++){
+    for(let j=-n;j<=n;j++){
+      let x=i*.14,z=j*.14;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2.7)continue;
+      // Gaussian scalar field
+      let f=1.2*Math.exp(-r*r*.6)+.15*Math.sin(r*4-time*2)*Math.exp(-r*.5);
+      let y=f;
+      let p=rotY(...rotX(x,y,z,camX),camY);
+      let pr=proj(...p,fov);
+      if(pr[3]<.3)continue;
+      let intensity=f/1.3;
+      let cr=Math.floor(40+200*intensity);
+      let cg=Math.floor(100+120*intensity);
+      let cb=Math.floor(220+35*intensity);
+      let sz=Math.max(.8,3*pr[2]*.08)*fade;
+      X.fillStyle=`rgba(${cr},${cg},${cb},${fade*.45})`;
+      X.beginPath();X.arc(pr[0],pr[1],sz,0,6.283);X.fill();
+    }
+  }
+
+  // Gradient arrows on surface
+  let an=10;
+  for(let i=-an;i<=an;i+=2){
+    for(let j=-an;j<=an;j+=2){
+      let x=i*.2,z=j*.2;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2.2||r<.3)continue;
+      let f=1.2*Math.exp(-r*r*.6);
+      let y=f;
+      // Gradient = -2*.6*x*f, -2*.6*z*f (for Gaussian)
+      let gx=-2*.6*x*f;
+      let gz=-2*.6*z*f;
+      let gy=0;
+      let gMag=Math.sqrt(gx*gx+gz*gz);
+      if(gMag<.01)continue;
+      let scale=.25;
+      drawArrow3D(x,y+.02,z,gx*scale,gy,gz*scale,camY,camX,`rgba(255,220,100,${fade*.6})`,2,fov);
+    }
+  }
+
+  // Peak glow
+  let peak=rotY(...rotX(0,1.2,0,camX),camY);
+  let ppeak=proj(...peak,fov);
+  glow(ppeak[0],ppeak[1],30*fade,'rgba(100,200,255,.3)','rgba(100,200,255,0)');
+
+  // Contour rings
+  X.globalAlpha=fade*.1;
+  for(let cr2=0;cr2<5;cr2++){
+    let contR=.3+cr2*.4;
+    X.beginPath();
+    for(let a=0;a<=64;a++){
+      let ang=a/64*Math.PI*2;
+      let cx2=Math.cos(ang)*contR,cz2=Math.sin(ang)*contR;
+      let cy2=1.2*Math.exp(-contR*contR*.6);
+      let p=rotY(...rotX(cx2,cy2,cz2,camX),camY);
+      let pr=proj(...p,fov);
+      if(a===0)X.moveTo(pr[0],pr[1]);else X.lineTo(pr[0],pr[1]);
+    }
+    X.closePath();X.strokeStyle='rgba(100,200,255,1)';X.lineWidth=.8;X.stroke();
+  }
+  X.globalAlpha=1;
+}
+
+function sceneDivergence(time,lt){
+  // Source and sink with diverging/converging arrows
+  let camY=.3+Math.sin(time*.09)*.3;
+  let camX=.3+Math.sin(time*.12)*.1;
+  let fov=Math.min(W,H)*.7;
+  let fade=Math.min(1,lt*2.5);
+
+  // Source (positive divergence)
+  let srcOff=-1.2;
+  for(let a=0;a<20;a++){
+    let phi=a/20*Math.PI*2;
+    for(let el=-2;el<=2;el++){
+      let theta=el*.4;
+      let dir=[Math.cos(phi)*Math.cos(theta),Math.sin(theta),Math.sin(phi)*Math.cos(theta)];
+      for(let ri=0;ri<3;ri++){
+        let d=.25+ri*.35;
+        let ox=srcOff+dir[0]*d,oy=dir[1]*d,oz=dir[2]*d;
+        let pulse=1+.2*Math.sin(time*3-d*4);
+        let mag=.18*pulse;
+        let alpha=fade*(.5-ri*.12);
+        if(alpha<=0)continue;
+        drawArrow3D(ox,oy,oz,dir[0]*mag,dir[1]*mag,dir[2]*mag,camY,camX,`rgba(255,160,60,${alpha})`,1.5,fov);
+      }
+    }
+  }
+
+  // Source glow
+  let sp=rotY(...rotX(srcOff,0,0,camX),camY);
+  let spr=proj(...sp,fov);
+  glow(spr[0],spr[1],40*fade,'rgba(255,200,80,.5)','rgba(255,150,50,0)');
+  glow(spr[0],spr[1],8*fade,'rgba(255,240,200,.9)','rgba(255,200,100,0)');
+
+  // Expanding shells
+  for(let s=0;s<4;s++){
+    let sr=((time*1.2+s*.5)%2)*.8+.1;
+    let sa=Math.max(0,.2-sr*.1)*fade;
+    X.beginPath();
+    for(let a=0;a<=48;a++){
+      let ang=a/48*Math.PI*2;
+      let p=rotY(...rotX(srcOff+Math.cos(ang)*sr,Math.sin(ang)*sr*.5,Math.sin(ang)*sr,camX),camY);
+      let pr=proj(...p,fov);
+      if(a===0)X.moveTo(pr[0],pr[1]);else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle=`rgba(255,180,60,${sa})`;X.lineWidth=1;X.stroke();
+  }
+
+  // Sink (negative divergence)
+  let snkOff=1.2;
+  for(let a=0;a<20;a++){
+    let phi=a/20*Math.PI*2;
+    for(let el=-2;el<=2;el++){
+      let theta=el*.4;
+      let dir=[Math.cos(phi)*Math.cos(theta),Math.sin(theta),Math.sin(phi)*Math.cos(theta)];
+      for(let ri=0;ri<3;ri++){
+        let d=.25+ri*.35;
+        let ox=snkOff+dir[0]*d,oy=dir[1]*d,oz=dir[2]*d;
+        let pulse=1+.2*Math.sin(time*3-d*4);
+        let mag=.18*pulse;
+        let alpha=fade*(.5-ri*.12);
+        if(alpha<=0)continue;
+        // Inward arrows
+        drawArrow3D(ox+dir[0]*mag,oy+dir[1]*mag,oz+dir[2]*mag,-dir[0]*mag,-dir[1]*mag,-dir[2]*mag,camY,camX,`rgba(80,180,255,${alpha})`,1.5,fov);
+      }
+    }
+  }
+
+  // Sink glow
+  let snp=rotY(...rotX(snkOff,0,0,camX),camY);
+  let snpr=proj(...snp,fov);
+  glow(snpr[0],snpr[1],35*fade,'rgba(80,160,255,.4)','rgba(60,120,255,0)');
+  glow(snpr[0],snpr[1],6*fade,'rgba(180,220,255,.8)','rgba(100,180,255,0)');
+
+  // Contracting shells
+  for(let s=0;s<4;s++){
+    let sr=((2-time*1.2-s*.5)%2+2)%2*.8+.1;
+    let sa=Math.max(0,.15-Math.abs(sr-1)*.1)*fade;
+    X.beginPath();
+    for(let a=0;a<=48;a++){
+      let ang=a/48*Math.PI*2;
+      let p=rotY(...rotX(snkOff+Math.cos(ang)*sr,Math.sin(ang)*sr*.5,Math.sin(ang)*sr,camX),camY);
+      let pr=proj(...p,fov);
+      if(a===0)X.moveTo(pr[0],pr[1]);else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle=`rgba(80,180,255,${sa})`;X.lineWidth=1;X.stroke();
+  }
+
+  // Labels
+  X.fillStyle=`rgba(255,200,80,${fade*.4})`;X.font='14px Helvetica Neue';X.textAlign='center';
+  X.fillText('∇·F > 0',spr[0],spr[1]-50);
+  X.fillStyle=`rgba(80,180,255,${fade*.4})`;
+  X.fillText('∇·F < 0',snpr[0],snpr[1]-45);
+}
+
+function sceneCurl(time,lt){
+  // Vortex with curl visualization
+  let camY=.2+Math.sin(time*.08)*.3;
+  let camX=.55+Math.sin(time*.11)*.12;
+  let fov=Math.min(W,H)*.7;
+  let fade=Math.min(1,lt*2.5);
+
+  // Tangential velocity field (vortex)
+  let n=14;
+  for(let i=-n;i<=n;i++){
+    for(let j=-n;j<=n;j++){
+      let x=i*.18,z=j*.18;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2.5||r<.2)continue;
+      let y=0;
+      let angle=Math.atan2(z,x);
+      // Tangential + some decay
+      let speed=.8/(1+r)*Math.exp(-r*.15);
+      let vx=-Math.sin(angle)*speed;
+      let vz=Math.cos(angle)*speed;
+      let vy=.03*Math.sin(r*3-time*3)*Math.exp(-r*.3);
+      let scale=.22;
+      let alpha=fade*(.5-r*.1);
+      if(alpha<=0)continue;
+
+      let hue=(angle/Math.PI*180+180+time*30)%360;
+      let cr=Math.floor(80+100*Math.sin(hue*.017+1));
+      let cg=Math.floor(200+55*Math.sin(hue*.017+3));
+      let cb=Math.floor(140+80*Math.sin(hue*.017+5));
+      drawArrow3D(x,y,z,vx*scale,vy*scale,vz*scale,camY,camX,`rgba(${cr},${cg},${cb},${alpha})`,1.5,fov);
+    }
+  }
+
+  // Spiral streamlines
+  X.globalAlpha=fade*.08;
+  for(let s=0;s<8;s++){
+    X.beginPath();let st=false;
+    for(let t2=0;t2<6;t2+=.04){
+      let angle2=t2*1.5+s*Math.PI*.25+time*.4;
+      let r2=.2+t2*.35;
+      if(r2>2.5)break;
+      let x=Math.cos(angle2)*r2;
+      let z=Math.sin(angle2)*r2;
+      let y=.05*Math.sin(t2*2)*Math.exp(-t2*.2);
+      let p=rotY(...rotX(x,y,z,camX),camY);
+      let pr=proj(...p,fov);
+      if(!st){X.moveTo(pr[0],pr[1]);st=true}else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle='rgba(80,230,160,1)';X.lineWidth=1.2;X.stroke();
+  }
+  X.globalAlpha=1;
+
+  // Curl vector at center (pointing UP along axis)
+  let curlMag=.8+.2*Math.sin(time*2);
+  drawArrow3D(0,0,0,0,curlMag,0,camY,camX,`rgba(255,100,120,${fade*.8})`,3,fov);
+
+  // Label on curl arrow
+  let curlTip=rotY(...rotX(0,curlMag+.15,0,camX),camY);
+  let curlPr=proj(...curlTip,fov);
+  X.fillStyle=`rgba(255,120,140,${fade*.5})`;X.font='bold 14px Helvetica Neue';X.textAlign='center';
+  X.fillText('∇×F',curlPr[0],curlPr[1]-10);
+
+  // Center glow
+  let cp=rotY(...rotX(0,0,0,camX),camY);
+  let cpr=proj(...cp,fov);
+  glow(cpr[0],cpr[1],50*fade,'rgba(80,220,160,.2)','rgba(80,220,160,0)');
+
+  // Rotating ring
+  X.beginPath();
+  for(let a=0;a<=64;a++){
+    let ang=a/64*Math.PI*2;
+    let rr=.6;
+    let p=rotY(...rotX(Math.cos(ang)*rr,0,Math.sin(ang)*rr,camX),camY);
+    let pr=proj(...p,fov);
+    if(a===0)X.moveTo(pr[0],pr[1]);else X.lineTo(pr[0],pr[1]);
+  }
+  X.strokeStyle=`rgba(80,230,160,${fade*.25})`;X.lineWidth=1.5;X.stroke();
+
+  // Animated particle on ring
+  let pAngle=time*2;
+  let pp=rotY(...rotX(Math.cos(pAngle)*.6,0,Math.sin(pAngle)*.6,camX),camY);
+  let ppr=proj(...pp,fov);
+  glow(ppr[0],ppr[1],10*fade,'rgba(255,255,200,.8)','rgba(255,220,100,0)');
+}
+
+function sceneStokes(time,lt){
+  // Stokes theorem: surface integral = line integral
+  let camY=.35+Math.sin(time*.1)*.25;
+  let camX=.4+Math.cos(time*.08)*.1;
+  let fov=Math.min(W,H)*.65;
+  let fade=Math.min(1,lt*2.5);
+
+  // Surface patch (wavy membrane)
+  let n=20;
+  for(let i=-n;i<=n;i++){
+    X.beginPath();let st=false;
+    for(let j=-n;j<=n;j++){
+      let x=i*.1,z=j*.1;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2)continue;
+      let y=.15*Math.sin(r*3-time*2)*Math.exp(-r*.4)+.08*Math.cos(x*4+time)*Math.exp(-r*.5);
+      let p=rotY(...rotX(x,y,z,camX),camY);
+      let pr=proj(...p,fov);
+      if(!st){X.moveTo(pr[0],pr[1]);st=true}else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle=`rgba(100,140,220,${fade*.06})`;X.lineWidth=.5;X.stroke();
+  }
+  for(let j=-n;j<=n;j++){
+    X.beginPath();let st=false;
+    for(let i=-n;i<=n;i++){
+      let x=i*.1,z=j*.1;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2)continue;
+      let y=.15*Math.sin(r*3-time*2)*Math.exp(-r*.4)+.08*Math.cos(x*4+time)*Math.exp(-r*.5);
+      let p=rotY(...rotX(x,y,z,camX),camY);
+      let pr=proj(...p,fov);
+      if(!st){X.moveTo(pr[0],pr[1]);st=true}else X.lineTo(pr[0],pr[1]);
+    }
+    X.strokeStyle=`rgba(100,140,220,${fade*.06})`;X.lineWidth=.5;X.stroke();
+  }
+
+  // Curl arrows on surface (normal vectors)
+  for(let i=-6;i<=6;i+=2){
+    for(let j=-6;j<=6;j+=2){
+      let x=i*.2,z=j*.2;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>1.8)continue;
+      let y=.15*Math.sin(r*3-time*2)*Math.exp(-r*.4);
+      let curlVal=.12*Math.exp(-r*.3);
+      let alpha=fade*(.4-r*.1);
+      if(alpha<=0)continue;
+      drawArrow3D(x,y,z,0,curlVal,0,camY,camX,`rgba(200,120,255,${alpha})`,1.2,fov);
+    }
+  }
+
+  // Boundary curve (glowing ring) with circulation arrows
+  let boundR=2;
+  X.beginPath();
+  for(let a=0;a<=80;a++){
+    let ang=a/80*Math.PI*2;
+    let bx=Math.cos(ang)*boundR,bz=Math.sin(ang)*boundR;
+    let br=Math.sqrt(bx*bx+bz*bz);
+    let by=.15*Math.sin(br*3-time*2)*Math.exp(-br*.4);
+    let p=rotY(...rotX(bx,by,bz,camX),camY);
+    let pr=proj(...p,fov);
+    if(a===0)X.moveTo(pr[0],pr[1]);else X.lineTo(pr[0],pr[1]);
+  }
+  X.closePath();
+  X.strokeStyle=`rgba(255,200,80,${fade*.6})`;X.lineWidth=2.5;
+  X.shadowColor='rgba(255,180,50,.4)';X.shadowBlur=15;X.stroke();X.shadowBlur=0;
+
+  // Moving particle along boundary
+  let bAng=time*1.5;
+  let bpx=Math.cos(bAng)*boundR,bpz=Math.sin(bAng)*boundR;
+  let bpr2=Math.sqrt(bpx*bpx+bpz*bpz);
+  let bpy=.15*Math.sin(bpr2*3-time*2)*Math.exp(-bpr2*.4);
+  let bp=rotY(...rotX(bpx,bpy,bpz,camX),camY);
+  let bpp=proj(...bp,fov);
+  glow(bpp[0],bpp[1],14*fade,'rgba(255,240,150,.9)','rgba(255,200,80,0)');
+
+  // Tangent arrows along boundary
+  for(let a=0;a<12;a++){
+    let ang=a/12*Math.PI*2+time*.3;
+    let bx2=Math.cos(ang)*boundR,bz2=Math.sin(ang)*boundR;
+    let by2=.15*Math.sin(Math.sqrt(bx2*bx2+bz2*bz2)*3-time*2)*Math.exp(-Math.sqrt(bx2*bx2+bz2*bz2)*.4);
+    let tx=-Math.sin(ang)*.2,tz=Math.cos(ang)*.2;
+    drawArrow3D(bx2,by2,bz2,tx,0,tz,camY,camX,`rgba(255,220,100,${fade*.45})`,1.3,fov);
+  }
+}
+
+function sceneUnified(time,lt){
+  // All three operations shown in one flowing field
+  let camY=time*.12+.3;
+  let camX=.3+Math.sin(time*.15)*.12;
+  let fov=Math.min(W,H)*.65;
+  let fade=Math.min(1,lt*2);
+
+  let n=14;
+  for(let i=-n;i<=n;i++){
+    for(let j=-n;j<=n;j++){
+      let x=i*.18,z=j*.18;
+      let r=Math.sqrt(x*x+z*z);
+      if(r>2.8||r<.15)continue;
+      let angle=Math.atan2(z,x);
+
+      // Combined: vortex + source + gradient
+      let vortex=.6/(1+r);
+      let source=.15*Math.exp(-r*.5);
+      let vx=-Math.sin(angle)*vortex+Math.cos(angle)*source;
+      let vz=Math.cos(angle)*vortex+Math.sin(angle)*source;
+      let vy=.08*Math.sin(r*3-time*2.5)*Math.exp(-r*.4);
+
+      let scale=.2;
+      let alpha=fade*(.45-r*.08);
+      if(alpha<=0)continue;
+
+      let speed=Math.sqrt(vx*vx+vy*vy+vz*vz);
+      let hue=(angle/Math.PI*180+r*60+time*40)%360;
+      let cr=Math.floor(120+120*Math.sin(hue*.017));
+      let cg=Math.floor(150+80*Math.sin(hue*.017+2));
+      let cb=Math.floor(200+55*Math.sin(hue*.017+4));
+      drawArrow3D(x,vy*.5,z,vx*scale,vy*scale,vz*scale,camY,camX,`rgba(${cr},${cg},${cb},${alpha})`,1.3,fov);
+    }
+  }
+
+  // Central glow
+  let cp=rotY(...rotX(0,0,0,camX),camY);
+  let cpr=proj(...cp,fov);
+  glow(cpr[0],cpr[1],80*fade,'rgba(200,180,255,.12)','rgba(100,80,200,0)');
+  glow(cpr[0],cpr[1],20*fade,'rgba(255,255,255,.2)','rgba(200,200,255,0)');
+
+  // Floating formula particles
+  for(let i=0;i<15;i++){
+    let pa=time*.3+i*Math.PI*2/15;
+    let pr2=1.5+.5*Math.sin(time*.4+i);
+    let px=Math.cos(pa)*pr2,pz=Math.sin(pa)*pr2;
+    let py=.3*Math.sin(time+i);
+    let p=rotY(...rotX(px,py,pz,camX),camY);
+    let pp=proj(...p,fov);
+    let sz=4*pp[2]*.08*fade;
+    if(sz<.5)continue;
+    let phase=i*.6;
+    let cr2=Math.floor(150+100*Math.sin(phase));
+    let cg2=Math.floor(170+80*Math.sin(phase+2));
+    let cb2=Math.floor(220+35*Math.sin(phase+4));
+    glow(pp[0],pp[1],sz*3,'rgba('+cr2+','+cg2+','+cb2+','+(fade*.4)+')','rgba('+cr2+','+cg2+','+cb2+',0)');
+  }
+}
+
+// =================== TIMELINE ===================
+const timeline=[
+  [0,6,sceneVectorField,'矢量场','空间中每一点 赋予一个方向',null,1,5],
+  [5,13,sceneGradient,'梯度','标量场最陡峭的上升方向','∇f',6,11.5],
+  [11,20,sceneDivergence,'散度','场的源与汇','∇·F',12.5,18.5],
+  [18,27,sceneCurl,'旋度','场的旋转与涡流','∇×F',19.5,25.5],
+  [25,34,sceneStokes,null,'面上旋度之和 等于边界上的环流','∮F·dr = ∬(∇×F)·dA',26.5,32.5],
+  [32,42,sceneUnified,'场的语言','梯度 散度 旋度 — 万物皆场','∇',33.5,40],
+];
+
+function animate(ts){
+  if(!t0)t0=ts;
+  let el=(ts-t0)/1000;
+  if(el>DUR+2){t0=ts;el=0}
+
+  X.fillStyle='rgba(5,8,18,1)';X.fillRect(0,0,W,H);
+
+  // Nebula bg
+  let nb=X.createRadialGradient(W/2+Math.sin(el*.04)*80,H/2+Math.cos(el*.05)*40,0,W/2,H/2,W*.5);
+  nb.addColorStop(0,'rgba(12,8,30,.2)');nb.addColorStop(.5,'rgba(6,4,18,.08)');nb.addColorStop(1,'rgba(0,0,0,0)');
+  X.fillStyle=nb;X.fillRect(0,0,W,H);
+
+  let aT={m:null,s:null,f:null},sM=false,sS=false,sF=false;
+
+  for(let i=0;i<timeline.length;i++){
+    let[st,en,fn,m,s,f,ts2,th]=timeline[i];
+    if(el>=st&&el<=en){
+      let lt=(el-st)/(en-st);
+      let sf=1;
+      if(el-st<1.5)sf=(el-st)/1.5;
+      if(en-el<1.5)sf=Math.min(sf,(en-el)/1.5);
+      X.save();X.globalAlpha=Math.max(0,Math.min(1,sf));
+      fn(el,lt);
+      X.restore();
+      if(el>=ts2&&el<=th){
+        if(m){aT.m=m;sM=true}
+        if(s){aT.s=s;sS=true}
+        if(f){aT.f=f;sF=true}
+      }
+    }
+  }
+
+  if(aT.m)T1.textContent=aT.m;
+  if(aT.s)T2.textContent=aT.s;
+  if(aT.f)T3.textContent=aT.f;
+  T1.classList.toggle('vis',sM);
+  T2.classList.toggle('vis',sS);
+  T3.classList.toggle('vis',sF);
+
+  PB.style.width=Math.min(100,el/DUR*100)+'%';
+
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

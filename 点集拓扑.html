@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点集拓扑：从集合到空间结构</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            padding: 60px 80px;
+            position: relative;
+            background: white;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            font-size: 24px;
+            color: #999;
+            font-weight: 300;
+        }
+
+        h1 {
+            font-size: 72px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 56px;
+            margin-bottom: 50px;
+            color: #2d3748;
+            font-weight: 800;
+            border-left: 8px solid #667eea;
+            padding-left: 30px;
+        }
+
+        h3 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            color: #4a5568;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 36px;
+            color: #718096;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .box {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border-left: 6px solid #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .box h3 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .box p, .box ul {
+            font-size: 28px;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .box li {
+            padding: 12px 0;
+            border-bottom: 1px solid #cbd5e0;
+        }
+
+        .box li:last-child {
+            border-bottom: none;
+        }
+
+        .box li::before {
+            content: "▸ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .formula {
+            background: #f7fafc;
+            padding: 30px 40px;
+            border-radius: 15px;
+            font-size: 38px;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+            margin: 25px 0;
+            border: 2px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffd89b 0%, #19547b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .diagram {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .venn-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .venn-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .circle-a {
+            width: 280px;
+            height: 280px;
+            left: 80px;
+            top: 60px;
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .circle-b {
+            width: 280px;
+            height: 280px;
+            right: 80px;
+            top: 60px;
+            background: rgba(244, 114, 182, 0.3);
+            border-color: #f472b6;
+            color: #f472b6;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 32px;
+        }
+
+        .table td {
+            padding: 20px 25px;
+            border-bottom: 2px solid #e2e8f0;
+            background: white;
+        }
+
+        .table tr:hover td {
+            background: #f7fafc;
+        }
+
+        .arrow-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 40px 0;
+        }
+
+        .flow-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            font-size: 32px;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .flow-arrow {
+            font-size: 48px;
+            color: #667eea;
+            margin: 0 20px;
+            font-weight: bold;
+        }
+
+        .big-number {
+            font-size: 120px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 30px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-top: 5px solid #667eea;
+        }
+
+        .card h4 {
+            font-size: 34px;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card p {
+            font-size: 26px;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.95);
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            background: #667eea;
+            color: white;
+        }
+
+        .legend {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+            font-size: 28px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .legend-color {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        .timeline-dot {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 28px;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+
+        @media print {
+            .navigation {
+                display: none;
+            }
+            .slide {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: 封面 -->
+<div class="slide active">
+    <div class="content" style="text-align: center;">
+        <h1 style="font-size: 96px; margin-bottom: 40px;">点集拓扑</h1>
+        <div class="subtitle" style="font-size: 48px; margin-bottom: 80px;">从集合运算到空间结构</div>
+        <div class="subtitle" style="font-size: 36px; color: #a0aec0;">实分析的地基工程</div>
+    </div>
+</div>
+
+<!-- Slide 2: 核心问题 -->
+<div class="slide">
+    <h2>为什么需要点集拓扑？</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 40px;">
+            <h3>狄利克雷函数的困境</h3>
+            <div class="formula">
+                D(x) = { 1  (x∈ℚ),  0  (x∉ℚ) }
+            </div>
+            <p style="font-size: 32px; margin-top: 30px;">这个函数的积分是多少？黎曼积分无法回答！</p>
+        </div>
+        
+        <div class="three-column">
+            <div class="box">
+                <h3>问题1</h3>
+                <p>"有理数稀少"是什么意思？</p>
+            </div>
+            <div class="box">
+                <h3>问题2</h3>
+                <p>"几乎处处"如何定义？</p>
+            </div>
+            <div class="box">
+                <h3>问题3</h3>
+                <p>需要什么样的集合运算？</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">2</div>
+</div>
+
+<!-- Slide 3: 集合运算总览 -->
+<div class="slide">
+    <h2>集合的五种基本运算</h2>
+    <div class="content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>运算</th>
+                    <th>符号</th>
+                    <th>定义</th>
+                    <th>直觉</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>并</strong></td>
+                    <td>A ∪ B</td>
+                    <td>{x : x∈A 或 x∈B}</td>
+                    <td>至少属于一个</td>
+                </tr>
+                <tr>
+                    <td><strong>交</strong></td>
+                    <td>A ∩ B</td>
+                    <td>{x : x∈A 且 x∈B}</td>
+                    <td>同时属于两个</td>
+                </tr>
+                <tr>
+                    <td><strong>补</strong></td>
+                    <td>Aᶜ</td>
+                    <td>{x∈Ω : x∉A}</td>
+                    <td>不属于A</td>
+                </tr>
+                <tr>
+                    <td><strong>差</strong></td>
+                    <td>A \ B</td>
+                    <td>{x : x∈A 且 x∉B}</td>
+                    <td>从A中去掉B</td>
+                </tr>
+                <tr>
+                    <td><strong>对称差</strong></td>
+                    <td>A △ B</td>
+                    <td>(A\B) ∪ (B\A)</td>
+                    <td>恰好属于一个</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="slide-number">3</div>
+</div>
+
+<!-- Slide 4: 德·摩根律 -->
+<div class="slide">
+    <h2>德·摩根律：连接运算的桥梁</h2>
+    <div class="content">
+        <div class="formula" style="font-size: 52px; margin: 50px 0;">
+            (⋃<sub>α</sub> A<sub>α</sub>)ᶜ = ⋂<sub>α</sub> A<sub>α</sub>ᶜ
+        </div>
+        <div class="formula" style="font-size: 52px; margin: 50px 0;">
+            (⋂<sub>α</sub> A<sub>α</sub>)ᶜ = ⋃<sub>α</sub> A<sub>α</sub>ᶜ
+        </div>
+        
+        <div class="arrow-flow" style="margin-top: 80px;">
+            <div class="flow-item">并的补</div>
+            <div class="flow-arrow">=</div>
+            <div class="flow-item">补的交</div>
+        </div>
+        
+        <div class="arrow-flow">
+            <div class="flow-item">交的补</div>
+            <div class="flow-arrow">=</div>
+            <div class="flow-item">补的并</div>
+        </div>
+        
+        <p style="text-align: center; font-size: 32px; margin-top: 60px; color: #667eea; font-weight: 600;">
+            ⇒ 开集与闭集的对偶性
+        </p>
+    </div>
+    <div class="slide-number">4</div>
+</div>
+
+<!-- Slide 5: 可数集 -->
+<div class="slide">
+    <h2>可数集：能排成一列的集合</h2>
+    <div class="content">
+        <div class="two-column">
+            <div>
+                <div class="big-number">ℵ₀</div>
+                <div class="box">
+                    <h3>定义</h3>
+                    <p>集合A是<span class="highlight">可数的</span>，如果存在双射 A → ℕ</p>
+                    <p style="margin-top: 20px;">即可以排列为：a₁, a₂, a₃, ...</p>
+                </div>
+            </div>
+            
+            <div>
+                <div class="box" style="margin-bottom: 30px;">
+                    <h3>经典例子</h3>
+                    <ul>
+                        <li>ℕ（自然数）可数 ✓</li>
+                        <li>ℤ（整数）可数 ✓</li>
+                        <li><strong>ℚ（有理数）可数 ✓</strong></li>
+                        <li>ℝ（实数）不可数 ✗</li>
+                    </ul>
+                </div>
+                
+                <div class="box">
+                    <h3>关键性质</h3>
+                    <p><strong>可数个可数集的并是可数的</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">5</div>
+</div>
+
+<!-- Slide 6: 康托尔对角线论证 -->
+<div class="slide">
+    <h2>康托尔对角线论证</h2>
+    <div class="content">
+        <div class="two-column">
+            <div>
+                <h3 style="color: #667eea; margin-bottom: 30px;">证明 [0,1] 不可数</h3>
+                <div style="background: #f7fafc; padding: 30px; border-radius: 15px; font-family: monospace; font-size: 28px; line-height: 2;">
+                    x₁ = 0.<span style="background: #ffd89b;">a₁₁</span> a₁₂ a₁₃ a₁₄ ...<br>
+                    x₂ = 0. a₂₁ <span style="background: #ffd89b;">a₂₂</span> a₂₃ a₂₄ ...<br>
+                    x₃ = 0. a₃₁ a₃₂ <span style="background: #ffd89b;">a₃₃</span> a₃₄ ...<br>
+                    x₄ = 0. a₄₁ a₄₂ a₄₃ <span style="background: #ffd89b;">a₄₄</span> ...<br>
+                    ⋮
+                </div>
+                <div class="formula" style="margin-top: 30px; font-size: 32px;">
+                    y = 0.b₁b₂b₃... 其中 b<sub>n</sub> ≠ a<sub>nn</sub>
+                </div>
+            </div>
+            
+            <div>
+                <div class="big-number" style="font-size: 180px; text-align: center;">𝔠</div>
+                <div class="box">
+                    <h3>结论</h3>
+                    <p>y ∈ [0,1] 但与所有 x<sub>n</sub> 都不同</p>
+                    <p style="margin-top: 20px; font-weight: 700; color: #667eea;">⇒ [0,1] 不可数</p>
+                </div>
+                <div class="box" style="margin-top: 30px;">
+                    <h3>基数层级</h3>
+                    <div class="formula">ℵ₀ < 𝔠 = 2^ℵ₀</div>
+                    <p style="margin-top: 20px;">有理数在实数中"微不足道"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">6</div>
+</div>
+
+<!-- Slide 7: 集合列的极限 -->
+<div class="slide">
+    <h2>集合列的上下极限</h2>
+    <div class="content">
+        <div class="two-column">
+            <div class="box">
+                <h3>上极限集 limsup A<sub>n</sub></h3>
+                <div class="formula" style="font-size: 36px; margin: 30px 0;">
+                    ⋂<sub>n=1</sub><sup>∞</sup> ⋃<sub>k=n</sub><sup>∞</sup> A<sub>k</sub>
+                </div>
+                <p style="font-size: 30px; font-weight: 600; color: #667eea;">= 属于无穷多个 A<sub>n</sub> 的元素</p>
+                <p style="margin-top: 20px; font-size: 26px;">无论从哪一步开始，后面总能找到包含x的集合</p>
+            </div>
+            
+            <div class="box">
+                <h3>下极限集 liminf A<sub>n</sub></h3>
+                <div class="formula" style="font-size: 36px; margin: 30px 0;">
+                    ⋃<sub>n=1</sub><sup>∞</sup> ⋂<sub>k=n</sub><sup>∞</sup> A<sub>k</sub>
+                </div>
+                <p style="font-size: 30px; font-weight: 600; color: #f472b6;">= 从某项起永远属于 A<sub>n</sub> 的元素</p>
+                <p style="margin-top: 20px; font-size: 26px;">最多不属于有限个集合</p>
+            </div>
+        </div>
+        
+        <div class="formula" style="font-size: 42px; margin-top: 60px;">
+            liminf A<sub>n</sub> ⊆ limsup A<sub>n</sub>  （总是成立）
+        </div>
+        
+        <div class="box" style="margin-top: 40px; text-align: center;">
+            <p style="font-size: 32px;">若两者相等 ⇒ lim A<sub>n</sub> 存在</p>
+        </div>
+    </div>
+    <div class="slide-number">7</div>
+</div>
+
+<!-- Slide 8: 开集定义 -->
+<div class="slide">
+    <h2>开集：没有边界的集合</h2>
+    <div class="content">
+        <div class="two-column">
+            <div>
+                <div class="box">
+                    <h3>定义</h3>
+                    <p style="font-size: 32px; line-height: 1.9;">G是<span class="highlight">开集</span>，如果对每个 x∈G，存在 ε>0 使得</p>
+                    <div class="formula" style="margin: 30px 0;">
+                        B(x, ε) ⊂ G
+                    </div>
+                    <p style="font-size: 28px; color: #718096;">（ε-邻域完全在G内）</p>
+                </div>
+                
+                <div class="box" style="margin-top: 40px;">
+                    <h3>例子</h3>
+                    <ul>
+                        <li>(a, b) 是开集 ✓</li>
+                        <li>[a, b] 不是开集 ✗</li>
+                        <li>ℝ 是开集 ✓</li>
+                        <li>∅ 是开集 ✓</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div>
+                <div class="diagram">
+                    <svg width="100%" height="400" viewBox="0 0 500 400">
+                        <!-- 开集示意 -->
+                        <ellipse cx="250" cy="200" rx="180" ry="120" fill="rgba(102, 126, 234, 0.2)" stroke="#667eea" stroke-width="3" stroke-dasharray="8,8"/>
+                        
+                        <!-- 内部点 -->
+                        <circle cx="250" cy="200" r="8" fill="#667eea"/>
+                        <circle cx="250" cy="200" r="50" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="4,4"/>
+                        <text x="250" y="270" text-anchor="middle" font-size="24" fill="#667eea">ε-邻域完全在内</text>
+                        
+                        <!-- 另一个点 -->
+                        <circle cx="180" cy="150" r="8" fill="#667eea"/>
+                        <circle cx="180" cy="150" r="40" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="4,4"/>
+                        
+                        <text x="250" y="50" text-anchor="middle" font-size="32" fill="#2d3748" font-weight="bold">开集G</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">8</div>
+</div>
+
+<!-- Slide 9: 闭集定义 -->
+<div class="slide">
+    <h2>闭集：包含所有聚点</h2>
+    <div class="content">
+        <div class="two-column">
+            <div>
+                <div class="box">
+                    <h3>定义</h3>
+                    <p style="font-size: 32px; line-height: 1.9;">F是<span class="highlight">闭集</span>，如果</p>
+                    <div class="formula" style="margin: 30px 0; font-size: 42px;">
+                        Fᶜ 是开集
+                    </div>
+                    <p style="font-size: 28px; color: #718096;">等价于：F包含它的所有极限点</p>
+                </div>
+                
+                <div class="box" style="margin-top: 40px;">
+                    <h3>例子</h3>
+                    <ul>
+                        <li>[a, b] 是闭集 ✓</li>
+                        <li>(a, b) 不是闭集 ✗</li>
+                        <li>{1/n : n∈ℕ} ∪ {0} 是闭集 ✓</li>
+                        <li>ℤ 是闭集 ✓</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div>
+                <div class="box">
+                    <h3>聚点 vs 孤立点</h3>
+                    <div style="margin: 30px 0;">
+                        <p style="font-size: 28px; margin-bottom: 20px;"><strong>聚点：</strong>每个邻域都包含A中异于x的点</p>
+                        <p style="font-size: 28px;"><strong>孤立点：</strong>存在邻域只包含x自己</p>
+                    </div>
+                </div>
+                
+                <div class="box" style="margin-top: 40px;">
+                    <h3>闭包</h3>
+                    <div class="formula" style="font-size: 38px;">
+                        Ā = A ∪ A'
+                    </div>
+                    <p style="margin-top: 20px; font-size: 26px;">A' = A的所有聚点</p>
+                    <p style="margin-top: 15px; font-size: 26px;">Ā 是包含A的最小闭集</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">9</div>
+</div>
+
+<!-- Slide 10: 开集与闭集的对偶性 -->
+<div class="slide">
+    <h2>开集与闭集的对偶性</h2>
+    <div class="content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">开集性质</th>
+                    <th style="width: 50%;">闭集性质</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>任意多个</strong>开集的<strong>并</strong>是开集</td>
+                    <td><strong>任意多个</strong>闭集的<strong>交</strong>是闭集</td>
+                </tr>
+                <tr>
+                    <td><strong>有限个</strong>开集的<strong>交</strong>是开集</td>
+                    <td><strong>有限个</strong>闭集的<strong>并</strong>是闭集</td>
+                </tr>
+                <tr>
+                    <td>∅ 和 ℝ 是开集</td>
+                    <td>∅ 和 ℝ 是闭集</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="arrow-flow" style="margin-top: 80px;">
+            <div class="flow-item" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">开集运算</div>
+            <div class="flow-arrow" style="font-size: 56px;">⇄</div>
+            <div class="flow-item" style="background: linear-gradient(135deg, #f472b6 0%, #be185d 100%);">闭集运算</div>
+        </div>
+        
+        <p style="text-align: center; font-size: 36px; margin-top: 60px; color: #4a5568; font-weight: 600;">
+            通过<span class="highlight">德·摩根律</span>相互转换
+        </p>
+    </div>
+    <div class="slide-number">10</div>
+</div>
+
+<!-- Slide 11: 紧集 - 开覆盖 -->
+<div class="slide">
+    <h2>紧集：有限覆盖性质</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 50px;">
+            <h3>开覆盖</h3>
+            <p style="font-size: 32px; line-height: 1.8;">集合K的<span class="highlight">开覆盖</span>是一族开集 {G<sub>α</sub>}，使得</p>
+            <div class="formula" style="font-size: 44px; margin: 30px 0;">
+                K ⊆ ⋃<sub>α</sub> G<sub>α</sub>
+            </div>
+        </div>
+        
+        <div class="two-column">
+            <div class="box">
+                <h3>紧集定义</h3>
+                <p style="font-size: 30px; line-height: 1.9;">K是<strong>紧集</strong>，如果K的<span style="color: #667eea; font-weight: 700;">每一个</span>开覆盖都有<span style="color: #f472b6; font-weight: 700;">有限子覆盖</span></p>
+            </div>
+            
+            <div class="box">
+                <h3>直觉</h3>
+                <p style="font-size: 30px; line-height: 1.9;">紧集是"有限集的推广"——虽然可能有无穷多个点，但在覆盖的意义上表现得像有限集</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">11</div>
+</div>
+
+<!-- Slide 12: Heine-Borel定理 -->
+<div class="slide">
+    <h2>Heine-Borel 定理</h2>
+    <div class="content">
+        <div class="formula" style="font-size: 64px; margin: 80px 0; padding: 50px;">
+            K 是紧集  ⟺  K 是有界闭集
+        </div>
+        
+        <div class="grid-container">
+            <div class="card">
+                <h4>✓ 紧集</h4>
+                <p>[a, b] 有界且闭</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">⇒ 紧</div>
+            </div>
+            
+            <div class="card">
+                <h4>✗ 非紧</h4>
+                <p>[0, ∞) 闭但无界</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">⇒ 非紧</div>
+            </div>
+            
+            <div class="card">
+                <h4>✗ 非紧</h4>
+                <p>(0, 1) 有界但不闭</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">⇒ 非紧</div>
+            </div>
+            
+            <div class="card">
+                <h4>⚠ 注意</h4>
+                <p>此定理仅对 ℝⁿ 成立！</p>
+                <p style="margin-top: 15px; font-size: 22px; color: #718096;">一般空间中有界闭 ≠ 紧</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">12</div>
+</div>
+
+<!-- Slide 13: 紧性的威力 -->
+<div class="slide">
+    <h2>紧性的重要应用</h2>
+    <div class="content">
+        <div class="three-column">
+            <div class="box">
+                <h3>极值定理</h3>
+                <p style="font-size: 28px; line-height: 1.8;">紧集上的连续函数</p>
+                <div class="formula" style="font-size: 36px; margin: 25px 0;">↓</div>
+                <p style="font-size: 28px; font-weight: 700; color: #667eea;">取到最大值和最小值</p>
+            </div>
+            
+            <div class="box">
+                <h3>一致连续性</h3>
+                <p style="font-size: 28px; line-height: 1.8;">紧集上的连续函数</p>
+                <div class="formula" style="font-size: 36px; margin: 25px 0;">↓</div>
+                <p style="font-size: 28px; font-weight: 700; color: #667eea;">一致连续</p>
+            </div>
+            
+            <div class="box">
+                <h3>序列紧性</h3>
+                <p style="font-size: 28px; line-height: 1.8;">紧集中的任何序列</p>
+                <div class="formula" style="font-size: 36px; margin: 25px 0;">↓</div>
+                <p style="font-size: 28px; font-weight: 700; color: #667eea;">都有收敛子列</p>
+            </div>
+        </div>
+        
+        <div class="box" style="margin-top: 60px; background: linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%); border-left-color: #f472b6;">
+            <h3 style="color: #be185d;">核心洞察</h3>
+            <p style="font-size: 34px; line-height: 1.8; color: #2d3748;">紧性将<strong>无穷问题化为有限问题</strong>，是分析学中几乎所有深刻定理的背后推手</p>
+        </div>
+    </div>
+    <div class="slide-number">13</div>
+</div>
+
+<!-- Slide 14: 完备性 -->
+<div class="slide">
+    <h2>完备性：柯西列必收敛</h2>
+    <div class="content">
+        <div class="two-column">
+            <div>
+                <div class="box">
+                    <h3>柯西列</h3>
+                    <p style="font-size: 30px; line-height: 1.8;">数列 {x<sub>n</sub>} 是柯西列，如果</p>
+                    <div class="formula" style="font-size: 36px; margin: 25px 0;">
+                        ∀ε>0, ∃N: m,n>N ⇒ |x<sub>m</sub>-x<sub>n</sub>|&lt;ε
+                    </div>
+                </div>
+                
+                <div class="box" style="margin-top: 40px;">
+                    <h3>完备性</h3>
+                    <p style="font-size: 32px; font-weight: 700; color: #667eea;">度量空间中的每个柯西列都收敛</p>
+                </div>
+            </div>
+            
+            <div>
+                <div class="box">
+                    <h3>ℝ vs ℚ</h3>
+                    <ul style="font-size: 30px;">
+                        <li><strong>ℝ 是完备的</strong> ✓</li>
+                        <li style="margin-top: 25px;"><strong>ℚ 不完备</strong> ✗</li>
+                    </ul>
+                    <p style="margin-top: 30px; font-size: 26px; line-height: 1.7;">例：1, 1.4, 1.41, 1.414, ... 是ℚ中的柯西列，但极限 √2 ∉ ℚ</p>
+                </div>
+                
+                <div class="box" style="margin-top: 40px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left-color: #10b981;">
+                    <h3 style="color: #047857;">关键</h3>
+                    <p style="font-size: 28px; color: #2d3748;">完备性是ℝ区别于ℚ的根本</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">14</div>
+</div>
+
+<!-- Slide 15: 完备性的等价形式 -->
+<div class="slide">
+    <h2>完备性的等价表述</h2>
+    <div class="content">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>柯西列收敛</strong>（柯西完备性）
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>单调有界数列收敛</strong>（单调收敛定理）
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>确界原理</strong>：非空有上界的集合有上确界
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>闭区间套定理</strong>：嵌套闭区间的交集非空
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>Bolzano-Weierstrass</strong>：有界数列有收敛子列
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>Heine-Borel</strong>：有界闭集是紧的
+                </div>
+            </div>
+        </div>
+        
+        <div class="box" style="margin-top: 50px; text-align: center;">
+            <p style="font-size: 36px; font-weight: 700; color: #667eea;">这些命题在ℝ中彼此等价，构成实分析的根基</p>
+        </div>
+    </div>
+    <div class="slide-number">15</div>
+</div>
+
+<!-- Slide 16: σ-代数 -->
+<div class="slide">
+    <h2>σ-代数：测度论的框架</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 50px;">
+            <h3>定义</h3>
+            <p style="font-size: 32px; line-height: 1.8;">集族 ℱ ⊂ 2<sup>Ω</sup> 是 <span class="highlight">σ-代数</span>，如果：</p>
+        </div>
+        
+        <div class="three-column">
+            <div class="box">
+                <h3>1. 包含全集</h3>
+                <div class="formula" style="font-size: 42px; margin: 30px 0;">
+                    Ω ∈ ℱ
+                </div>
+            </div>
+            
+            <div class="box">
+                <h3>2. 对补封闭</h3>
+                <div class="formula" style="font-size: 42px; margin: 30px 0;">
+                    A∈ℱ ⇒ Aᶜ∈ℱ
+                </div>
+            </div>
+            
+            <div class="box">
+                <h3>3. 对可数并封闭</h3>
+                <div class="formula" style="font-size: 36px; margin: 30px 0;">
+                    A₁,A₂,...∈ℱ<br>⇒ ⋃Aₙ∈ℱ
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow-flow" style="margin-top: 60px;">
+            <div class="flow-item">集合运算封闭</div>
+            <div class="flow-arrow">+</div>
+            <div class="flow-item">极限运算封闭</div>
+            <div class="flow-arrow">=</div>
+            <div class="flow-item">测度的良好载体</div>
+        </div>
+    </div>
+    <div class="slide-number">16</div>
+</div>
+
+<!-- Slide 17: 波莱尔集 -->
+<div class="slide">
+    <h2>波莱尔 σ-代数</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 50px;">
+            <h3>定义</h3>
+            <p style="font-size: 34px; line-height: 1.9;"><strong>波莱尔 σ-代数</strong> 𝓑(ℝ) 是由ℝ上所有<span class="highlight">开集</span>生成的最小σ-代数</p>
+        </div>
+        
+        <div class="arrow-flow">
+            <div class="flow-item" style="font-size: 28px;">所有开集</div>
+            <div class="flow-arrow">⊂</div>
+            <div class="flow-item" style="font-size: 28px;">所有闭集</div>
+            <div class="flow-arrow">⊂</div>
+            <div class="flow-item" style="font-size: 28px;">G<sub>δ</sub> 集</div>
+            <div class="flow-arrow">⊂</div>
+            <div class="flow-item" style="font-size: 28px;">F<sub>σ</sub> 集</div>
+            <div class="flow-arrow">⊂</div>
+            <div class="flow-item" style="font-size: 28px;">𝓑(ℝ)</div>
+        </div>
+        
+        <div class="grid-container" style="margin-top: 60px;">
+            <div class="card">
+                <h4>G<sub>δ</sub> 集</h4>
+                <p>可数个开集的交</p>
+                <div class="formula" style="font-size: 30px; margin-top: 15px;">⋂ G<sub>n</sub></div>
+            </div>
+            
+            <div class="card">
+                <h4>F<sub>σ</sub> 集</h4>
+                <p>可数个闭集的并</p>
+                <div class="formula" style="font-size: 30px; margin-top: 15px;">⋃ F<sub>n</sub></div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">17</div>
+</div>
+
+<!-- Slide 18: 波莱尔集的例子 -->
+<div class="slide">
+    <h2>波莱尔集包含什么？</h2>
+    <div class="content">
+        <div class="grid-container">
+            <div class="card">
+                <h4>单点集</h4>
+                <p>{a} 是 G<sub>δ</sub> 集</p>
+                <div class="formula" style="font-size: 28px; margin-top: 15px;">
+                    {a} = ⋂(a-1/n, a+1/n)
+                </div>
+            </div>
+            
+            <div class="card">
+                <h4>有理数集</h4>
+                <p>ℚ 是 F<sub>σ</sub> 集（可数并）</p>
+                <div class="formula" style="font-size: 28px; margin-top: 15px;">
+                    ℚ = ⋃<sub>q∈ℚ</sub> {q}
+                </div>
+            </div>
+            
+            <div class="card">
+                <h4>无理数集</h4>
+                <p>ℝ\ℚ 是 G<sub>δ</sub> 集</p>
+                <div class="formula" style="font-size: 28px; margin-top: 15px;">
+                    ℝ\ℚ = ℚᶜ
+                </div>
+            </div>
+            
+            <div class="card">
+                <h4>康托尔集</h4>
+                <p>闭集，因此是波莱尔集</p>
+                <div class="formula" style="font-size: 28px; margin-top: 15px;">
+                    测度为0但不可数
+                </div>
+            </div>
+        </div>
+        
+        <div class="box" style="margin-top: 60px; text-align: center; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left-color: #f59e0b;">
+            <h3 style="color: #d97706;">重要事实</h3>
+            <p style="font-size: 32px; color: #2d3748; line-height: 1.8;">分析中遇到的"几乎所有"集合都是波莱尔集</p>
+        </div>
+    </div>
+    <div class="slide-number">18</div>
+</div>
+
+<!-- Slide 19: 波莱尔集与集合列极限 -->
+<div class="slide">
+    <h2>为什么选择波莱尔集？</h2>
+    <div class="content">
+        <div class="three-column">
+            <div class="box">
+                <h3>动机1</h3>
+                <p style="font-size: 28px; line-height: 1.8;"><strong>测度的载体</strong></p>
+                <p style="margin-top: 20px; font-size: 26px;">勒贝格测度在波莱尔集上定义良好</p>
+            </div>
+            
+            <div class="box">
+                <h3>动机2</h3>
+                <p style="font-size: 28px; line-height: 1.8;"><strong>极限封闭性</strong></p>
+                <p style="margin-top: 20px; font-size: 26px;">limsup A<sub>n</sub> 和 liminf A<sub>n</sub> 都是波莱尔集</p>
+            </div>
+            
+            <div class="box">
+                <h3>动机3</h3>
+                <p style="font-size: 28px; line-height: 1.8;"><strong>概率论基础</strong></p>
+                <p style="margin-top: 20px; font-size: 26px;">事件σ-代数通常取波莱尔σ-代数</p>
+            </div>
+        </div>
+        
+        <div class="formula" style="font-size: 48px; margin: 80px 0; padding: 50px;">
+            limsup A<sub>n</sub> = ⋂ ⋃ A<sub>k</sub> ∈ 𝓑(ℝ)
+        </div>
+        
+        <p style="text-align: center; font-size: 32px; color: #667eea; font-weight: 600;">
+            ⇒ σ-代数对可数并/交封闭，保证极限操作不会"逃出"
+        </p>
+    </div>
+    <div class="slide-number">19</div>
+</div>
+
+<!-- Slide 20: 拓扑空间 -->
+<div class="slide">
+    <h2>拓扑空间：最抽象的推广</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 50px;">
+            <h3>定义</h3>
+            <p style="font-size: 32px; line-height: 1.8;">拓扑空间 (X, 𝓣) 由集合X和开集族𝓣组成，满足：</p>
+        </div>
+        
+        <div class="three-column">
+            <div class="box">
+                <h3>T1</h3>
+                <div class="formula" style="font-size: 40px; margin: 25px 0;">
+                    ∅, X ∈ 𝓣
+                </div>
+            </div>
+            
+            <div class="box">
+                <h3>T2</h3>
+                <div class="formula" style="font-size: 36px; margin: 25px 0;">
+                    G₁,G₂∈𝓣<br>⇒ G₁∩G₂∈𝓣
+                </div>
+            </div>
+            
+            <div class="box">
+                <h3>T3</h3>
+                <div class="formula" style="font-size: 36px; margin: 25px 0;">
+                    {G<sub>α</sub>}⊂𝓣<br>⇒ ⋃G<sub>α</sub>∈𝓣
+                </div>
+            </div>
+        </div>
+        
+        <div class="box" style="margin-top: 60px; text-align: center;">
+            <p style="font-size: 34px; line-height: 1.9;">这三条公理<span class="highlight">抽象了</span> ℝⁿ 中开集的核心性质，使得"连续性"、"收敛性"等概念可以在没有距离的空间中定义</p>
+        </div>
+    </div>
+    <div class="slide-number">20</div>
+</div>
+
+<!-- Slide 21: 概念层级 -->
+<div class="slide">
+    <h2>空间结构的层级</h2>
+    <div class="content">
+        <div style="position: relative; height: 600px;">
+            <svg width="100%" height="600" viewBox="0 0 1200 600">
+                <!-- 层级框 -->
+                <rect x="100" y="50" width="1000" height="100" fill="rgba(102, 126, 234, 0.1)" stroke="#667eea" stroke-width="3" rx="10"/>
+                <text x="600" y="110" text-anchor="middle" font-size="36" font-weight="bold" fill="#667eea">拓扑空间 (X, 𝓣)</text>
+                
+                <rect x="150" y="180" width="900" height="100" fill="rgba(244, 114, 182, 0.1)" stroke="#f472b6" stroke-width="3" rx="10"/>
+                <text x="600" y="240" text-anchor="middle" font-size="36" font-weight="bold" fill="#f472b6">度量空间 (X, d)</text>
+                
+                <rect x="200" y="310" width="800" height="100" fill="rgba(16, 185, 129, 0.1)" stroke="#10b981" stroke-width="3" rx="10"/>
+                <text x="600" y="370" text-anchor="middle" font-size="36" font-weight="bold" fill="#10b981">赋范空间 (X, ‖·‖)</text>
+                
+                <rect x="250" y="440" width="700" height="100" fill="rgba(251, 191, 36, 0.1)" stroke="#f59e0b" stroke-width="3" rx="10"/>
+                <text x="600" y="500" text-anchor="middle" font-size="36" font-weight="bold" fill="#f59e0b">内积空间 (X, ⟨·,·⟩)</text>
+                
+                <!-- 箭头 -->
+                <path d="M 600 150 L 600 180" stroke="#667eea" stroke-width="4" marker-end="url(#arrowhead)"/>
+                <path d="M 600 280 L 600 310" stroke="#f472b6" stroke-width="4" marker-end="url(#arrowhead)"/>
+                <path d="M 600 410 L 600 440" stroke="#10b981" stroke-width="4" marker-end="url(#arrowhead)"/>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                        <polygon points="0 0, 10 5, 0 10" fill="#667eea"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+        
+        <p style="text-align: center; font-size: 32px; margin-top: 30px; color: #4a5568; font-weight: 600;">
+            结构越丰富 → 性质越强 → 适用范围越窄
+        </p>
+    </div>
+    <div class="slide-number">21</div>
+</div>
+
+<!-- Slide 22: 核心联系图 -->
+<div class="slide">
+    <h2>概念关系总览</h2>
+    <div class="content">
+        <svg width="100%" height="700" viewBox="0 0 1400 700">
+            <!-- 集合运算 -->
+            <rect x="50" y="50" width="300" height="120" fill="#fff5f5" stroke="#f472b6" stroke-width="3" rx="10"/>
+            <text x="200" y="100" text-anchor="middle" font-size="28" font-weight="bold">集合运算</text>
+            <text x="200" y="135" text-anchor="middle" font-size="20">并/交/补/差/对称差</text>
+            
+            <!-- 基数 -->
+            <rect x="450" y="50" width="300" height="120" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" rx="10"/>
+            <text x="600" y="100" text-anchor="middle" font-size="28" font-weight="bold">基数理论</text>
+            <text x="600" y="135" text-anchor="middle" font-size="20">可数 vs 不可数</text>
+            
+            <!-- 集合列极限 -->
+            <rect x="850" y="50" width="300" height="120" fill="#f0fdf4" stroke="#10b981" stroke-width="3" rx="10"/>
+            <text x="1000" y="100" text-anchor="middle" font-size="28" font-weight="bold">集合列极限</text>
+            <text x="1000" y="135" text-anchor="middle" font-size="20">limsup / liminf</text>
+            
+            <!-- 拓扑结构 -->
+            <rect x="50" y="250" width="300" height="120" fill="#ede9fe" stroke="#8b5cf6" stroke-width="3" rx="10"/>
+            <text x="200" y="300" text-anchor="middle" font-size="28" font-weight="bold">拓扑结构</text>
+            <text x="200" y="335" text-anchor="middle" font-size="20">开集/闭集</text>
+            
+            <!-- 完备性 -->
+            <rect x="450" y="250" width="300" height="120" fill="#dbeafe" stroke="#3b82f6" stroke-width="3" rx="10"/>
+            <text x="600" y="300" text-anchor="middle" font-size="28" font-weight="bold">完备性</text>
+            <text x="600" y="335" text-anchor="middle" font-size="20">柯西列收敛</text>
+            
+            <!-- 紧性 -->
+            <rect x="850" y="250" width="300" height="120" fill="#fce7f3" stroke="#ec4899" stroke-width="3" rx="10"/>
+            <text x="1000" y="300" text-anchor="middle" font-size="28" font-weight="bold">紧性</text>
+            <text x="1000" y="335" text-anchor="middle" font-size="20">有限覆盖</text>
+            
+            <!-- σ-代数 -->
+            <rect x="250" y="450" width="350" height="120" fill="#e0e7ff" stroke="#667eea" stroke-width="3" rx="10"/>
+            <text x="425" y="500" text-anchor="middle" font-size="28" font-weight="bold">σ-代数</text>
+            <text x="425" y="535" text-anchor="middle" font-size="20">对可数运算封闭</text>
+            
+            <!-- 波莱尔集 -->
+            <rect x="700" y="450" width="350" height="120" fill="#f3e8ff" stroke="#a855f7" stroke-width="3" rx="10"/>
+            <text x="875" y="500" text-anchor="middle" font-size="28" font-weight="bold">波莱尔集</text>
+            <text x="875" y="535" text-anchor="middle" font-size="20">测度论的对象</text>
+            
+            <!-- 连接线 -->
+            <path d="M 200 170 L 200 250" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+            <path d="M 1000 170 L 1000 250" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+            <path d="M 200 370 L 425 450" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+            <path d="M 1000 370 L 875 450" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+            <path d="M 600 370 L 425 450" stroke="#667eea" stroke-width="3" stroke-dasharray="5,5"/>
+        </svg>
+    </div>
+    <div class="slide-number">22</div>
+</div>
+
+<!-- Slide 23: 关键洞察 -->
+<div class="slide">
+    <h2>六个核心洞察</h2>
+    <div class="content">
+        <div class="grid-container">
+            <div class="card" style="background: linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%);">
+                <h4>1. 运算是基础</h4>
+                <p>五种集合运算 + 德·摩根律为一切后续结构提供代数工具</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+                <h4>2. 可数是分水岭</h4>
+                <p>有理数（可数）在实数（不可数）中"几乎不存在"</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+                <h4>3. 极限连接分析</h4>
+                <p>集合列极限将极限概念从数推广到集合</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);">
+                <h4>4. 开闭是对偶</h4>
+                <p>开集和闭集通过补运算和德·摩根律相互转化</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                <h4>5. 完备性是根本</h4>
+                <p>ℝ 区别于 ℚ 的关键：没有"空隙"</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);">
+                <h4>6. 紧性是武器</h4>
+                <p>将无穷问题化为有限问题，是深刻定理的推手</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">23</div>
+</div>
+
+<!-- Slide 24: 应用展望 -->
+<div class="slide">
+    <h2>通往现代分析的桥梁</h2>
+    <div class="content">
+        <div class="arrow-flow" style="margin-bottom: 60px;">
+            <div class="flow-item" style="flex: 1.5;">点集拓扑</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item" style="flex: 1.5;">测度论</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item" style="flex: 1.5;">勒贝格积分</div>
+        </div>
+        
+        <div class="three-column">
+            <div class="box">
+                <h3>波莱尔集</h3>
+                <p style="font-size: 26px; line-height: 1.7;">界定"哪些集合可以测量"</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">μ: 𝓑(ℝ) → [0,∞]</div>
+            </div>
+            
+            <div class="box">
+                <h3>完备性</h3>
+                <p style="font-size: 26px; line-height: 1.7;">保证极限点存在</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">∫ lim f<sub>n</sub> = lim ∫ f<sub>n</sub></div>
+            </div>
+            
+            <div class="box">
+                <h3>紧性</h3>
+                <p style="font-size: 26px; line-height: 1.7;">使一致收敛成为可能</p>
+                <div class="formula" style="font-size: 32px; margin-top: 20px;">Stone-Weierstrass</div>
+            </div>
+        </div>
+        
+        <div class="box" style="margin-top: 60px; text-align: center; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-left-color: #667eea;">
+            <h3 style="color: #4338ca;">最终目标</h3>
+            <p style="font-size: 36px; color: #2d3748; line-height: 1.8; font-weight: 600;">在没有"长度"概念的空间中定义"大小"和"积分"</p>
+        </div>
+    </div>
+    <div class="slide-number">24</div>
+</div>
+
+<!-- Slide 25: 总结 -->
+<div class="slide">
+    <h2>从集合到拓扑：完整的旅程</h2>
+    <div class="content">
+        <div class="box" style="margin-bottom: 40px; background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);">
+            <div style="display: flex; justify-content: space-around; align-items: center; padding: 30px 0;">
+                <div style="text-align: center;">
+                    <div class="big-number" style="font-size: 80px;">5</div>
+                    <p style="font-size: 28px; color: #4a5568;">集合运算</p>
+                </div>
+                <div style="text-align: center;">
+                    <div class="big-number" style="font-size: 80px;">2</div>
+                    <p style="font-size: 28px; color: #4a5568;">基数层级</p>
+                </div>
+                <div style="text-align: center;">
+                    <div class="big-number" style="font-size: 80px;">3</div>
+                    <p style="font-size: 28px; color: #4a5568;">拓扑概念</p>
+                </div>
+                <div style="text-align: center;">
+                    <div class="big-number" style="font-size: 80px;">1</div>
+                    <p style="font-size: 28px; color: #4a5568;">统一框架</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="formula" style="font-size: 52px; padding: 60px; margin: 50px 0;">
+            集合论 + 拓扑 + 测度 = 现代分析的基石
+        </div>
+        
+        <div class="box" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+            <p style="font-size: 40px; color: white; line-height: 1.8; font-weight: 700;">
+                "在数学中，艺术在于<br>在合适的层次上提出问题"
+            </p>
+            <p style="font-size: 28px; color: rgba(255,255,255,0.8); margin-top: 30px;">— 点集拓扑给出了这个"合适的层次"</p>
+        </div>
+    </div>
+    <div class="slide-number">25</div>
+</div>
+
+<!-- 导航按钮 -->
+<div class="navigation">
+    <button class="nav-btn" onclick="prevSlide()">◀ 上一页</button>
+    <button class="nav-btn" onclick="nextSlide()">下一页 ▶</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(n) {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + totalSlides) % totalSlides;
+        slides[currentSlide].classList.add('active');
+    }
+
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    // 键盘导航
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            prevSlide();
+        }
+    });
+
+    // 触摸滑动支持
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        if (touchEndX < touchStartX - 50) nextSlide();
+        if (touchEndX > touchStartX + 50) prevSlide();
+    }
+</script>
+
+</body>
+</html>
